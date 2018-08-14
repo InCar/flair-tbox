@@ -1,0 +1,13 @@
+# Log src/main/resources/log4j2-product.xml
+logging.config:
+
+# Spring settings
+spring:
+    profiles.active: product
+
+# SAIC2017
+saic2017:
+    mongo:
+        host: 127.0.0.1
+        user: mongoUser
+        pwd: yourPassword
