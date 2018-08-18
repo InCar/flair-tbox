@@ -20,3 +20,5 @@ saic2017:
         pwd: # your-password
         database: newrvm
         collection: newrvmSignalData20171231
+    # 最大并发数
+    maxPower: 8

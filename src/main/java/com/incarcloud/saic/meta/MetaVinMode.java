@@ -43,7 +43,7 @@ public class MetaVinMode {
                     }
                     count++;
                 }
-                s_logger.info("meta loaded {} lines", count);
+                s_logger.info("meta loaded {} vins from {} lines", mapVinModes.size(), count);
             }
         }
         catch (Exception ex){
@@ -52,6 +52,10 @@ public class MetaVinMode {
         }
 
         return true;
+    }
+
+    public int size(){
+        return mapVinModes.size();
     }
 
     /**

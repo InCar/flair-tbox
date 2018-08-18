@@ -25,4 +25,8 @@ public class SAIC2017Config {
 
     private final MongoConfig mongo = new MongoConfig();
     public MongoConfig getMongo(){ return mongo; }
+
+    private int maxPower;
+    public int getMaxPower(){ return maxPower; }
+    public void setMaxPower(int val){ maxPower = val; }
 }
