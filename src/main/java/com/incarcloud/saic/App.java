@@ -2,6 +2,7 @@ package com.incarcloud.saic;
 
 import com.incarcloud.saic.config.MongoConfig;
 import com.incarcloud.saic.config.SAIC2017Config;
+import com.incarcloud.saic.heliosphere.Parker;
 import com.incarcloud.saic.meta.MetaVinMode;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -40,15 +41,19 @@ public class App implements CommandLineRunner{
         s_logger.info("appver: {}", (new GitVer()).getVersion());
         s_logger.info("Active log4j config file: {}", config.getName());
 
-        MetaVinMode metaVinMode = new MetaVinMode();
-        metaVinMode.load();
-        for(Map.Entry<String, List<String>> kv : metaVinMode.getVinModes()){
-            s_logger.info("{} : {}", kv.getKey(), kv.getValue());
-        }
-
         SAIC2017Config cfg = _ctx.getBean(SAIC2017Config.class);
         MongoConfig cfgMongo = cfg.getMongo();
         s_logger.info("host: {}", cfgMongo.getHosts());
+
+        Parker parker = new Parker();
+        parker.setDate(cfg.getBeginDate(), cfg.getEndDate());
+        parker.runAsync();
+
+        MetaVinMode metaVinMode = new MetaVinMode();
+        metaVinMode.load();
+        for(Map.Entry<String, List<String>> kv : metaVinMode.getVinModes()){
+            // s_logger.info("{} : {}", kv.getKey(), kv.getValue());
+        }
 
         MongoClient client = cfgMongo.createClient();
         try{

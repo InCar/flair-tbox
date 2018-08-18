@@ -7,6 +7,11 @@ spring:
 
 # SAIC2017
 saic2017:
+    # 开始日期 yyyy-MM-dd
+    beginDate: 2017-01-01
+    # 结束日期
+    endDate: 2017-12-31
+    # mongodb
     mongo:
         hosts:
             - 127.0.0.1:27017
