@@ -13,3 +13,5 @@ saic2017:
         source: admin # the source where the user is defined
         user: # your-user-name
         pwd: # your-password
+        database: newrvm
+        collection: newrvmSignalData20171231

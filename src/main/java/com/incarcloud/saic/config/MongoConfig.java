@@ -25,6 +25,14 @@ public class MongoConfig {
     public char[] getPwd(){ return pwd; }
     public void setPwd(char[] val){ pwd = val; }
 
+    private String database;
+    public String getDatabase(){ return database; }
+    public void setDatabase(String val){ database = val; }
+
+    private String collection;
+    public String getCollection(){ return collection; }
+    public void setCollection(String val){ collection = val; }
+
     public MongoClient createClient(){
         MongoClientSettings.Builder builder = MongoClientSettings.builder();
         builder.applyToClusterSettings(x->x.hosts(getHostAddresses()));
