@@ -38,11 +38,9 @@ public class App implements CommandLineRunner{
         s_logger.info("Active log4j config file: {}", config.getName());
 
         SAIC2017Config cfg = _ctx.getBean(SAIC2017Config.class);
-        MongoConfig cfgMongo = cfg.getMongo();
-        String strMongo = String.format("mongodb://%s:%s@%s:27017",
-                cfgMongo.getUser(), cfgMongo.getPwd(), cfg.getMongo().getHost());
+        s_logger.info("host: {}", cfg.getMongo().getHosts());
 
-        MongoClient client = MongoClients.create(strMongo);
+        MongoClient client = cfg.getMongo().createClient();
         try{
             MongoDatabase database = client.getDatabase("s100");
             MongoCollection<Document> vins = database.getCollection("vins");
