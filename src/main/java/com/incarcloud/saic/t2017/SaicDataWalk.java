@@ -27,8 +27,11 @@ class SaicDataWalk implements IDataWalk {
     private final String mode;
     private final String out;
 
+    private Path path = null;
     private OutputStream fs = null;
     private OutputStreamWriter writer = null;
+
+    private long count = 0;
 
     SaicDataWalk(String vin, LocalDate date, String mode, String out){
         this.vin = vin;
@@ -45,16 +48,15 @@ class SaicDataWalk implements IDataWalk {
      * 每天所有的数据打包成一个 dd.tar.gz 文件
      */
     public boolean onBegin(){
-        Path path = Paths.get(this.out,
+        path = Paths.get(this.out,
                 String.valueOf(date.getYear()),
                 String.format("%02d", date.getMonthValue()),
                 String.format("%02d", date.getDayOfMonth()),
                 this.vin);
         try {
             Files.createDirectories(path.getParent());
-            Files.createFile(path);
 
-            fs = Files.newOutputStream(path, StandardOpenOption.TRUNCATE_EXISTING);
+            fs = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             writer = new OutputStreamWriter(fs, Charset.forName("UTF-8").newEncoder());
 
             return true;
@@ -79,6 +81,7 @@ class SaicDataWalk implements IDataWalk {
                 String buf = doc.toJson();
                 writer.write(buf);
                 writer.write("\n");
+                count++;
             }
             return true;
         }
@@ -106,7 +109,16 @@ class SaicDataWalk implements IDataWalk {
 
     private void closeFS(){
         try {
-            if (fs != null) fs.close();
+            if (fs != null) {
+                writer.flush();
+                writer.close();
+                fs.close();
+            }
+
+            // 如果实际没有数据,清除掉文件
+            if(count == 0)
+                Files.deleteIfExists(path);
+
         }catch (Exception ex){
             s_logger.error("Close file failed: {} : {} : {}",
                     this.vin, this.date.format(s_fmt), ex);
