@@ -7,6 +7,8 @@ import com.incarcloud.saic.ds.ISource2017;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
 /**
  * 工作逻辑
  */
@@ -15,14 +17,20 @@ public class TaskWork implements Action<TaskArg> {
 
     // 数据源
     private ISource2017 ds = null;
+    // 数据输出位置
+    private String out = null;
 
     public TaskWork(){
     }
 
     // 初始化
-    public void init(MongoConfig cfg){
+    public void init(MongoConfig cfg, String out){
+        // 输入数据源
         ds = DSFactory.create(cfg);
         ds.init();
+
+        // 输出文件夹
+        this.out = out;
     }
 
     // 清理
@@ -32,7 +40,7 @@ public class TaskWork implements Action<TaskArg> {
 
     @Override
     public void run(TaskArg arg){
-        SaicDataWalk dataWalk = new SaicDataWalk(arg.vin, arg.date, arg.mode);
+        SaicDataWalk dataWalk = new SaicDataWalk(arg.vin, arg.date, arg.mode, this.out);
         ds.fetch(arg.vin, arg.date, dataWalk);
     }
 }

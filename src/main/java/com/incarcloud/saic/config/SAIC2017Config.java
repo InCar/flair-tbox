@@ -25,6 +25,10 @@ public class SAIC2017Config {
         endDate = LocalDate.parse(val, s_fmt);
     }
 
+    private String out;
+    public String getOut(){ return out; }
+    public void setOut(String val){ out = val; }
+
     private final MongoConfig mongo = new MongoConfig();
     public MongoConfig getMongo(){ return mongo; }
 

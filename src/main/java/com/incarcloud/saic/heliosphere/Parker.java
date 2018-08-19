@@ -65,8 +65,8 @@ public class Parker {
         saTask.setMax(max);
     }
 
-    public void setDataSourceConfig(MongoConfig cfg){
-        taskWork.init(cfg);
+    public void setDataSourceTargetConfig(MongoConfig cfg, String out){
+        taskWork.init(cfg, out);
     }
 
     // 执行

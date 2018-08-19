@@ -45,7 +45,7 @@ public class App implements CommandLineRunner{
             SpringApplication.exit(_ctx, ()->exitCode);
         });
         parker.setMaxPower(cfg.getMaxPower());
-        parker.setDataSourceConfig(cfg.getMongo());
+        parker.setDataSourceTargetConfig(cfg.getMongo(), cfg.getOut());
         parker.runAsync();
     }
 }

@@ -11,6 +11,8 @@ saic2017:
     beginDate: 2017-01-01
     # 结束日期
     endDate: 2017-12-31
+    # 输出文件夹
+    out: ./out
     # mongodb
     mongo:
         hosts:

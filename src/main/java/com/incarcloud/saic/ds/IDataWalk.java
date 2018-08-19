@@ -6,15 +6,17 @@ package com.incarcloud.saic.ds;
 public interface IDataWalk {
     /**
      * 在开始时调用一次
+     * 成功返回true,失败返回false
      */
-    void onBegin();
+    boolean onBegin();
 
     /**
      * 每条数据调用一次
      * 在开始和结束之间可能会被调用多次
      * 也可能一次都不调用
+     * 成功返回true,失败返回false
      */
-    void onData(Object data);
+    boolean onData(Object data);
 
     /**
      * 在正常结束时调用一次
@@ -26,5 +28,5 @@ public interface IDataWalk {
      * 在异常结束时调用一次
      * 它和onFinished相互排斥,两者只有一个会被调用
      */
-    void onFailed();
+    void onFailed(Exception ex);
 }
