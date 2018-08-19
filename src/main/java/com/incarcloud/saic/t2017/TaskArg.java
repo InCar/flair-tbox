@@ -6,9 +6,9 @@ import java.time.LocalDate;
  * 任务参数
  */
 public class TaskArg {
-    private final LocalDate date;
-    private final String vin;
-    private final String mode;
+    final LocalDate date;
+    final String vin;
+    final String mode;
 
     public TaskArg(LocalDate date, String vin, String mode){
         this.date = date;

@@ -37,7 +37,7 @@ public class TaskWork implements Action<TaskArg> {
     public void run(TaskArg arg){
         try{
             MongoDatabase database = client.getDatabase(cfgMongo.getDatabase());
-            MongoCollection<Document> vins = database.getCollection(cfgMongo.getCollection());
+            MongoCollection<Document> vins = database.getCollection(cfgMongo.getCollection(arg.date));
 
             for(Document doc : vins.find()){
                 // TODO: process data fetched

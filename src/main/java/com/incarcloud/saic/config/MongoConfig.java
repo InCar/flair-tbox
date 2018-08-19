@@ -6,10 +6,16 @@ import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MongoConfig {
+    private static final Pattern s_rgxArgDate = Pattern.compile("\\{\\s*date\\s*:\\s*(\\S+)\\s*\\}");
+
     private List<String> hosts = new ArrayList<>();
     public List<String> getHosts(){ return hosts; }
 
@@ -32,6 +38,22 @@ public class MongoConfig {
     private String collection;
     public String getCollection(){ return collection; }
     public void setCollection(String val){ collection = val; }
+    public String getCollection(LocalDate date){
+        // 转换date参数
+        Matcher m = s_rgxArgDate.matcher(collection);
+        if(m.find()){
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern(m.group(1));
+            String xDate = date.format(fmt);
+            String replaced = String.format("%s%s%s",
+                    collection.substring(0, m.start()),
+                    xDate,
+                    collection.substring(m.end()));
+            return replaced;
+        }
+        else{
+            return collection;
+        }
+    }
 
     public MongoClient createClient(){
         MongoClientSettings.Builder builder = MongoClientSettings.builder();

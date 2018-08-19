@@ -19,7 +19,7 @@ saic2017:
         user: # your-user-name
         pwd: # your-password
         database: newrvm
-        collection: newrvmSignalData20171231
+        collection: newrvmSignalData{date:yyyyMMdd}
     # 最大并发数
     maxPower: 8
     # 车辆数据模式,处理列在此处的,或不写表示全部处理
