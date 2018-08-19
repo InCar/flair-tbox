@@ -39,7 +39,9 @@ class Hourglass {
      * 计算当前进度
      */
     synchronized float getProgress(){
-        float fVins = 1.0f * finishedVins / totalVins;
+        float fVins = 0.0f;
+        if(totalVins > 0)
+            fVins = 1.0f * finishedVins / totalVins;
         float fDays = 1.0f * finishedDays / totalDays;
         return fDays + fVins / totalDays;
     }

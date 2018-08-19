@@ -26,8 +26,17 @@ public class MetaVinMode {
     /**
      * 加载预定义的配置文件vin.txt
      */
-    public boolean load(){
+    public boolean load(List<String> modes, String vinMatch){
         try {
+            // 组织modes以便高效检索
+            HashSet<String> modeSet = new HashSet<>();
+            modeSet.addAll(modes);
+
+            // vin码正则表达过滤器
+            Pattern rgxVin = null;
+            if(vinMatch != null && vinMatch.length() > 0)
+                rgxVin = Pattern.compile(vinMatch);
+
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
             try (InputStream fs = loader.getResourceAsStream("vin.txt");
                  BufferedReader reader = new BufferedReader(new InputStreamReader(fs))
@@ -39,11 +48,16 @@ public class MetaVinMode {
                     if(m.find()){
                         String vin = m.group(1);
                         String mode = m.group(2);
-                        mapVinModes.computeIfAbsent(vin, k->new ArrayList<>(4)).add(mode);
+                        // modeSet为空集代表全部型号都需要处理
+                        if((modeSet.size() == 0 || modeSet.contains(mode)) && (rgxVin == null || rgxVin.matcher(vin).matches()))
+                            mapVinModes.computeIfAbsent(vin, k->new ArrayList<>(4)).add(mode);
                     }
                     count++;
                 }
-                s_logger.info("meta loaded {} vins from {} lines", mapVinModes.size(), count);
+                s_logger.info("Loaded {} from {} where {}{}",
+                        mapVinModes.size(), count,
+                        modes.size() > 0 ? modes : "[*]",
+                        rgxVin != null ? " && " + vinMatch : "");
             }
         }
         catch (Exception ex){

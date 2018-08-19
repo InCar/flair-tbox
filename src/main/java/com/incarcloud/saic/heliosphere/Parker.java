@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import java.util.Map;
  * 执行数据转换服务
  */
 public class Parker {
+    private static final DateTimeFormatter s_fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final Logger s_logger = LoggerFactory.getLogger(Parker.class);
 
     private LocalDate beginDate;
@@ -44,6 +46,10 @@ public class Parker {
 
     // 设置起止日期
     public void setJob(LocalDate begin, LocalDate end, MetaVinMode meta){
+        if(end.isBefore(begin))
+            throw new IllegalArgumentException(String.format("The date of end(%s) is before begin(%s).",
+                    end.format(s_fmt), begin.format(s_fmt)));
+
         beginDate = begin;
         endDate = end;
         metaVinMode = meta;
@@ -73,44 +79,53 @@ public class Parker {
     }
 
     private void run(){
+        int exitCode = 0;
+
         long totalDays = beginDate.until(endDate, ChronoUnit.DAYS) + 1;
         hourglass.setTotalAmount(totalDays, metaVinMode.size());
+        s_logger.info("{} => {} total {} day{}",
+                beginDate.format(s_fmt), endDate.format(s_fmt), totalDays, totalDays>1?"s":"");
 
-        for(long i=0;i<totalDays;i++){
-            int count = 0;
-            LocalDate cursor = beginDate.plusDays(i);
-            for(Map.Entry<String, List<String>> vinModes : metaVinMode.getVinModes()){
-                // TODO: 如何决断Mode???
-                saTask.submit(new TaskArg(cursor, vinModes.getKey(), vinModes.getValue().get(0)));
-                count++;
+        try {
+            for (long i = 0; i < totalDays; i++) {
+                LocalDate cursor = beginDate.plusDays(i);
+                s_logger.info("progress {} {}",
+                        cursor.format(s_fmt),
+                        String.format("%6.2f%%", 100.0f * hourglass.getProgress()));
 
-                // TODO: 测试代码,只处理前20个vin,配置测试MODE和测试VIN限制
-                if(count>=20) break;
-            }
+                for (Map.Entry<String, List<String>> vinModes : metaVinMode.getVinModes()) {
+                    // TODO: 如何决断Mode???
+                    saTask.submit(new TaskArg(cursor, vinModes.getKey(), vinModes.getValue().get(0)));
+                }
 
-            // 等待工作完成
-            while (saTask.getWaiting() > 0 || saTask.getRunning() > 0){
-                synchronized (objExit){
-                    try {
-                        objExit.wait(1000 * 10);
-                    }catch (InterruptedException ex){
-                        return;
+                // 等待工作完成
+                int loop = 0;
+                while (saTask.getWaiting() > 0 || saTask.getRunning() > 0) {
+                    synchronized (objExit) {
+                        objExit.wait(1000);
+                    }
+                    loop++;
+
+                    if(loop % 10 == 0) {
+                        s_logger.info("\n{}",
+                                LimitedTask.printMetric(saTask, 1000 * 60)
+                                        .replaceAll("(.*)", "\t$1"));
                     }
                 }
 
-                s_logger.info("\n{}",
-                        LimitedTask.printMetric(saTask, 1000*60)
-                            .replaceAll("(.*)", "\t$1"));
+                hourglass.increaseFinishedDay();
+                if(i == totalDays-1)
+                    s_logger.info(String.format("progress %6.2f%%", 100.0f * hourglass.getProgress()));
             }
-
-            hourglass.increaseFinishedDay();
-            s_logger.info(String.format("%6.2f%%", 100.0f * hourglass.getProgress()));
+        }catch (InterruptedException ex){
+            s_logger.error("interrupted {}", ex);
+            exitCode = -1;
         }
 
         saTask.stop();
         taskWork.clean();
 
         if(actionFinished != null)
-            actionFinished.run(0);
+            actionFinished.run(exitCode);
     }
 }

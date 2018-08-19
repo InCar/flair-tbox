@@ -22,3 +22,16 @@ saic2017:
         collection: newrvmSignalData20171231
     # 最大并发数
     maxPower: 8
+    # 车辆数据模式,处理列在此处的,或不写表示全部处理
+    modes:
+        - AS24
+        - AS26
+        - IP24
+        - IP34
+        - OLD-AS24
+        - IP32P
+        - OLD-IP24MCE
+        - OLD-IP24
+        - OLD-BP34
+    # vin匹配正则表达式,可以在测试只处理匹配上的车辆,不写表示匹配全部
+    vinMatch: # LSJA24793HS[0-9]+

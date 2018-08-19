@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @ConfigurationProperties(prefix="saic2017")
@@ -29,4 +31,11 @@ public class SAIC2017Config {
     private int maxPower;
     public int getMaxPower(){ return maxPower; }
     public void setMaxPower(int val){ maxPower = val; }
+
+    private final List<String> modes = new ArrayList<>();
+    public List<String> getModes(){ return modes; }
+
+    private String vinMatch;
+    public String getVinMatch(){ return vinMatch; }
+    public void setVinMatch(String val){ vinMatch = val; }
 }

@@ -35,12 +35,15 @@ public class App implements CommandLineRunner{
         SAIC2017Config cfg = _ctx.getBean(SAIC2017Config.class);
         // 车辆静态配置
         MetaVinMode metaVinMode = new MetaVinMode();
-        metaVinMode.load();
+        metaVinMode.load(cfg.getModes(), cfg.getVinMatch());
 
         // 主处理逻辑
         Parker parker = new Parker();
         parker.setJob(cfg.getBeginDate(), cfg.getEndDate(), metaVinMode);
-        parker.onFinished((exitCode)->SpringApplication.exit(_ctx, ()->exitCode));
+        parker.onFinished((exitCode)->{
+            s_logger.info("exit {}", exitCode);
+            SpringApplication.exit(_ctx, ()->exitCode);
+        });
         parker.setMaxPower(cfg.getMaxPower());
         parker.setDataSourceConfig(cfg.getMongo());
         parker.runAsync();
