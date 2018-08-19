@@ -2,10 +2,8 @@ package com.incarcloud.saic.t2017;
 
 import com.incarcloud.lang.Action;
 import com.incarcloud.saic.config.MongoConfig;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import org.bson.Document;
+import com.incarcloud.saic.ds.DSFactory;
+import com.incarcloud.saic.ds.ISource2017;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,36 +13,26 @@ import org.slf4j.LoggerFactory;
 public class TaskWork implements Action<TaskArg> {
     private static final Logger s_logger = LoggerFactory.getLogger(TaskWork.class);
 
-    private MongoConfig cfgMongo = null;
-    private MongoClient client = null;
+    // 数据源
+    private ISource2017 ds = null;
 
     public TaskWork(){
     }
 
     // 初始化
     public void init(MongoConfig cfg){
-        cfgMongo = cfg;
-        client = cfgMongo.createClient();
+        ds = DSFactory.create(cfg);
+        ds.init();
     }
 
     // 清理
     public void clean(){
-        if(client != null)
-            client.close();
+        if(ds != null) ds.clean();
     }
 
     @Override
     public void run(TaskArg arg){
-        try{
-            MongoDatabase database = client.getDatabase(cfgMongo.getDatabase());
-            MongoCollection<Document> vins = database.getCollection(cfgMongo.getCollection(arg.date));
-
-            for(Document doc : vins.find()){
-                // TODO: process data fetched
-                // s_logger.info("{}", doc.toJson());
-            }
-        }catch (Exception ex){
-            s_logger.error("TaskWork run failed: {}", ex);
-        }
+        SaicDataWalk dataWalk = new SaicDataWalk(arg.vin, arg.date, arg.mode);
+        ds.fetch(arg.vin, arg.date, dataWalk);
     }
 }

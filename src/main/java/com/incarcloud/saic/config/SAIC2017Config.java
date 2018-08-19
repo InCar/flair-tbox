@@ -28,6 +28,9 @@ public class SAIC2017Config {
     private final MongoConfig mongo = new MongoConfig();
     public MongoConfig getMongo(){ return mongo; }
 
+    private final OracleConfig oracle = new OracleConfig();
+    public OracleConfig getOracle(){ return oracle; }
+
     private int maxPower;
     public int getMaxPower(){ return maxPower; }
     public void setMaxPower(int val){ maxPower = val; }
