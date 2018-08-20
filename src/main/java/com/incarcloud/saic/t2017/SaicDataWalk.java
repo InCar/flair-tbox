@@ -12,7 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -22,9 +21,7 @@ class SaicDataWalk implements IDataWalk {
     private static final DateTimeFormatter s_fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final Logger s_logger = LoggerFactory.getLogger(SaicDataWalk.class);
 
-    private final String vin;
-    private final LocalDate date;
-    private final String mode;
+    private final TaskArg taskArg;
     private final String out;
 
     private Path path = null;
@@ -33,10 +30,8 @@ class SaicDataWalk implements IDataWalk {
 
     private long count = 0;
 
-    SaicDataWalk(String vin, LocalDate date, String mode, String out){
-        this.vin = vin;
-        this.date = date;
-        this.mode = mode;
+    SaicDataWalk(TaskArg taskArg, String out){
+        this.taskArg = taskArg;
         this.out = out;
     }
 
@@ -49,15 +44,16 @@ class SaicDataWalk implements IDataWalk {
      */
     public boolean onBegin(long totalCount){
         path = Paths.get(this.out,
-                String.valueOf(date.getYear()),
-                String.format("%02d", date.getMonthValue()),
-                String.format("%02d", date.getDayOfMonth()),
-                this.vin);
+                String.valueOf(taskArg.date.getYear()),
+                String.format("%02d", taskArg.date.getMonthValue()),
+                String.format("%02d", taskArg.date.getDayOfMonth()),
+                taskArg.vin);
         try {
             Files.createDirectories(path.getParent());
 
             fs = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             writer = new OutputStreamWriter(fs, Charset.forName("UTF-8").newEncoder());
+            taskArg.updateTotal(totalCount);
 
             return true;
         }catch (Exception ex){
@@ -81,6 +77,7 @@ class SaicDataWalk implements IDataWalk {
                 String buf = doc.toJson();
                 writer.write(buf);
                 writer.write("\n");
+                taskArg.updateIdx(idx);
                 count++;
             }
             return true;
@@ -103,7 +100,7 @@ class SaicDataWalk implements IDataWalk {
      * 它和onFinished相互排斥,两者只有一个会被调用
      */
     public void onFailed(Exception ex){
-        s_logger.error("Fetch data failed: {}", ex);
+        s_logger.error("Fetch data failed: {} : {} : {}", taskArg.vin, taskArg.date.format(s_fmt), ex);
         closeFS();
     }
 
@@ -121,7 +118,7 @@ class SaicDataWalk implements IDataWalk {
 
         }catch (Exception ex){
             s_logger.error("Close file failed: {} : {} : {}",
-                    this.vin, this.date.format(s_fmt), ex);
+                    taskArg.vin, taskArg.date.format(s_fmt), ex);
         }
     }
 }

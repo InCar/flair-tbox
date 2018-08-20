@@ -95,7 +95,7 @@ public class Parker {
 
                 for (Map.Entry<String, List<String>> vinModes : metaVinMode.getVinModes()) {
                     // TODO: 如何决断Mode???
-                    saTask.submit(new TaskArg(cursor, vinModes.getKey(), vinModes.getValue().get(0)));
+                    saTask.submit(new TaskArg(cursor, vinModes.getKey(), vinModes.getValue().get(0), hourglass));
                 }
 
                 // 等待工作完成
@@ -107,7 +107,8 @@ public class Parker {
                     loop++;
 
                     if(loop % 10 == 0) {
-                        s_logger.info("\n{}",
+                        s_logger.info("{}\n{}",
+                                String.format("progress %6.2f%%", 100.0f * hourglass.getProgress()),
                                 LimitedTask.printMetric(saTask, 1000 * 60)
                                         .replaceAll("(.*)", "\t$1"));
                     }

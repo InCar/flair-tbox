@@ -3,7 +3,7 @@ package com.incarcloud.saic.heliosphere;
 /**
  * 进度计量
  */
-class Hourglass {
+public class Hourglass {
     private long totalDays;
     private long totalVins;
 
@@ -23,7 +23,7 @@ class Hourglass {
     /**
      * 完成天数+1
      */
-    synchronized void increaseFinishedDay(){
+    public synchronized void increaseFinishedDay(){
         finishedVins = 0L;
         finishedDays++;
     }
@@ -31,7 +31,7 @@ class Hourglass {
     /**
      * 完成车辆数+1
      */
-    synchronized void increaseFinishedVin(){
+    public synchronized void increaseFinishedVin(){
         finishedVins++;
     }
 

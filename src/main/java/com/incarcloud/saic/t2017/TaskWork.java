@@ -40,7 +40,8 @@ public class TaskWork implements Action<TaskArg> {
 
     @Override
     public void run(TaskArg arg){
-        SaicDataWalk dataWalk = new SaicDataWalk(arg.vin, arg.date, arg.mode, this.out);
+        SaicDataWalk dataWalk = new SaicDataWalk(arg, this.out);
         ds.fetch(arg.vin, arg.date, dataWalk);
+        arg.increaseFinishedVin();
     }
 }
