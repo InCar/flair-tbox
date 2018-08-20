@@ -31,7 +31,7 @@ public abstract class GBData {
     public abstract void fillGBFrame(DataOutputStream stream) throws IOException;
 
     // 拼装GB32960实时数据包
-    public static byte[] makeGBPackage(String vin, String tm, List<GBData> listGBData) throws IOException{
+    public static byte[] makeGBPackage(String vin, ZonedDateTime tmGMT8, List<GBData> listGBData) throws IOException{
 
         final int headerSize = 24+1; // 24字节包头+1字节BCC校验
         int size = 6; // 计算尺寸需求 +6字节实时数据时间戳
@@ -52,6 +52,14 @@ public abstract class GBData {
 
         ds.writeByte(0x00); // 不加密
         ds.writeShort(size);
+
+        // 6字节时间
+        ds.writeByte(tmGMT8.getYear() % 100); // 2位的年份
+        ds.writeByte(tmGMT8.getMonthValue());
+        ds.writeByte(tmGMT8.getDayOfMonth());
+        ds.writeByte(tmGMT8.getHour());
+        ds.writeByte(tmGMT8.getMinute());
+        ds.writeByte(tmGMT8.getSecond());
 
         for(GBData data : listGBData){
             data.fillGBFrame(ds);

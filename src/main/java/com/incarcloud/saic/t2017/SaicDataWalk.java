@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -98,7 +99,8 @@ class SaicDataWalk implements IDataWalk {
             if(listGBData.size() > 0){
                 String vin = listGBData.get(0).getVin();
                 String tm = listGBData.get(0).getTmGMT8AsString();
-                byte[] bufGB32960 = GBData.makeGBPackage(vin, tm, listGBData);
+                ZonedDateTime tmGMT8 = listGBData.get(0).getTmGMT8();
+                byte[] bufGB32960 = GBData.makeGBPackage(vin, tmGMT8, listGBData);
 
                 // 一条数据一行 时间戳,base64帧
                 // 20171123103928,IyMH/kFCQ0RFRkcwMTIzNDU2Nzg5AQAAwQ==
