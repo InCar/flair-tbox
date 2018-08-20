@@ -1,5 +1,7 @@
 package com.incarcloud.saic.modes;
 
+import com.incarcloud.saic.modes.AS24.AS24;
+
 /**
  * 映射算法工厂
  */

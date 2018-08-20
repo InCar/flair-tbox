@@ -58,8 +58,8 @@ public class SourceMGO implements ISource2017 {
                 // 如果DataWalk的onBegin方法失败,就没有必要取数据了,直接结束
                 if(dataWalk.onBegin(total)) {
                     // 检索数据,因为mongo已经是按天存储在collection中,所以这里不需要时间过滤条件
-                    MongoIterable<Document> fx = docs.find(Filters.eq("vin", vin));
-                    // .sort(Sorts.ascending("tboxTime")); // 按时间排序
+                    MongoIterable<Document> fx = docs.find(Filters.eq("vin", vin))
+                            .sort(Sorts.ascending("tboxTime")); // 按时间排序,因为输出需要按这个顺序
 
                     long idx = 0;
                     for (Document doc : fx) {
