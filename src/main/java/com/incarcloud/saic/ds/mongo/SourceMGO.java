@@ -4,18 +4,20 @@ import com.incarcloud.saic.config.MongoConfig;
 import com.incarcloud.saic.ds.IDataWalk;
 import com.incarcloud.saic.ds.ISource2017;
 import com.mongodb.client.*;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Sorts;
+import com.mongodb.client.model.*;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 /**
  * MongoDB数据源
  */
 public class SourceMGO implements ISource2017 {
+    private static final DateTimeFormatter s_fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final Logger s_logger = LoggerFactory.getLogger(SourceMGO.class);
 
     private final MongoConfig cfg;
@@ -42,13 +44,24 @@ public class SourceMGO implements ISource2017 {
             // 如果DataWalk的onBegin方法失败,就没有必要取数据了,直接结束
             if(dataWalk.onBegin()) {
 
-                // TODO: 按上汽数据格式修订 排序要按时间序,这里临时先用mode试一下功能
-                MongoIterable<Document> fx = docs.find(Filters.eq("vin", vin))
-                        .sort(Sorts.ascending("mode"));
+                // count
+                Document total = docs.aggregate(
+                        Arrays.asList(
+                            Aggregates.match(Filters.eq("vin", vin)),
+                            Aggregates.count()
+                    )).first();
+                s_logger.debug("fetching {} {} {}", vin, date.format(s_fmt) ,total!=null?total:"{count=0}");
 
-                for (Document doc : fx) {
-                    // 如果DataWalk的onData方法返回false,跳出循环
-                    if(!dataWalk.onData(doc)) break;
+                if(total != null) {
+                    // 检索数据,因为mongo已经是按天存储在collection中,所以这里不需要时间过滤条件
+                    MongoIterable<Document> fx = docs.find(Filters.eq("vin", vin));
+                    // .sort(Sorts.ascending("tboxTime")); // 按时间排序
+
+
+                    for (Document doc : fx) {
+                        // 如果DataWalk的onData方法返回false,跳出循环
+                        if (!dataWalk.onData(doc)) break;
+                    }
                 }
             }
 
