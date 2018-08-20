@@ -1,5 +1,6 @@
 package com.incarcloud.saic.heliosphere;
 
+import com.incarcloud.auxiliary.Helper;
 import com.incarcloud.concurrent.LimitedSyncArgTask;
 import com.incarcloud.concurrent.LimitedTask;
 import com.incarcloud.lang.Action;
@@ -127,7 +128,7 @@ public class Parker {
                     s_logger.info(String.format("progress %6.2f%%", 100.0f * hourglass.getProgress()));
             }
         }catch (Exception ex){
-            s_logger.error("interrupted {}", ex);
+            s_logger.error("Execute failed {}", Helper.printStackTrace(ex));
             exitCode = -1;
         }
 
@@ -145,10 +146,13 @@ public class Parker {
         String target = String.format("%02d", date.getDayOfMonth());
         File workingFolder = path.toFile();
 
+        // 按日期打包
         String cmd = String.format("tar -zcvf %s.tar.gz %s", target, target);
         s_logger.info("exec -> {}", cmd);
-        Runtime.getRuntime().exec(cmd, null, workingFolder).waitFor();
+        int ret = Runtime.getRuntime().exec(cmd, null, workingFolder).waitFor();
+        if(ret != 0) return; // 如果不是0,可能打包失败,不执行删除动作
 
+        // 删除已经打包的文件
         cmd = String.format("rm -rf %s", target);
         s_logger.info("exec -> {}", cmd);
         Runtime.getRuntime().exec(cmd, null, workingFolder).waitFor();
