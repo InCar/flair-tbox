@@ -8,8 +8,6 @@ import java.time.ZoneId;
  * 把数据转换为GB32960数据
  */
 public abstract class Mode {
-    protected static final ZoneId s_zoneGMT8 = ZoneId.of("+8");
-
     public abstract GBx01Overview makeGBx01Overview(Object data);
     public abstract GBx02Motor    makeGBx02Motor(Object data);
     public abstract GBx04Engine   makeGBx04Engine(Object data);

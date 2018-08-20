@@ -1,13 +1,25 @@
 package com.incarcloud.saic.modes;
 
 import com.incarcloud.saic.GB32960.*;
+import com.incarcloud.saic.modes.mongo.IMongoX01Overview;
 import org.bson.Document;
 
-public abstract class ModeMongo extends Mode{
+public class ModeMongo extends Mode{
+
+    private final String mode;
+
+    private final IMongoX01Overview x01Overview;
+
+    ModeMongo(String mode){
+        this.mode = mode;
+
+        x01Overview = create(mode, IMongoX01Overview.class);
+    }
 
     @Override
     public GBx01Overview makeGBx01Overview(Object data){
-        if(data instanceof Document) return makeGBx01Overview((Document) data);
+        if(data instanceof Document)
+            return x01Overview.makeGBx01Overview((Document) data);
         return null;
     }
 
@@ -41,11 +53,16 @@ public abstract class ModeMongo extends Mode{
         return null;
     }
 
-    public abstract GBx01Overview makeGBx01Overview(Document bsonDoc);
-    public abstract GBx02Motor    makeGBx02Motor(Document bsonDoc);
-    public abstract GBx04Engine   makeGBx04Engine(Document bsonDoc);
-    public abstract GBx05Position makeGBx05Position(Document bsonDoc);
-    public abstract GBx06Peak     makeGBx06Peak(Document bsonDoc);
-    public abstract GBx07Alarm    makeGBx07Alarm(Document bsonDoc);
+    @SuppressWarnings("unchecked")
+    private <T> T create(String mode, Class<T> cls){
+        try {
+            final String prefix = String.format("com.incarcloud.saic.modes.%s.%sx");
+            final String name = prefix + cls.getSimpleName().substring("IMongoX".length());
+            Class<?> clsObj = Class.forName(name);
+            return (T)clsObj.newInstance();
+        }catch (Exception ex){
+            throw new RuntimeException("Create mode class failed", ex);
+        }
+    }
 
 }
