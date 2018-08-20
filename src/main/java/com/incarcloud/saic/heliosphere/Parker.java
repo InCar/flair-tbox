@@ -147,14 +147,19 @@ public class Parker {
         File workingFolder = path.toFile();
 
         // 按日期打包
-        String cmd = String.format("tar -zcvf %s.tar.gz %s", target, target);
+        boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
+
+        String cmd = String.format("tar %s -zcvf %s.tar.gz %s",
+                isWindows?"":"--remove-files",
+                target, target);
         s_logger.info("exec -> {}", cmd);
         int ret = Runtime.getRuntime().exec(cmd, null, workingFolder).waitFor();
-        if(ret != 0) return; // 如果不是0,可能打包失败,不执行删除动作
 
-        // 删除已经打包的文件
-        cmd = String.format("rm -rf %s", target);
-        s_logger.info("exec -> {}", cmd);
-        Runtime.getRuntime().exec(cmd, null, workingFolder).waitFor();
+        // windows 
+        if(isWindows && ret == 0){
+            cmd = String.format("rm -rf %s", target);
+            s_logger.info("exec -> {}", cmd);
+            Runtime.getRuntime().exec(cmd, null, workingFolder).waitFor();
+        }
     }
 }
