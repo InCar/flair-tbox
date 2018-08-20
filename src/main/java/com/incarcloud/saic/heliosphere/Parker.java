@@ -10,6 +10,9 @@ import com.incarcloud.saic.t2017.TaskWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -26,6 +29,7 @@ public class Parker {
     private LocalDate beginDate;
     private LocalDate endDate;
     private MetaVinMode metaVinMode;
+    private String out; // 输出位置
 
     private Thread thread = null;
     private final Object objExit = new Object();
@@ -67,6 +71,7 @@ public class Parker {
 
     public void setDataSourceTargetConfig(MongoConfig cfg, String out){
         taskWork.init(cfg, out);
+        this.out = out;
     }
 
     // 执行
@@ -114,11 +119,14 @@ public class Parker {
                     }
                 }
 
+                // compress
+                tar(cursor);
+
                 hourglass.increaseFinishedDay();
                 if(i == totalDays-1)
                     s_logger.info(String.format("progress %6.2f%%", 100.0f * hourglass.getProgress()));
             }
-        }catch (InterruptedException ex){
+        }catch (Exception ex){
             s_logger.error("interrupted {}", ex);
             exitCode = -1;
         }
@@ -128,5 +136,21 @@ public class Parker {
 
         if(actionFinished != null)
             actionFinished.run(exitCode);
+    }
+
+    private void tar(LocalDate date) throws Exception{
+        Path path = Paths.get(this.out,
+                String.valueOf(date.getYear()),
+                String.format("%02d", date.getMonthValue()));
+        String target = String.format("%02d", date.getDayOfMonth());
+        File workingFolder = path.toFile();
+
+        String cmd = String.format("tar -zcvf %s.tar.gz %s", target, target);
+        s_logger.info("exec -> {}", cmd);
+        Runtime.getRuntime().exec(cmd, null, workingFolder).waitFor();
+
+        cmd = String.format("rm -rf %s", target);
+        s_logger.info("exec -> {}", cmd);
+        Runtime.getRuntime().exec(cmd, null, workingFolder).waitFor();
     }
 }
