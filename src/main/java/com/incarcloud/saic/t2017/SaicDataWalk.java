@@ -1,5 +1,6 @@
 package com.incarcloud.saic.t2017;
 
+import com.incarcloud.auxiliary.Helper;
 import com.incarcloud.lang.Func;
 import com.incarcloud.saic.GB32960.GBData;
 import com.incarcloud.saic.ds.IDataWalk;
@@ -16,7 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -26,7 +26,6 @@ import java.util.List;
  * 1天1车对应一个此对象
  */
 class SaicDataWalk implements IDataWalk {
-    private static final DateTimeFormatter s_fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final Logger s_logger = LoggerFactory.getLogger(SaicDataWalk.class);
 
     private final TaskArg taskArg;
@@ -89,7 +88,9 @@ class SaicDataWalk implements IDataWalk {
         try {
 
             List<GBData> listGBData = new ArrayList<>();
-            for(Func<GBData, Object> makeFn : makeFuncs()){
+            for(Object fn : makeFuncs()){
+                @SuppressWarnings("unchecked")
+                Func<GBData, Object> makeFn = (Func<GBData, Object>)fn;
                 GBData dataGB = makeFn.call(data);
                 if(dataGB != null) listGBData.add(dataGB);
             }
@@ -113,6 +114,11 @@ class SaicDataWalk implements IDataWalk {
             return true;
         }
         catch (Exception ex){
+            // 用于跟踪进度
+            taskArg.updateIdx(idx);
+            s_logger.error("Processing data failed: {} : {} \n {}",
+                    taskArg, Helper.printStackTrace(ex), data);
+
             return false;
         }
     }
@@ -130,7 +136,7 @@ class SaicDataWalk implements IDataWalk {
      * 它和onFinished相互排斥,两者只有一个会被调用
      */
     public void onFailed(Exception ex){
-        s_logger.error("Fetch data failed: {} : {} : {}", taskArg.vin, taskArg.date.format(s_fmt), ex);
+        s_logger.error("Fetch data failed: {} : {}", taskArg, ex);
         closeFS();
     }
 
@@ -150,20 +156,33 @@ class SaicDataWalk implements IDataWalk {
                 Files.deleteIfExists(path);
 
         }catch (Exception ex){
-            s_logger.error("Close file failed: {} : {} : {}",
-                    taskArg.vin, taskArg.date.format(s_fmt), ex);
+            s_logger.error("Close file failed: {} : {}",
+                    taskArg, ex);
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private Func<GBData, Object>[] makeFuncs(){
-        Func<GBData, Object>[] fnMake = (Func<GBData, Object>[])new Object[6];
-        fnMake[0] = modeObj::makeGBx01Overview;
-        fnMake[1] = modeObj::makeGBx02Motor;
-        fnMake[2] = modeObj::makeGBx04Engine;
-        fnMake[3] = modeObj::makeGBx05Position;
-        fnMake[4] = modeObj::makeGBx06Peak;
-        fnMake[5] = modeObj::makeGBx07Alarm;
+    private Object[] makeFuncs(){
+        Func<GBData, Object> fn;
+
+        Object[] fnMake = new Object[6];
+
+        fn = modeObj::makeGBx01Overview;
+        fnMake[0] = fn;
+
+        fn = modeObj::makeGBx02Motor;
+        fnMake[1] = fn;
+
+        fn = modeObj::makeGBx04Engine;
+        fnMake[2] = fn;
+
+        fn = modeObj::makeGBx05Position;
+        fnMake[3] = fn;
+
+        fn = modeObj::makeGBx05Position;
+        fnMake[4] = fn;
+
+        fn = modeObj::makeGBx07Alarm;
+        fnMake[5] = fn;
 
         return fnMake;
     }

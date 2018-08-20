@@ -15,7 +15,8 @@ public class MongoX {
     }
 
     protected ZonedDateTime getZonedDateTimeGMT8(Document bsonDoc){
-        long tmEpoch = bsonDoc.getLong("tboxTime");
+        String tboxTime = bsonDoc.getString("tboxTime");
+        long tmEpoch = Long.parseLong(tboxTime);
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(tmEpoch), s_zoneGMT8);
     }
 }
