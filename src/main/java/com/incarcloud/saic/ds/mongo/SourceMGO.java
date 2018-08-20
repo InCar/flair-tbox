@@ -6,6 +6,7 @@ import com.incarcloud.saic.ds.ISource2017;
 import com.mongodb.client.*;
 import com.mongodb.client.model.*;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,38 +38,46 @@ public class SourceMGO implements ISource2017 {
     }
 
     public void fetch(String vin, LocalDate date, IDataWalk dataWalk){
-        try{
-            MongoDatabase database = client.getDatabase(cfg.getDatabase());
-            MongoCollection<Document> docs = database.getCollection(cfg.getCollection(date));
+        MongoDatabase database = client.getDatabase(cfg.getDatabase());
+        MongoCollection<Document> docs = database.getCollection(cfg.getCollection(date));
 
-            // 如果DataWalk的onBegin方法失败,就没有必要取数据了,直接结束
-            if(dataWalk.onBegin()) {
+        Bson filterByVin = Filters.eq("vin", vin);
 
-                // count
-                Document total = docs.aggregate(
-                        Arrays.asList(
-                            Aggregates.match(Filters.eq("vin", vin)),
-                            Aggregates.count()
-                    )).first();
-                s_logger.debug("fetching {} {} {}", vin, date.format(s_fmt) ,total!=null?total:"{count=0}");
+        // counting first
+        Document docTotal = docs.aggregate(
+                Arrays.asList(
+                        Aggregates.match(filterByVin),
+                        Aggregates.count()
+                )).first();
 
-                if(total != null) {
+        if(docTotal != null){
+            int total = docTotal.get("count", Integer.class);
+            s_logger.debug("fetching {} {} {}", vin, date.format(s_fmt), total);
+
+            try {
+                // 如果DataWalk的onBegin方法失败,就没有必要取数据了,直接结束
+                if(dataWalk.onBegin(total)) {
                     // 检索数据,因为mongo已经是按天存储在collection中,所以这里不需要时间过滤条件
                     MongoIterable<Document> fx = docs.find(Filters.eq("vin", vin));
                     // .sort(Sorts.ascending("tboxTime")); // 按时间排序
 
-
+                    long idx = 0;
                     for (Document doc : fx) {
                         // 如果DataWalk的onData方法返回false,跳出循环
-                        if (!dataWalk.onData(doc)) break;
+                        if (!dataWalk.onData(doc, idx)) break;
+                        idx++;
                     }
                 }
+
+                dataWalk.onFinished();
+
+            }catch (Exception ex){
+                dataWalk.onFailed(ex);
             }
-
-            dataWalk.onFinished();
-
-        }catch (Exception ex){
-            dataWalk.onFailed(ex);
+        }
+        else{
+            // no data
+            s_logger.debug("fetching {} {} 0", vin, date.format(s_fmt));
         }
     }
 }

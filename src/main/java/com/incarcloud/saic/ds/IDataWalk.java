@@ -8,7 +8,7 @@ public interface IDataWalk {
      * 在开始时调用一次
      * 成功返回true,失败返回false
      */
-    boolean onBegin();
+    boolean onBegin(long total);
 
     /**
      * 每条数据调用一次
@@ -16,7 +16,7 @@ public interface IDataWalk {
      * 也可能一次都不调用
      * 成功返回true,失败返回false
      */
-    boolean onData(Object data);
+    boolean onData(Object data, long idx);
 
     /**
      * 在正常结束时调用一次

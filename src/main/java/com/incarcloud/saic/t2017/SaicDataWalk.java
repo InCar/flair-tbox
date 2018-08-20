@@ -47,7 +47,7 @@ class SaicDataWalk implements IDataWalk {
      * 按时序存贮1天的数据
      * 每天所有的数据打包成一个 dd.tar.gz 文件
      */
-    public boolean onBegin(){
+    public boolean onBegin(long totalCount){
         path = Paths.get(this.out,
                 String.valueOf(date.getYear()),
                 String.format("%02d", date.getMonthValue()),
@@ -73,7 +73,7 @@ class SaicDataWalk implements IDataWalk {
      * 在开始和结束之间可能会被调用多次
      * 也可能一次都不调用
      */
-    public boolean onData(Object data){
+    public boolean onData(Object data, long idx){
         // TODO: write file
         try {
             if (data instanceof Document) {
