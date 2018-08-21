@@ -1,5 +1,7 @@
 package com.incarcloud.saic.GB32960;
 
+import com.incarcloud.saic.utils.FloatUtil;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -28,39 +30,97 @@ public class GBx01Overview extends GBData {
     public void setPowerSource(byte val){ powerSource = val; }
 
     // 车速 有效值范围：0～2200（表示0 km/h～220 km/h），最小计量单元：0.1km/h，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
-    private short speedKmHX10;
+    private float speedKmH;
     public float getSpeedKmH(){
-        if(speedKmHX10 == (short)0xFFFF) return -1.0f;
-        else if(speedKmHX10 == (short)0xFFFE) return -2.0f;
-        else return speedKmHX10/10.0f;
+        return speedKmH;
     }
     public void setSpeedKmH(float val){
-        if(val >=0.0f && val <= 300.0f) speedKmHX10 = (short)Math.round(val*10);
-        else if(val < 0.0f) speedKmHX10 = (short)0xFFFF;
-        else speedKmHX10 = (short)0xFFFE;
+        speedKmH = val;
     }
 
     // 累计里程 有效值范围：0～9999999（表示0km～999999.9km），最小计量单元：0.1km。
     //         “0xFF, 0xFF, 0xFF,0xFE”表示异常，“0xFF,0xFF,0xFF,0xFF”表示无效
-    private int mileageKmX10;
+    private float mileageKm;
+    public float getMileageKm(){
+        return mileageKm;
+    }
+    public void setMileageKm(float val){
+        mileageKm = val;
+    }
 
     // 总电压 有效值范围：0～10000（表示0V～1000V），最小计量单元：0.1V，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
-    private short voltageX10;
+    private float voltage;
+    public float getVoltage() {
+        return voltage;
+    }
+    public void setVoltage(float val) {
+        voltage = val;
+    }
 
     // 总电流 有效值范围： 0～20000（偏移量1000A，表示-1000A～+1000A），最小计量单元：0.1A，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
-    private short currentX10plus10k;
+    private float current;
+    public float getCurrent() {
+        return current;
+    }
+    public void setCurrent(float val) {
+        current = val;
+    }
 
     // SOC 有效值范围：0～100（表示0%～100%），最小计量单元：1%，“0xFE”表示异常，“0xFF”表示无效。
     private byte soc;
+    public byte getSoc() {
+        return soc;
+    }
+    public void setSoc(byte val) {
+        soc = val;
+    }
 
     // DC-DC状态 直流斩波状态 0x01：工作；0x02：断开，“0xFE”表示异常，“0xFF”表示无效。
     private byte dcdcOnOff;
+    public byte getDcdcOnOff() {
+        return dcdcOnOff;
+    }
+    public void setDcdcOnOff(byte val) {
+        dcdcOnOff = val;
+    }
 
     // 挡位 bit5:0x0无驱动,0x1有驱动;bit4:0x0无制动0x1有制动;bit0-bit3:0x0空档,0x1~0x7档,0xD=R,0xE=D,0xF=P
-    private byte carGear;
+    private byte bit5;
+    private byte bit4;
+    private byte bit3;
+
+    public byte getBit5() {
+        return bit5;
+    }
+
+    public void setBit5(byte bit5) {
+        this.bit5 = bit5;
+    }
+
+    public byte getBit4() {
+        return bit4;
+    }
+
+    public void setBit4(byte bit4) {
+        this.bit4 = bit4;
+    }
+
+    public byte getBit3() {
+        return bit3;
+    }
+
+    public void setBit3(byte bit3) {
+        this.bit3 = bit3;
+    }
 
     // 绝缘电阻 有效范围0~60000（表示0KΩ~60000KΩ），最小计量单元：1KΩ。
     private int resistancekOhm;
+    public int getResistancekOhm() {
+        return resistancekOhm;
+    }
+    public void setResistancekOhm(int resistancekOhm) {
+        this.resistancekOhm = resistancekOhm;
+    }
 
     public int calcGBFrameSize(){
         // 整车数据固定21字节
@@ -76,14 +136,23 @@ public class GBx01Overview extends GBData {
         stream.writeByte(chargingStatus);
         stream.writeByte(powerSource);
 
-        stream.writeShort(speedKmHX10);
-        stream.writeInt(mileageKmX10);
+        stream.writeShort(FloatUtil.mul(speedKmH, 10f).shortValue());
+        stream.writeInt(FloatUtil.mul(mileageKm, 10f).intValue());
 
-        stream.writeShort(voltageX10);
-        stream.writeShort(currentX10plus10k);
+        stream.writeShort(FloatUtil.mul(voltage, 10f).shortValue());
+        stream.writeShort(FloatUtil.mul(current, 10f).shortValue() + 10000);
 
         stream.writeByte(soc);
         stream.writeByte(dcdcOnOff);
+
+        String low = Integer.toBinaryString(bit3);
+        StringBuilder value = new StringBuilder();
+        value.append("00" + bit5 + bit4);
+        for(int i = 0;i < 4 - low.length();i ++){
+            value.append("0");
+        }
+        value.append(low);
+        byte carGear = Byte.parseByte(value.toString(), 2);
         stream.writeByte(carGear);
 
         stream.writeShort(resistancekOhm);
