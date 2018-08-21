@@ -17,7 +17,7 @@ public class AS24x02Motor extends MongoX implements IMongoX02Motor {
 
 
     @Override
-    public GBx02Motor makeGBx01Overview(Document bsonDoc) {
+    public GBx02Motor makeGBx02Motor(Document bsonDoc) {
         String vin = super.getVin(bsonDoc);
         ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(bsonDoc);
         GBx02Motor motor = new GBx02Motor(vin, tmGMT8);
