@@ -67,12 +67,13 @@ public class SourceMGO implements ISource2017 {
                         idx++;
                     }
                 }
-
-                dataWalk.onFinished();
-
-            }catch (Exception ex){
-                dataWalk.onFailed(ex);
             }
+            catch (Exception ex){
+                dataWalk.onFailed(ex);
+                return;
+            }
+
+            dataWalk.onFinished();
         }
         else{
             // no data
