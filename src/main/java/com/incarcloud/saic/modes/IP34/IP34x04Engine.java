@@ -1,4 +1,4 @@
-package com.incarcloud.saic.modes.AS24;
+package com.incarcloud.saic.modes.IP34;
 
 import com.incarcloud.saic.GB32960.GBx04Engine;
 import com.incarcloud.saic.modes.MongoX;
@@ -7,7 +7,7 @@ import org.bson.Document;
 
 import java.time.ZonedDateTime;
 
-public class AS24x04Engine extends MongoX implements IMongoX04Engine {
+public class IP34x04Engine extends MongoX implements IMongoX04Engine {
 
     public GBx04Engine makeGBx04Engine(Document bsonDoc){
         String vin = super.getVin(bsonDoc);
