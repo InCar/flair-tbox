@@ -50,6 +50,18 @@ public class AS24x01Overview extends MongoX implements IMongoX01Overview  {
         GBx01Overview data = new GBx01Overview(vin, tmGMT8);
         data.setVehicleStatus(calcVehicleStatus(vehEPTRdy, vehSysPwrMod));
         data.setChargingStatus(calcChargingStatus(vehBMSBscSta, vehBMSPackCrnt));
+        data.setPowerSource(calcRunningMode(vehElecVehSysMd));
+        data.setSpeedKmH(calcSpeed(vehSpdAvgDrvnV, vehSpeed));
+        data.setMileageKm(calcTotalMileage(vehOdoV, vehOdo));
+        data.setVoltage(calcTotalVoltage(vehBMSPackVolV, vehBMSPackVol));
+        data.setCurrent(calcTotalCurrent(vehBMSPackCrntV, vehBMSPackCrnt));
+        data.setSoc((byte) calcSOC(vehBMSPackSOCV, vehBMSPackSOC));
+        data.setDcdcOnOff(calcDcdcStatus(vehHVDCDCSta));
+        data.setBit5(calcGearsBit5(vehEPTTrInptShaftToqV, vehEPTTrInptShaftToq));
+        data.setBit4(calcGearsBit4(vehEPTTrInptShaftToqV, vehEPTTrInptShaftToq, vehEPTBrkPdlDscrtInptStsV,
+                vehEPTBrkPdlDscrtInptSts, vehBrkSysBrkLghtsReqd, vehEPBSysBrkLghtsReqd));
+        data.setBit3(calcGearsBit3(vehTrShftLvrPosV, vehGearPos));
+        data.setResistancekOhm((int) calcInsulationResistance(vehBMSPtIsltnRstc));
 
         return data;
     }
@@ -99,7 +111,7 @@ public class AS24x01Overview extends MongoX implements IMongoX01Overview  {
      * @param vehElecVehSysMd
      * @return
      */
-    private static int calcRunningMode(int vehElecVehSysMd) {
+    private static byte calcRunningMode(int vehElecVehSysMd) {
         /*
         IF vehElecVehSysMd=3 || 7 || 8
         THEN 运行模式=0x01
@@ -109,7 +121,7 @@ public class AS24x01Overview extends MongoX implements IMongoX01Overview  {
         THEN 运行模式=0x03
         ELSE 运行模式=0xFF
          */
-        int runningMode;
+        byte runningMode;
         if (vehElecVehSysMd == 3 || vehElecVehSysMd == 7 || vehElecVehSysMd == 8) {
             runningMode = 0x01;
         } else if (vehElecVehSysMd == 0 || vehElecVehSysMd == 1 || vehElecVehSysMd == 2
@@ -118,7 +130,7 @@ public class AS24x01Overview extends MongoX implements IMongoX01Overview  {
         } else if (vehElecVehSysMd == 4) {
             runningMode = 0x03;
         } else {
-            runningMode = 0xFF;
+            runningMode = (byte) 0xFF;
         }
         return runningMode;
     }
@@ -251,28 +263,63 @@ public class AS24x01Overview extends MongoX implements IMongoX01Overview  {
     }
 
     /**
-     * 档位
+     * 档位bit5
+     * @param vehEPTTrInptShaftToqV
+     * @param vehEPTTrInptShaftToq
+     * @return
+     */
+    private static byte calcGearsBit5(int vehEPTTrInptShaftToqV, float vehEPTTrInptShaftToq) {
+        /*
+        IF vehEPTTrInptShaftToqV=0 && vehEPTTrInptShaftToq>0
+        THEN Bit5=0x1
+        ELSE Bit5=0x0
+         */
+        byte bit5;
+        if (vehEPTTrInptShaftToqV == 0 && vehEPTTrInptShaftToq > 0) {
+            bit5 = 0x01;
+        } else {
+            bit5 = 0x00;
+        }
+        return bit5;
+    }
+
+    /**
+     * 档位bit4
      * @param vehEPTTrInptShaftToqV
      * @param vehEPTTrInptShaftToq
      * @param vehEPTBrkPdlDscrtInptStsV
      * @param vehEPTBrkPdlDscrtInptSts
      * @param vehBrkSysBrkLghtsReqd
      * @param vehEPBSysBrkLghtsReqd
+     * @return
+     */
+    private static byte calcGearsBit4(int vehEPTTrInptShaftToqV, float vehEPTTrInptShaftToq,
+                                      int vehEPTBrkPdlDscrtInptStsV, int vehEPTBrkPdlDscrtInptSts,
+                                  int vehBrkSysBrkLghtsReqd, int vehEPBSysBrkLghtsReqd) {
+        /*
+        IF (vehEPTTrInptShaftToqV=0 && vehEPTTrInptShaftToq<0) || (vehEPTBrkPdlDscrtInptStsV=0&&vehEPTBrkPdlDscrtInptSts=1) || vehBrkSysBrkLghtsReqd=1 || vehEPBSysBrkLghtsReqd=1
+        THEN Bit4=0x1
+        ELSE Bit4=0x0
+         */
+        byte bit4;
+        if ((vehEPTTrInptShaftToqV == 0 && vehEPTTrInptShaftToq < 0)
+                || (vehEPTBrkPdlDscrtInptStsV ==0 && vehEPTBrkPdlDscrtInptSts == 1)
+                || vehBrkSysBrkLghtsReqd ==1 || vehEPBSysBrkLghtsReqd ==1) {
+            bit4 = 0x01;
+        } else {
+            bit4 = 0x00;
+        }
+        return bit4;
+    }
+
+    /**
+     * 档位bit3~0
      * @param vehTrShftLvrPosV
      * @param vehGearPos
      * @return
      */
-    private static byte calcGears(int vehEPTTrInptShaftToqV, float vehEPTTrInptShaftToq,
-                                  int vehEPTBrkPdlDscrtInptStsV, int vehEPTBrkPdlDscrtInptSts,
-                                  int vehBrkSysBrkLghtsReqd, int vehEPBSysBrkLghtsReqd,
-                                  int vehTrShftLvrPosV, int vehGearPos) {
+    private static byte calcGearsBit3(int vehTrShftLvrPosV, int vehGearPos) {
         /*
-        IF vehEPTTrInptShaftToqV=0 && vehEPTTrInptShaftToq>0
-        THEN Bit5=0x1
-        ELSE Bit5=0x0
-        IF (vehEPTTrInptShaftToqV=0 && vehEPTTrInptShaftToq<0) || (vehEPTBrkPdlDscrtInptStsV=0&&vehEPTBrkPdlDscrtInptSts=1) || vehBrkSysBrkLghtsReqd=1 || vehEPBSysBrkLghtsReqd=1
-        THEN Bit4=0x1
-        ELSE Bit4=0x0
         IF vehTrShftLvrPosV=0 && vehGearPos=1
         THEN Bit3~0=0xF
         ELSE IF vehTrShftLvrPosV=0 && vehGearPos=4
@@ -281,32 +328,17 @@ public class AS24x01Overview extends MongoX implements IMongoX01Overview  {
         THEN Bit3~0=0xD
         ELSE Bit3~0=0x0
          */
-
-        StringBuffer sb = new StringBuffer("00");
-        if (vehEPTTrInptShaftToqV == 0 && vehEPTTrInptShaftToq > 0) {
-            sb.append("1");
-        } else {
-            sb.append("0");
-        }
-
-        if ((vehEPTTrInptShaftToqV == 0 && vehEPTTrInptShaftToq < 0)
-                || (vehEPTBrkPdlDscrtInptStsV ==0 && vehEPTBrkPdlDscrtInptSts == 1)
-                || vehBrkSysBrkLghtsReqd ==1 || vehEPBSysBrkLghtsReqd ==1) {
-            sb.append("1");
-        } else {
-            sb.append("0");
-        }
-
+        byte bit3;
         if (vehTrShftLvrPosV == 0 && vehGearPos == 1) {
-            sb.append("1111");
+            bit3 = 0x0F;
         } else if (vehTrShftLvrPosV == 0 && vehGearPos == 4) {
-            sb.append("1110");
+            bit3 = 0x0E;
         } else if ((vehTrShftLvrPosV == 0 && vehGearPos == 2)) {
-            sb.append("1101");
+            bit3 = 0x0D;
         } else {
-            sb.append("0000");
+            bit3 = 0x00;
         }
-        return (byte) Integer.parseInt(sb.toString(), 2);
+        return bit3;
     }
 
     private static float calcInsulationResistance(float vehBMSPtIsltnRstc) {
