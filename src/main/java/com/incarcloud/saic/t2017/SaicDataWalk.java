@@ -21,7 +21,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 /**
@@ -71,6 +70,9 @@ class SaicDataWalk implements IDataWalk {
      */
     public boolean onData(Object data, long idx){
         try {
+            // 性能计数器
+            taskArg.increasePerfCount();
+
             // 实时数据
             List<GBData> listGBData = new ArrayList<>();
             for(Object fn : makeFuncs()){
