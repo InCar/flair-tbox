@@ -17,6 +17,7 @@ public class TaskArg extends TaskArgBase {
 
     private volatile long total = 0;
     private volatile long idx = 0;
+    private volatile long actualWritten = 0;
 
     public TaskArg(LocalDate date, String vin, String mode, Hourglass hourglass){
         super(hourglass);
@@ -29,12 +30,13 @@ public class TaskArg extends TaskArgBase {
     // 进度指示
     void updateTotal(long val){ total = val; }
     void updateIdx(long val){ idx = val; }
+    void updateActualWritten(long val){ actualWritten = val; }
 
     @Override
     public String toString(){
-        return String.format("TaskArg@%s %s %s %s %d/%d",
+        return String.format("TaskArg@%s %s %s %s %d/%d/%d",
                 String.format("%08x", hashCode()),
                 vin, date.format(s_fmt), mode,
-                idx, total);
+                actualWritten, idx, total);
     }
 }
