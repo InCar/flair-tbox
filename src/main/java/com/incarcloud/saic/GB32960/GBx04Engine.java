@@ -67,6 +67,10 @@ public class GBx04Engine extends GBData {
         stream.writeShort(speed);//曲轴转速，有效范围：0～60000(表示0rpm～60000rpm)，最小计量单元：1rpm，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
 
         float rate = this.rate;
-        stream.writeShort(FloatUtil.mul(rate ,100f).shortValue());//燃料消耗率，有效值范围：0～60000（表示0L/100km～600L/100km），最小计量单元：0.01L/100km，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
+        if(rate != 0xFFFF && rate != 0xFFFE){
+            stream.writeShort(FloatUtil.mul(rate ,100f).shortValue());//燃料消耗率，有效值范围：0～60000（表示0L/100km～600L/100km），最小计量单元：0.01L/100km，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
+        }else{
+            stream.writeShort((short)rate);
+        }
     }
 }
