@@ -155,7 +155,7 @@ public class Parker {
         s_logger.info("exec -> {}", cmd);
         int ret = Runtime.getRuntime().exec(cmd, null, workingFolder).waitFor();
 
-        // windows 
+        // windows
         if(isWindows && ret == 0){
             cmd = String.format("rm -rf %s", target);
             s_logger.info("exec -> {}", cmd);

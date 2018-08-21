@@ -57,6 +57,7 @@ public class MongoConfig {
 
     public MongoClient createClient(){
         MongoClientSettings.Builder builder = MongoClientSettings.builder();
+        builder.applicationName("saic2017");
         builder.applyToClusterSettings(x->x.hosts(getHostAddresses()));
         if(user != null && user.length() > 0){
             builder.credential(MongoCredential.createCredential(user, source, pwd));
