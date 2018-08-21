@@ -89,7 +89,7 @@ public class AS24x02Motor extends MongoX implements IMongoX02Motor {
         }
 
         // 驱动电机温度
-        m.setMotorTemperature((byte) Integer.parseInt(prefix + "SttrTem"));
+        m.setMotorTemperature((byte) Integer.parseInt(bsonDoc.getString(prefix + "SttrTem")));
 
         // 电机控制器输入电压
         int volt = Integer.parseInt(bsonDoc.getString(prefix + "vehHVDCDCHVSideVolV"));

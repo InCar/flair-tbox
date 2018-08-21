@@ -77,7 +77,7 @@ class SaicDataWalk implements IDataWalk {
                 @SuppressWarnings("unchecked")
                 Func<GBData, Object> makeFn = (Func<GBData, Object>)fn;
                 GBData dataGB = makeFn.call(data);
-                if(dataGB != null) listGBData.add(dataGB);
+                if (dataGB != null) listGBData.add(dataGB);
             }
 
             addToSort(listGBData);
@@ -85,18 +85,15 @@ class SaicDataWalk implements IDataWalk {
             // 告警数据
             GBx07Alarm alarm = modeObj.makeGBx07Alarm(data);
             if(alarm != null) sortedAlarms.add(alarm);
-
-            // 用于跟踪进度
-            taskArg.updateIdx(idx);
             return true;
         }
         catch (Exception ex){
+            s_logger.error("Processing data failed: {} : {} \n {}", taskArg, Helper.printStackTrace(ex), data);
+            return false;
+        }
+        finally {
             // 用于跟踪进度
             taskArg.updateIdx(idx);
-            s_logger.error("Processing data failed: {} : {} \n {}",
-                    taskArg, Helper.printStackTrace(ex), data);
-
-            return false;
         }
     }
 

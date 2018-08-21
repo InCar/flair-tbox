@@ -21,55 +21,58 @@ public class ModeMongo extends Mode{
     private final IMongoX06Peak x06Peak;
     private final IMongoX07Alarm x07Alarm;
 
-    ModeMongo(String mode){
-        this.mode = mode;
+    private final boolean[] gbSwitches;
 
-        x01Overview = create(mode, IMongoX01Overview.class);
-        x02Motor = create(mode, IMongoX02Motor.class);
-        x04Engine = create(mode, IMongoX04Engine.class);
-        x05Position = create(mode, IMongoX05Position.class);
-        x06Peak = create(mode, IMongoX06Peak.class);
-        x07Alarm = create(mode, IMongoX07Alarm.class);
+    ModeMongo(String mode, boolean[] gbSwitches){
+        this.mode = mode;
+        this.gbSwitches = gbSwitches;
+
+        x01Overview = gbSwitches[0x01] ? create(mode, IMongoX01Overview.class) : null;
+        x02Motor    = gbSwitches[0x02] ? create(mode, IMongoX02Motor.class)    : null;
+        x04Engine   = gbSwitches[0x04] ? create(mode, IMongoX04Engine.class)   : null;
+        x05Position = gbSwitches[0x05] ? create(mode, IMongoX05Position.class) : null;
+        x06Peak     = gbSwitches[0x06] ? create(mode, IMongoX06Peak.class)     : null;
+        x07Alarm    = gbSwitches[0x07] ? create(mode, IMongoX07Alarm.class)    : null;
     }
 
     @Override
     public GBx01Overview makeGBx01Overview(Object data){
-        if(data instanceof Document && x01Overview != null)
+        if(gbSwitches[0x01] && data instanceof Document)
             return x01Overview.makeGBx01Overview((Document) data);
         return null;
     }
 
     @Override
     public GBx02Motor makeGBx02Motor(Object data){
-        if(data instanceof Document && x02Motor != null)
+        if(gbSwitches[0x02] && data instanceof Document)
             return x02Motor.makeGBx02Motor((Document) data);
         return null;
     }
 
     @Override
     public GBx04Engine makeGBx04Engine(Object data){
-        if(data instanceof Document && x04Engine != null)
+        if(gbSwitches[0x04] && data instanceof Document)
             return x04Engine.makeGBx04Engine((Document) data);
         return null;
     }
 
     @Override
     public GBx05Position makeGBx05Position(Object data){
-        if(data instanceof Document)
+        if(gbSwitches[0x05] && data instanceof Document)
             return x05Position.makeGBx05Position((Document) data);
         return null;
     }
 
     @Override
     public GBx06Peak makeGBx06Peak(Object data){
-        if(data instanceof Document && x06Peak != null)
+        if(gbSwitches[0x06] && data instanceof Document)
             return x06Peak.makeGBx06Peak((Document) data);
         return null;
     }
 
     @Override
     public GBx07Alarm makeGBx07Alarm(Object data){
-        if(data instanceof Document && x07Alarm != null)
+        if(gbSwitches[0x07] && data instanceof Document)
             return x07Alarm.makeGBx07Alarm((Document) data);
         return null;
     }
