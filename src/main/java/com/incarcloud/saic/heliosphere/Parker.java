@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -156,10 +157,17 @@ public class Parker {
         int ret = Runtime.getRuntime().exec(cmd, null, workingFolder).waitFor();
 
         // windows
-        if(isWindows && ret == 0){
-            cmd = String.format("rm -rf %s", target);
-            s_logger.info("exec -> {}", cmd);
-            Runtime.getRuntime().exec(cmd, null, workingFolder).waitFor();
+        try {
+            if(isWindows && ret == 0){
+                cmd = String.format("rm -rf %s", target);
+                s_logger.info("exec -> {}", cmd);
+                Runtime.getRuntime().exec(cmd, null, workingFolder).waitFor();
+            }
+
         }
+        catch (IOException ex) {
+            s_logger.error("rm failed {}",ex.getMessage() );
+        }
+
     }
 }
