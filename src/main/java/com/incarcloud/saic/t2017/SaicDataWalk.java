@@ -78,8 +78,14 @@ class SaicDataWalk implements IDataWalk {
             for(Object fn : makeFuncs()){
                 @SuppressWarnings("unchecked")
                 Func<GBData, Object> makeFn = (Func<GBData, Object>)fn;
-                GBData dataGB = makeFn.call(data);
-                if (dataGB != null) listGBData.add(dataGB);
+                try {
+                    GBData dataGB = makeFn.call(data);
+                    if (dataGB != null) listGBData.add(dataGB);
+                }
+                catch (NumberFormatException ex){
+                    // 仍然继续处理其它数据
+                    s_logger.error("NumberFormatException skip: {} : {} \n {}", taskArg, Helper.printStackTrace(ex), data);
+                }
             }
 
             addToSort(listGBData);
