@@ -18,9 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
 
 /**
  * 上汽数据处理
@@ -35,12 +33,8 @@ class SaicDataWalk implements IDataWalk {
 
     private final Base64.Encoder base64Encoder;
 
-    private Path path = null;
-    private OutputStream fs = null;
-    private BufferedWriter writer = null;
-
-    // 实际写入行数
-    private long actualWritten = 0;
+    // 排序树
+    private TreeSet<GBPackage> sortedPackages = new TreeSet<>();
 
     SaicDataWalk(TaskArg taskArg, String out){
         this.taskArg = taskArg;
@@ -58,26 +52,8 @@ class SaicDataWalk implements IDataWalk {
      * 每天所有的数据打包成一个 dd.tar.gz 文件
      */
     public boolean onBegin(long totalCount){
-        path = Paths.get(this.out,
-                String.valueOf(taskArg.date.getYear()),
-                String.format("%02d", taskArg.date.getMonthValue()),
-                String.format("%02d", taskArg.date.getDayOfMonth()),
-                taskArg.vin);
-        try {
-            Files.createDirectories(path.getParent());
-
-            fs = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-            final int size = 4096*1024*4; // 16M write buffer
-            writer = new BufferedWriter(new OutputStreamWriter(fs, Charset.forName("UTF-8").newEncoder()), size);
-            taskArg.updateTotal(totalCount);
-
-            return true;
-        }catch (Exception ex){
-            s_logger.error("Create file failed : {} : {}",
-                    path.toAbsolutePath(),
-                    ex);
-            return false;
-        }
+        taskArg.updateTotal(totalCount);
+        return true;
     }
 
     /**
@@ -101,14 +77,9 @@ class SaicDataWalk implements IDataWalk {
                 String tm = listGBData.get(0).getTmGMT8AsString();
                 ZonedDateTime tmGMT8 = listGBData.get(0).getTmGMT8();
                 byte[] bufGB32960 = GBData.makeGBPackage(vin, tmGMT8, listGBData);
-
-                // 一条数据一行 时间戳,base64帧
-                // 20171123103928,IyMH/kFCQ0RFRkcwMTIzNDU2Nzg5AQAAwQ==
-                writer.write(tm);
-                writer.write(",");
-                writer.write(base64Encoder.encodeToString((bufGB32960)));
-                writer.write("\n");
-                actualWritten++;
+                String b64Val = base64Encoder.encodeToString((bufGB32960));
+                // 按时间排序,以备输出
+                sortedPackages.add(new GBPackage(tm, b64Val));
             }
 
             // 用于跟踪进度
@@ -130,7 +101,7 @@ class SaicDataWalk implements IDataWalk {
      * 它和onFailed相互排斥,两者只有一个会被调用
      */
     public void onFinished(){
-        closeFS();
+        output();
     }
 
     /**
@@ -138,28 +109,54 @@ class SaicDataWalk implements IDataWalk {
      * 它和onFinished相互排斥,两者只有一个会被调用
      */
     public void onFailed(Exception ex){
-        s_logger.error("Fetch data failed: {} : {}", taskArg, ex);
-        closeFS();
+        s_logger.error("Fetch data failed: {} : {}", taskArg, Helper.printStackTrace(ex));
+        output();
     }
 
-    private void closeFS(){
+    // 输出到文件
+    private void output(){
+        Path path = Paths.get(this.out,
+                String.valueOf(taskArg.date.getYear()),
+                String.format("%02d", taskArg.date.getMonthValue()),
+                String.format("%02d", taskArg.date.getDayOfMonth()),
+                taskArg.vin);
+
         try {
-            if(writer != null){
-                writer.flush();
-                writer.close();
+            BufferedWriter writer = prepareFS(path);
+
+            long actualWritten = 0L;
+            for (GBPackage pack : sortedPackages) {
+                // 一条数据一行 时间戳,base64帧
+                // 20171123103928,IyMH/kFCQ0RFRkcwMTIzNDU2Nzg5AQAAwQ==
+                writer.write(pack.tm);
+                writer.write(",");
+                writer.write(pack.val);
+                writer.write("\n");
+                actualWritten++;
+
+                // 用于跟踪进度
+                taskArg.updateActualWritten(actualWritten);
             }
 
-            if (fs != null) {
-                fs.close();
-            }
+            closeFS(writer);
+        }
+        catch (Exception ex){
+            s_logger.error("Write file failed: {} : {}: {}",
+                    taskArg, path.toAbsolutePath(), Helper.printStackTrace(ex));
+        }
+    }
 
-            // 如果实际没有数据,清除掉文件
-            if(actualWritten == 0)
-                Files.deleteIfExists(path);
+    private BufferedWriter prepareFS(Path path) throws Exception{
+        Files.createDirectories(path.getParent());
+        OutputStream fs = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        final int size = 4096*1024*4; // 16M write buffer
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fs, Charset.forName("UTF-8").newEncoder()), size);
+        return writer;
+    }
 
-        }catch (Exception ex){
-            s_logger.error("Close file failed: {} : {}",
-                    taskArg, ex);
+    private void closeFS(BufferedWriter writer) throws Exception{
+        if(writer != null){
+            writer.close();
         }
     }
 
