@@ -22,7 +22,7 @@ public class ModeMongo extends Mode{
 
         // TODO: 实现这些类型
         x02Motor = null;
-        x04Engine = null;
+        x04Engine = create(mode, IMongoX04Engine.class);
         x05Position = null;
         x06Peak = null;
         x07Alarm = null;
@@ -48,7 +48,8 @@ public class ModeMongo extends Mode{
 
     @Override
     public GBx04Engine makeGBx04Engine(Object data){
-        if(data instanceof Document) return null;
+        if(data instanceof Document)
+            return x04Engine.makeGBx04Engine((Document) data);
         return null;
     }
 
