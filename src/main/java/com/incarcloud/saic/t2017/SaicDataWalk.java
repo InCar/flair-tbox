@@ -177,7 +177,7 @@ class SaicDataWalk implements IDataWalk {
         fn = modeObj::makeGBx05Position;
         fnMake[3] = fn;
 
-        fn = modeObj::makeGBx05Position;
+        fn = modeObj::makeGBx06Peak;
         fnMake[4] = fn;
 
         fn = modeObj::makeGBx07Alarm;
