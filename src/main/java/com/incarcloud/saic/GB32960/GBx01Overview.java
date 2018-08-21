@@ -136,11 +136,27 @@ public class GBx01Overview extends GBData {
         stream.writeByte(chargingStatus);
         stream.writeByte(powerSource);
 
-        stream.writeShort(FloatUtil.mul(speedKmH, 10f).shortValue());
-        stream.writeInt(FloatUtil.mul(mileageKm, 10f).intValue());
+        if(speedKmH != 0xFFFF && speedKmH != 0xFFFE){
+            stream.writeShort(FloatUtil.mul(speedKmH, 10f).shortValue());
+        }else{
+            stream.writeShort((short)speedKmH);
+        }
+        if(mileageKm != 0xFFFFFFFF && mileageKm != 0xFFFFFFFE){
+            stream.writeInt(FloatUtil.mul(mileageKm, 10f).intValue());
+        }else{
+            stream.writeInt((int)mileageKm);
+        }
 
-        stream.writeShort(FloatUtil.mul(voltage, 10f).shortValue());
-        stream.writeShort(FloatUtil.mul(current, 10f).shortValue() + 10000);
+        if(voltage != 0xFFFF && voltage != 0xFFFE){
+            stream.writeShort(FloatUtil.mul(voltage, 10f).shortValue());
+        }else{
+            stream.writeShort((short)voltage);
+        }
+        if(current != 0xFFFF && current != 0xFFFE){
+            stream.writeShort(FloatUtil.mul(current, 10f).shortValue() + 10000);
+        }else{
+            stream.writeShort((short)current);
+        }
 
         stream.writeByte(soc);
         stream.writeByte(dcdcOnOff);
