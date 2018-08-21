@@ -61,7 +61,15 @@ public class GBx05Position extends GBData{
         stream.writeByte(0x05);
 
         stream.writeByte(positionStatus);//定位状态，状态位定义见表15。
-        stream.writeInt(DoubleUtil.mul(longitude,1000000d).intValue());//经度，以度为单位的纬度值乘以10的6次方，精确到百万分之一度。
-        stream.writeInt(DoubleUtil.mul(latitude,1000000d).intValue());//纬度，以度为单位的纬度值乘以10的6次方，精确到百万分之一度。
+        if(longitude != 0xFFFFFFFF && longitude != 0xFFFFFFFE){
+            stream.writeInt(DoubleUtil.mul(longitude,1000000d).intValue());//经度，以度为单位的纬度值乘以10的6次方，精确到百万分之一度。
+        }else{
+            stream.writeInt((int)longitude);
+        }
+        if(latitude != 0xFFFFFFFF && latitude != 0xFFFFFFFE){
+            stream.writeInt(DoubleUtil.mul(latitude,1000000d).intValue());//纬度，以度为单位的纬度值乘以10的6次方，精确到百万分之一度。
+        }else{
+            stream.writeInt((int)latitude);
+        }
     }
 }

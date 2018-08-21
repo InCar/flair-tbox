@@ -170,10 +170,18 @@ public class GBx06Peak extends GBData {
 
         stream.writeByte(highBatteryId);//最高电压电池子系统号，有效值范围：1～250，“0xFE”表示异常，“0xFF”表示无效。
         stream.writeByte(highBatteryCode);//电池单体电压最高值，有效值范围：0～15000（表示0V～15V），最小计量单元：0.001V，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
-        stream.writeShort(FloatUtil.mul(highVoltage , 1000f).shortValue());//电池单体电压最高值，有效值范围：0～15000（表示0V～15V），最小计量单元：0.001V，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
+        if(highVoltage != 0xFFFF && highVoltage != 0xFFFE){
+            stream.writeShort(FloatUtil.mul(highVoltage , 1000f).shortValue());//电池单体电压最高值，有效值范围：0～15000（表示0V～15V），最小计量单元：0.001V，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
+        }else{
+            stream.writeShort((short)highVoltage);
+        }
         stream.writeByte(lowBatteryId);//最低电压电池子系统号，有效值范围：1～250，“0xFE”表示异常，“0xFF”表示无效。
         stream.writeByte(lowBatteryCode);//最低电压电池单体代号，有效值范围：1～250，“0xFE”表示异常，“0xFF”表示无效。
-        stream.writeByte(FloatUtil.mul(lowVoltage,1000f).shortValue());//电池单体电压最低值，有效值范围：0～15000（表示0V～15V），最小计量单元：0.001V，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
+        if(lowVoltage != 0xFFFF && lowVoltage != 0xFFFE){
+            stream.writeByte(FloatUtil.mul(lowVoltage,1000f).shortValue());//电池单体电压最低值，有效值范围：0～15000（表示0V～15V），最小计量单元：0.001V，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
+        }else{
+            stream.writeShort((short)lowVoltage);
+        }
         stream.writeByte(highTemperatureId);//最高温度子系统号，有效值范围：1～250，“0xFE”表示异常，“0xFF”表示无效。
         stream.writeByte(highProbeCode);//最高温度探针序号，有效值范围：1～250，“0xFE”表示异常，“0xFF”表示无效。
         stream.writeByte(highTemperature);//最高温度值，有效值范围：0～250（数值偏移量40℃，表示-40℃～+210℃），最小计量单元：1℃，“0xFE”表示异常，“0xFF”表示无效。
