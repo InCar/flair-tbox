@@ -54,7 +54,8 @@ public class ModeMongo extends Mode{
 
     @Override
     public GBx05Position makeGBx05Position(Object data){
-        if(data instanceof Document) return null;
+        if(data instanceof Document)
+            return x05Position.makeGBx05Position((Document) data);
         return null;
     }
 
