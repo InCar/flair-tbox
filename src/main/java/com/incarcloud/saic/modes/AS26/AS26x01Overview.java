@@ -12,6 +12,7 @@ import java.time.ZonedDateTime;
  */
 public class AS26x01Overview extends MongoX implements IMongoX01Overview {
 
+    @Override
     public GBx01Overview makeGBx01Overview(Document bsonDoc) {
         String vin = super.getVin(bsonDoc);
         ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(bsonDoc);
