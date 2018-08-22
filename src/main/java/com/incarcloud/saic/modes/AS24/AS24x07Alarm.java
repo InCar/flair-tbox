@@ -13,10 +13,10 @@ public class AS24x07Alarm extends MongoX implements IMongoX07Alarm {
         String vin = super.getVin(bsonDoc);
         ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(bsonDoc);
 
-        int vehBMSCellMaxTemV = Integer.parseInt(bsonDoc.getString("vehBMSCellMaxTemV"));
-        int vehBMSCellMinTemV = Integer.parseInt(bsonDoc.getString("vehBMSCellMinTemV"));
-        float vehBMSCellMaxTem = Float.parseFloat(bsonDoc.getString("vehBMSCellMaxTem"));
-        float vehBMSCellMinTem = Float.parseFloat(bsonDoc.getString("vehBMSCellMinTem"));
+        int vehBMSCellMaxTemV = parseIntWithDef(bsonDoc, "vehBMSCellMaxTemV");
+        int vehBMSCellMinTemV = parseIntWithDef(bsonDoc, "vehBMSCellMinTemV");
+        float vehBMSCellMaxTem = parseFloatWithDef(bsonDoc, "vehBMSCellMaxTem");
+        float vehBMSCellMinTem = parseFloatWithDef(bsonDoc, "vehBMSCellMinTem");
 
         GBx07Alarm data = new GBx07Alarm(vin, tmGMT8);
         data.setTempPlusHigherl(calcTempPlusHigherl(vehBMSCellMinTemV, vehBMSCellMaxTemV, vehBMSCellMinTem, vehBMSCellMaxTem));
