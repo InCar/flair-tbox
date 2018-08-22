@@ -35,5 +35,13 @@ saic2017:
         - OLD-IP24MCE
         - OLD-IP24
         - OLD-BP34
+    # 可以在测试时只处理指定的数据,或不写表示全部处理
+    GB32960:
+        - x01Overview
+        - x02Motor
+        - x04Engine
+        - x05Position
+        - x06Peak
+        - x07Alarm
     # vin匹配正则表达式,可以在测试只处理匹配上的车辆,不写表示匹配全部
     vinMatch: # LSJA24793HS[0-9]+

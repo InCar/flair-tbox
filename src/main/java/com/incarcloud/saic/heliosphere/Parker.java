@@ -114,7 +114,8 @@ public class Parker {
 
                     if(loop % 10 == 0) {
                         s_logger.info("{}\n{}",
-                                String.format("progress %6.2f%%", 100.0f * hourglass.getProgress()),
+                                String.format("progress %6.2f%% %.2fHz",
+                                        100.0f * hourglass.getProgress(), hourglass.calcPerfAndReset()),
                                 LimitedTask.printMetric(saTask, 1000 * 60)
                                         .replaceAll("(.*)", "\t$1"));
                     }
@@ -139,7 +140,7 @@ public class Parker {
             actionFinished.run(exitCode);
     }
 
-    private void tar(LocalDate date) throws Exception{
+    private void tar(LocalDate date){
         Path path = Paths.get(this.out,
                 String.valueOf(date.getYear()),
                 String.format("%02d", date.getMonthValue()));
@@ -147,19 +148,14 @@ public class Parker {
         File workingFolder = path.toFile();
 
         // 按日期打包
-        boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
-
-        String cmd = String.format("tar %s -zcvf %s.tar.gz %s",
-                isWindows?"":"--remove-files",
-                target, target);
-        s_logger.info("exec -> {}", cmd);
-        int ret = Runtime.getRuntime().exec(cmd, null, workingFolder).waitFor();
-
-        // windows
-        if(isWindows && ret == 0){
-            cmd = String.format("rm -rf %s", target);
-            s_logger.info("exec -> {}", cmd);
+        try {
+            String cmd = String.format("tar --remove-files -zcvf %s.tar.gz %s", target, target);
+            s_logger.info("[{}]$ {}", path.toString(), cmd);
             Runtime.getRuntime().exec(cmd, null, workingFolder).waitFor();
+        }
+        catch (Exception ex){
+            // 打包失败,可以手动打包,记录一个警告
+            s_logger.warn("tar failed, please tar manually.\n\t{}", ex.getMessage());
         }
     }
 }

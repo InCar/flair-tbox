@@ -7,7 +7,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public abstract class GBData {
+public abstract class GBData{
     private static final DateTimeFormatter s_fmtTm = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
     private static final ZoneId s_zoneGMT8 = ZoneId.of("+8");
 

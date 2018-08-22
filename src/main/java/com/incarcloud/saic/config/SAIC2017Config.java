@@ -42,6 +42,9 @@ public class SAIC2017Config {
     private final List<String> modes = new ArrayList<>();
     public List<String> getModes(){ return modes; }
 
+    private final List<String> gb32960 = new ArrayList<>();
+    public List<String> getGB32960(){ return gb32960; }
+
     private String vinMatch;
     public String getVinMatch(){ return vinMatch; }
     public void setVinMatch(String val){ vinMatch = val; }

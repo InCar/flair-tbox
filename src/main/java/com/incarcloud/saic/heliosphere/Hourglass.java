@@ -1,5 +1,7 @@
 package com.incarcloud.saic.heliosphere;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * 进度计量
  */
@@ -9,6 +11,8 @@ public class Hourglass {
 
     private long finishedDays = 0L;
     private long finishedVins = 0L;
+
+    private AtomicInteger atomPerfCount = new AtomicInteger(0);
 
     /**
      * 设置总工作量
@@ -44,5 +48,23 @@ public class Hourglass {
             fVins = 1.0f * finishedVins / totalVins;
         float fDays = 1.0f * finishedDays / totalDays;
         return fDays + fVins / totalDays;
+    }
+
+    /**
+     * 数据数性能计数
+     */
+    public void increasePerfCount(){
+        atomPerfCount.incrementAndGet();
+    }
+
+    /**
+     * 性能计算
+     */
+    private long tmMark = System.currentTimeMillis();
+    public float calcPerfAndReset(){
+        long tmNow = System.currentTimeMillis();
+        float fPerfHz = 1000.0f * atomPerfCount.getAndSet(0) / (tmNow - tmMark);
+        tmMark = tmNow;
+        return fPerfHz;
     }
 }
