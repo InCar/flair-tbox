@@ -12,4 +12,6 @@ class TaskArgBase {
     protected void increaseFinishedVin(){
         hourglass.increaseFinishedVin();
     }
+
+    public void increasePerfCount(){ hourglass.increasePerfCount(); }
 }

@@ -122,6 +122,7 @@ public class GBx01Overview extends GBData {
         this.resistancekOhm = resistancekOhm;
     }
 
+    @Override
     public int calcGBFrameSize(){
         // 整车数据固定21字节
         return 21;

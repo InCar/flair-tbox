@@ -3,6 +3,7 @@ package com.incarcloud.saic;
 import com.incarcloud.saic.config.SAIC2017Config;
 import com.incarcloud.saic.heliosphere.Parker;
 import com.incarcloud.saic.meta.MetaVinMode;
+import com.incarcloud.saic.modes.ModeFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
@@ -33,6 +34,11 @@ public class App implements CommandLineRunner{
         s_logger.info("Active log4j config file: {}", config.getName());
 
         SAIC2017Config cfg = _ctx.getBean(SAIC2017Config.class);
+
+        // GB32960功能
+        ModeFactory.switchOnOffGB(cfg.getGB32960());
+        s_logger.info("Active GB32960 : {}", cfg.getGB32960().size() > 0 ? cfg.getGB32960() : "[*]");
+
         // 车辆静态配置
         MetaVinMode metaVinMode = new MetaVinMode();
         metaVinMode.load(cfg.getModes(), cfg.getVinMatch());

@@ -2,7 +2,9 @@ package com.incarcloud.saic.t2017;
 
 import com.incarcloud.auxiliary.Helper;
 import com.incarcloud.lang.Func;
+import com.incarcloud.saic.GB32960.GBAlarmFilter;
 import com.incarcloud.saic.GB32960.GBData;
+import com.incarcloud.saic.GB32960.GBx07Alarm;
 import com.incarcloud.saic.ds.IDataWalk;
 import com.incarcloud.saic.modes.Mode;
 import com.incarcloud.saic.modes.ModeFactory;
@@ -10,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
@@ -34,7 +37,8 @@ class SaicDataWalk implements IDataWalk {
     private final Base64.Encoder base64Encoder;
 
     // 排序树
-    private TreeSet<GBPackage> sortedPackages = new TreeSet<>();
+    private final TreeSet<GBPackage> sortedPackages = new TreeSet<>();
+    private final TreeSet<GBx07Alarm> sortedAlarms;
 
     SaicDataWalk(TaskArg taskArg, String out){
         this.taskArg = taskArg;
@@ -42,6 +46,9 @@ class SaicDataWalk implements IDataWalk {
 
         this.modeObj = ModeFactory.create(taskArg.mode);
         this.base64Encoder = Base64.getEncoder();
+
+        // Alarm按时间排序
+        sortedAlarms = new TreeSet<>(Comparator.comparing(GBx07Alarm::getTmGMT8));
     }
 
     /**
@@ -63,36 +70,38 @@ class SaicDataWalk implements IDataWalk {
      */
     public boolean onData(Object data, long idx){
         try {
+            // 性能计数器
+            taskArg.increasePerfCount();
 
+            // 实时数据
             List<GBData> listGBData = new ArrayList<>();
             for(Object fn : makeFuncs()){
                 @SuppressWarnings("unchecked")
                 Func<GBData, Object> makeFn = (Func<GBData, Object>)fn;
-                GBData dataGB = makeFn.call(data);
-                if(dataGB != null) listGBData.add(dataGB);
+                try {
+                    GBData dataGB = makeFn.call(data);
+                    if (dataGB != null) listGBData.add(dataGB);
+                }
+                catch (NumberFormatException ex){
+                    // 仍然继续处理其它数据
+                    s_logger.error("NumberFormatException skip: {} : {} \n {}", taskArg, Helper.printStackTrace(ex), data);
+                }
             }
 
-            if(listGBData.size() > 0){
-                String vin = listGBData.get(0).getVin();
-                String tm = listGBData.get(0).getTmGMT8AsString();
-                ZonedDateTime tmGMT8 = listGBData.get(0).getTmGMT8();
-                byte[] bufGB32960 = GBData.makeGBPackage(vin, tmGMT8, listGBData);
-                String b64Val = base64Encoder.encodeToString((bufGB32960));
-                // 按时间排序,以备输出
-                sortedPackages.add(new GBPackage(tm, b64Val));
-            }
+            addToSort(listGBData);
 
-            // 用于跟踪进度
-            taskArg.updateIdx(idx);
+            // 告警数据
+            GBx07Alarm alarm = modeObj.makeGBx07Alarm(data);
+            if(alarm != null) sortedAlarms.add(alarm);
             return true;
         }
         catch (Exception ex){
+            s_logger.error("Processing data failed: {} : {} \n {}", taskArg, Helper.printStackTrace(ex), data);
+            return false;
+        }
+        finally {
             // 用于跟踪进度
             taskArg.updateIdx(idx);
-            s_logger.error("Processing data failed: {} : {} \n {}",
-                    taskArg, Helper.printStackTrace(ex), data);
-
-            return false;
         }
     }
 
@@ -101,6 +110,7 @@ class SaicDataWalk implements IDataWalk {
      * 它和onFailed相互排斥,两者只有一个会被调用
      */
     public void onFinished(){
+        scanForAlarms();
         output();
     }
 
@@ -110,7 +120,27 @@ class SaicDataWalk implements IDataWalk {
      */
     public void onFailed(Exception ex){
         s_logger.error("Fetch data failed: {} : {}", taskArg, Helper.printStackTrace(ex));
+        scanForAlarms();
         output();
+    }
+
+    // 扫描告警
+    private void scanForAlarms(){
+        try {
+            GBAlarmFilter alarmFilter = new GBAlarmFilter(taskArg.vin);
+            for (GBx07Alarm data : sortedAlarms) {
+                GBx07Alarm alarm = alarmFilter.filter(data);
+                if (alarm != null) {
+                    List<GBData> listGBAlarm = new ArrayList<>(1);
+                    listGBAlarm.add(alarm);
+                    addToSort(listGBAlarm);
+                }
+            }
+        }
+        catch (IOException ex){
+            s_logger.error("Scan alarm failed : {} : {}",
+                    taskArg, Helper.printStackTrace(ex));
+        }
     }
 
     // 输出到文件
@@ -160,10 +190,22 @@ class SaicDataWalk implements IDataWalk {
         }
     }
 
+    private void addToSort(List<GBData> listGBData) throws IOException {
+        if(listGBData.size() > 0){
+            String vin = listGBData.get(0).getVin();
+            String tm = listGBData.get(0).getTmGMT8AsString();
+            ZonedDateTime tmGMT8 = listGBData.get(0).getTmGMT8();
+            byte[] bufGB32960 = GBData.makeGBPackage(vin, tmGMT8, listGBData);
+            String b64Val = base64Encoder.encodeToString((bufGB32960));
+            // 按时间排序,以备输出
+            sortedPackages.add(new GBPackage(tm, b64Val));
+        }
+    }
+
     private Object[] makeFuncs(){
         Func<GBData, Object> fn;
 
-        Object[] fnMake = new Object[6];
+        Object[] fnMake = new Object[5];
 
         fn = modeObj::makeGBx01Overview;
         fnMake[0] = fn;
@@ -177,11 +219,8 @@ class SaicDataWalk implements IDataWalk {
         fn = modeObj::makeGBx05Position;
         fnMake[3] = fn;
 
-        fn = modeObj::makeGBx05Position;
+        fn = modeObj::makeGBx06Peak;
         fnMake[4] = fn;
-
-        fn = modeObj::makeGBx07Alarm;
-        fnMake[5] = fn;
 
         return fnMake;
     }
