@@ -114,7 +114,7 @@ public class Parker {
 
                     if(loop % 10 == 0) {
                         s_logger.info("{}\n{}",
-                                String.format("progress %6.2f%% %.2fHz",
+                                String.format("progress %6.2f%% %8.2fHz",
                                         100.0f * hourglass.getProgress(), hourglass.calcPerfAndReset()),
                                 LimitedTask.printMetric(saTask, 1000 * 60)
                                         .replaceAll("(.*)", "\t$1"));

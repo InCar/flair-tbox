@@ -2,7 +2,6 @@ package com.incarcloud.saic.t2017;
 
 import com.incarcloud.auxiliary.Helper;
 import com.incarcloud.lang.Func;
-import com.incarcloud.saic.GB32960.GBAlarmFilter;
 import com.incarcloud.saic.GB32960.GBData;
 import com.incarcloud.saic.GB32960.GBx07Alarm;
 import com.incarcloud.saic.ds.IDataWalk;
@@ -33,6 +32,7 @@ class SaicDataWalk implements IDataWalk {
     private final TaskArg taskArg;
     private final String out;
     private final Mode modeObj;
+    private final List<Func<GBData, Object>> listFns;
 
     private final Base64.Encoder base64Encoder;
 
@@ -45,6 +45,8 @@ class SaicDataWalk implements IDataWalk {
         this.out = out;
 
         this.modeObj = ModeFactory.create(taskArg.mode);
+        this.listFns = makeFuncs(this.modeObj);
+
         this.base64Encoder = Base64.getEncoder();
 
         // Alarm按时间排序
@@ -75,9 +77,7 @@ class SaicDataWalk implements IDataWalk {
 
             // 实时数据
             List<GBData> listGBData = new ArrayList<>();
-            for(Object fn : makeFuncs()){
-                @SuppressWarnings("unchecked")
-                Func<GBData, Object> makeFn = (Func<GBData, Object>)fn;
+            for(Func<GBData, Object> makeFn : listFns){
                 try {
                     GBData dataGB = makeFn.call(data);
                     if (dataGB != null) listGBData.add(dataGB);
@@ -127,7 +127,7 @@ class SaicDataWalk implements IDataWalk {
     // 扫描告警
     private void scanForAlarms(){
         try {
-            GBAlarmFilter alarmFilter = new GBAlarmFilter(taskArg.vin);
+            AlarmFilter alarmFilter = new AlarmFilter(taskArg.vin);
             for (GBx07Alarm data : sortedAlarms) {
                 GBx07Alarm alarm = alarmFilter.filter(data);
                 if (alarm != null) {
@@ -202,26 +202,13 @@ class SaicDataWalk implements IDataWalk {
         }
     }
 
-    private Object[] makeFuncs(){
-        Func<GBData, Object> fn;
-
-        Object[] fnMake = new Object[5];
-
-        fn = modeObj::makeGBx01Overview;
-        fnMake[0] = fn;
-
-        fn = modeObj::makeGBx02Motor;
-        fnMake[1] = fn;
-
-        fn = modeObj::makeGBx04Engine;
-        fnMake[2] = fn;
-
-        fn = modeObj::makeGBx05Position;
-        fnMake[3] = fn;
-
-        fn = modeObj::makeGBx06Peak;
-        fnMake[4] = fn;
-
-        return fnMake;
+    private static List<Func<GBData, Object>> makeFuncs(Mode modeObj){
+        List<Func<GBData, Object>> fns = new ArrayList<>(5);
+        fns.add(modeObj::makeGBx01Overview);
+        fns.add(modeObj::makeGBx02Motor);
+        fns.add(modeObj::makeGBx04Engine);
+        fns.add(modeObj::makeGBx05Position);
+        fns.add(modeObj::makeGBx06Peak);
+        return fns;
     }
 }
