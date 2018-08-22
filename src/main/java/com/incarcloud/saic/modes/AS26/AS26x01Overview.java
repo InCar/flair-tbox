@@ -12,7 +12,6 @@ import java.time.ZonedDateTime;
  */
 public class AS26x01Overview extends MongoX implements IMongoX01Overview {
 
-    @Override
     public GBx01Overview makeGBx01Overview(Document bsonDoc) {
         String vin = super.getVin(bsonDoc);
         ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(bsonDoc);
@@ -21,8 +20,6 @@ public class AS26x01Overview extends MongoX implements IMongoX01Overview {
         int vehSysPwrMod = Integer.parseInt(bsonDoc.getString("vehSysPwrMod"));
         int vehBMSBscSta = Integer.parseInt(bsonDoc.getString("vehBMSBscSta"));
         float vehBMSPackCrnt = Float.parseFloat((bsonDoc.getString("vehBMSPackCrnt")));
-
-        int vehElecVehSysMd = Integer.parseInt(bsonDoc.getString("vehElecVehSysMd"));
 
         int vehSpdAvgDrvnV = Integer.parseInt(bsonDoc.getString("vehSpdAvgDrvnV"));
         float vehSpeed = Float.parseFloat(bsonDoc.getString("vehSpeed"));
