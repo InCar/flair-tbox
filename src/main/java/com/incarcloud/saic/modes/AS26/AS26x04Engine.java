@@ -21,20 +21,20 @@ public class AS26x04Engine extends MongoX implements IMongoX04Engine {
         return data;
     }
 
-    private static byte calcEngineStatus(){
+    private static short calcEngineStatus(){
         /*
         发动机状态=0xFF
         */
-        byte engineStatus = (byte)0xFF;
+        short engineStatus = (byte)0xFF;
 
         return engineStatus;
     }
 
-    private static short calcAxleSpeed(){
+    private static int calcAxleSpeed(){
         /*
         曲轴转速=0xFF,0xFF
          */
-        short axleSpeed = (short)0xFFFF;
+        int axleSpeed = 0xFFFF;
 
         return axleSpeed;
     }

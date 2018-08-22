@@ -14,7 +14,7 @@ public class IP24x04Engine extends MongoX implements IMongoX04Engine {
         ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(bsonDoc);
 
         int vehEnSpdF = Integer.parseInt(bsonDoc.getString("vehEnSpdF"));
-        short vehEnSpd = Short.parseShort(bsonDoc.getString("vehEnSpd"));
+        int vehEnSpd = Short.parseShort(bsonDoc.getString("vehEnSpd"));
         float vehAvgFuelCsump_g = Float.parseFloat(bsonDoc.getString("vehAvgFuelCsump_g"));
 
         GBx04Engine data = new GBx04Engine(vin, tmGMT8);
@@ -25,7 +25,7 @@ public class IP24x04Engine extends MongoX implements IMongoX04Engine {
         return data;
     }
 
-    private static byte calcEngineStatus(int vehEnSpdF, short vehEnSpd){
+    private static short calcEngineStatus(int vehEnSpdF, int vehEnSpd){
         /*
         IF vehEnSpdF=1
         THEN 发动机状态=0xFF
@@ -33,23 +33,23 @@ public class IP24x04Engine extends MongoX implements IMongoX04Engine {
         THEN发动机状态=0x01
         ELSE发动机状态=0x02
         */
-        byte engineStatus;
-        if(vehEnSpdF == 1) engineStatus = (byte)0xFF;
+        short engineStatus;
+        if(vehEnSpdF == 1) engineStatus = 0xFF;
         else if(vehEnSpd > 0) engineStatus = 0x01;
         else engineStatus = 0x02;
 
         return engineStatus;
     }
 
-    private static short calcAxleSpeed(int vehEnSpdF, short vehEnSpd){
+    private static int calcAxleSpeed(int vehEnSpdF, int vehEnSpd){
         /*
         IF vehEnSpdF=1
         THEN 曲轴转速=0xFF,0xFF
         ELSE 曲轴转速=vehEnSpd
          */
-        short axleSpeed;
+        int axleSpeed;
         if(vehEnSpdF == 1)
-            axleSpeed = (short)0xFFFF;
+            axleSpeed = 0xFFFF;
         else
             axleSpeed = vehEnSpd;
 

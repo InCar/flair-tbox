@@ -14,7 +14,7 @@ public class AS24x04Engine extends MongoX implements IMongoX04Engine {
         ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(bsonDoc);
 
         int vehEnSpdSts = Integer.parseInt(bsonDoc.getString("vehEnSpdSts"));
-        short vehRPM = Short.parseShort(bsonDoc.getString("vehRPM"));
+        int vehRPM = Short.parseShort(bsonDoc.getString("vehRPM"));
         float vehAvgFuelCsump_g = Float.parseFloat(bsonDoc.getString("vehAvgFuelCsump_g"));
 
         GBx04Engine data = new GBx04Engine(vin, tmGMT8);
@@ -25,7 +25,7 @@ public class AS24x04Engine extends MongoX implements IMongoX04Engine {
         return data;
     }
 
-    private static byte calcEngineStatus(int vehEnSpdSts, short vehRPM){
+    private static short calcEngineStatus(int vehEnSpdSts, int vehRPM){
         /*
         IF vehEnSpdSts=3
         THEN 发动机状态=0xFF
@@ -33,22 +33,22 @@ public class AS24x04Engine extends MongoX implements IMongoX04Engine {
         THEN 发动机状态=0x01
         ELSE 发动机状态=0x02
         */
-        byte engineStatus;
-        if(vehEnSpdSts == 3) engineStatus = (byte)0xFF;
+        short engineStatus;
+        if(vehEnSpdSts == 3) engineStatus = 0xFF;
         else if(vehRPM > 0) engineStatus = 0x01;
         else engineStatus = 0x02;
 
         return engineStatus;
     }
 
-    private static short calcAxleSpeed(int vehEnSpdSts, short vehRPM){
+    private static int calcAxleSpeed(int vehEnSpdSts, int vehRPM){
         /*
         沿用原bigdata格式（1rpm）：
         IF vehEnSpdSts=3
         THEN 曲轴转速=0xFF,0xFF
         ELSE 曲轴转速= vehRPM
          */
-        short axleSpeed;
+        int axleSpeed;
         if(vehEnSpdSts == 3)
             axleSpeed = (short)0xFFFF;
         else
