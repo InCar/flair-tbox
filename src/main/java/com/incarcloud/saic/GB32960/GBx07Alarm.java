@@ -39,12 +39,12 @@ public class GBx07Alarm extends GBData {
     /**
      * 最高报警等级，为当前发生的故障中的最高等级值，有效值范围：0～3，“0”表示无故障；“1”表示1级故障，指代不影响车辆正常行驶的故障；“2”表示2级故障，指代影响车辆性能，需驾驶员限制行驶的故障；“3”表示3级故障，为最高级别故障，指代驾驶员应立即停车处理或请求救援的故障；具体等级对应的故障内容由厂商自行定义；“0xFE”表示异常，“0xFF”表示无效。
      */
-    private byte maxLevel;
+    private short maxLevel;
 
     /**
      * 可充电储能子系统故障总数N1，N1个可充电储能子系统故障，有效值范围：0～252，“0xFE”表示异常，“0xFF”表示无效。
      */
-    private byte deviceFaultCount;
+    private short deviceFaultCount;
     /**
      * 可充电储能子系统故障代码列表，扩展性数据，由厂商自行定义，可充电储能子系统故障个数等于可充电储能子系统故障总数N1。
      */
@@ -53,7 +53,7 @@ public class GBx07Alarm extends GBData {
     /**
      * 驱动电机故障总数N2，N2个驱动电机故障，有效值范围：0～252，“0xFE”表示异常，“0xFF”表示无效。
      */
-    private byte motorFaultCount;
+    private short motorFaultCount;
     /**
      * 驱动电机故障代码列表，厂商自行定义，驱动电机故障个数等于驱动电机故障总数N2。
      */
@@ -62,7 +62,7 @@ public class GBx07Alarm extends GBData {
     /**
      * 发动机故障总数N3，N3个驱动电机故障，有效值范围：0～252，“0xFE”表示异常，“0xFF”表示无效。
      */
-    private byte engineFaultCount;
+    private short engineFaultCount;
     /**
      * 发动机故障列表，厂商自行定义，发动机故障个数等于驱动电机故障总数N3。
      */
@@ -71,7 +71,7 @@ public class GBx07Alarm extends GBData {
     /**
      * 其他故障总数N4，N4个其他故障，有效值范围：0～252，“0xFE”表示异常，“0xFF”表示无效。
      */
-    private byte otherFaultCount;
+    private short otherFaultCount;
     /**
      * 其他故障代码列表，厂商自行定义，故障个数等于故障总数N4。
      */
@@ -229,19 +229,19 @@ public class GBx07Alarm extends GBData {
         this.sellVolHighestChargerl = sellVolHighestChargerl;
     }
 
-    public byte getMaxLevel() {
+    public short getMaxLevel() {
         return maxLevel;
     }
 
-    public void setMaxLevel(byte maxLevel) {
+    public void setMaxLevel(short maxLevel) {
         this.maxLevel = maxLevel;
     }
 
-    public byte getDeviceFaultCount() {
+    public short getDeviceFaultCount() {
         return deviceFaultCount;
     }
 
-    public void setDeviceFaultCount(byte deviceFaultCount) {
+    public void setDeviceFaultCount(short deviceFaultCount) {
         this.deviceFaultCount = deviceFaultCount;
     }
 
@@ -253,11 +253,11 @@ public class GBx07Alarm extends GBData {
         this.deviceFaultCodeList = deviceFaultCodeList;
     }
 
-    public byte getMotorFaultCount() {
+    public short getMotorFaultCount() {
         return motorFaultCount;
     }
 
-    public void setMotorFaultCount(byte motorFaultCount) {
+    public void setMotorFaultCount(short motorFaultCount) {
         this.motorFaultCount = motorFaultCount;
     }
 
@@ -269,11 +269,11 @@ public class GBx07Alarm extends GBData {
         this.motorFaultCodeList = motorFaultCodeList;
     }
 
-    public byte getEngineFaultCount() {
+    public short getEngineFaultCount() {
         return engineFaultCount;
     }
 
-    public void setEngineFaultCount(byte engineFaultCount) {
+    public void setEngineFaultCount(short engineFaultCount) {
         this.engineFaultCount = engineFaultCount;
     }
 
@@ -285,11 +285,11 @@ public class GBx07Alarm extends GBData {
         this.engineFaultCodeList = engineFaultCodeList;
     }
 
-    public byte getOtherFaultCount() {
+    public short getOtherFaultCount() {
         return otherFaultCount;
     }
 
-    public void setOtherFaultCount(byte otherFaultCount) {
+    public void setOtherFaultCount(short otherFaultCount) {
         this.otherFaultCount = otherFaultCount;
     }
 

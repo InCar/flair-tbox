@@ -17,11 +17,11 @@ public class GBx06Peak extends GBData {
     /**
      * 最高电压电池子系统号，有效值范围：1～250，“0xFE”表示异常，“0xFF”表示无效。
      */
-    private byte highBatteryId;
+    private short highBatteryId;
     /**
      * 最高电压电池单体代号，有效值范围：1～250，“0xFE”表示异常，“0xFF”表示无效。
      */
-    private byte highBatteryCode;
+    private short highBatteryCode;
     /**
      * 电池单体电压最高值，有效值范围：0～15000（表示0V～15V），最小计量单元：0.001V，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
      */
@@ -29,11 +29,11 @@ public class GBx06Peak extends GBData {
     /**
      * 最低电压电池子系统号，有效值范围：1～250，“0xFE”表示异常，“0xFF”表示无效。
      */
-    private byte lowBatteryId;
+    private short lowBatteryId;
     /**
      * 最低电压电池单体代号，有效值范围：1～250，“0xFE”表示异常，“0xFF”表示无效。
      */
-    private byte lowBatteryCode;
+    private short lowBatteryCode;
     /**
      * 电池单体电压最低值，有效值范围：0～15000（表示0V～15V），最小计量单元：0.001V，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
      */
@@ -41,41 +41,41 @@ public class GBx06Peak extends GBData {
     /**
      * 最高温度子系统号，有效值范围：1～250，“0xFE”表示异常，“0xFF”表示无效。
      */
-    private byte highTemperatureId;
+    private short highTemperatureId;
     /**
      * 最高温度探针序号，有效值范围：1～250，“0xFE”表示异常，“0xFF”表示无效。
      */
-    private byte highProbeCode;
+    private short highProbeCode;
     /**
      * 最高温度值，有效值范围：0～250（数值偏移量40℃，表示-40℃～+210℃），最小计量单元：1℃，“0xFE”表示异常，“0xFF”表示无效。
      */
-    private byte highTemperature;
+    private short highTemperature;
     /**
      * 最低温度子系统号，有效值范围：1～250，“0xFE”表示异常，“0xFF”表示无效。
      */
-    private byte lowTemperatureId;
+    private short lowTemperatureId;
     /**
      * 最低温度探针序号，有效值范围：1～250，“0xFE”表示异常，“0xFF”表示无效。
      */
-    private byte lowProbeCode;
+    private short lowProbeCode;
     /**
      * 最低温度值，有效值范围：0～250（数值偏移量40℃，表示-40℃～+210℃），最小计量单元：1℃，“0xFE”表示异常，“0xFF”表示无效。
      */
-    private byte lowTemperature;
+    private short lowTemperature;
 
-    public byte getHighBatteryId() {
+    public short getHighBatteryId() {
         return highBatteryId;
     }
 
-    public void setHighBatteryId(byte highBatteryId) {
+    public void setHighBatteryId(short highBatteryId) {
         this.highBatteryId = highBatteryId;
     }
 
-    public byte getHighBatteryCode() {
+    public short getHighBatteryCode() {
         return highBatteryCode;
     }
 
-    public void setHighBatteryCode(byte highBatteryCode) {
+    public void setHighBatteryCode(short highBatteryCode) {
         this.highBatteryCode = highBatteryCode;
     }
 
@@ -87,19 +87,19 @@ public class GBx06Peak extends GBData {
         this.highVoltage = highVoltage;
     }
 
-    public byte getLowBatteryId() {
+    public short getLowBatteryId() {
         return lowBatteryId;
     }
 
-    public void setLowBatteryId(byte lowBatteryId) {
+    public void setLowBatteryId(short lowBatteryId) {
         this.lowBatteryId = lowBatteryId;
     }
 
-    public byte getLowBatteryCode() {
+    public short getLowBatteryCode() {
         return lowBatteryCode;
     }
 
-    public void setLowBatteryCode(byte lowBatteryCode) {
+    public void setLowBatteryCode(short lowBatteryCode) {
         this.lowBatteryCode = lowBatteryCode;
     }
 
@@ -111,51 +111,51 @@ public class GBx06Peak extends GBData {
         this.lowVoltage = lowVoltage;
     }
 
-    public byte getHighTemperatureId() {
+    public short getHighTemperatureId() {
         return highTemperatureId;
     }
 
-    public void setHighTemperatureId(byte highTemperatureId) {
+    public void setHighTemperatureId(short highTemperatureId) {
         this.highTemperatureId = highTemperatureId;
     }
 
-    public byte getHighProbeCode() {
+    public short getHighProbeCode() {
         return highProbeCode;
     }
 
-    public void setHighProbeCode(byte highProbeCode) {
+    public void setHighProbeCode(short highProbeCode) {
         this.highProbeCode = highProbeCode;
     }
 
-    public byte getHighTemperature() {
+    public short getHighTemperature() {
         return highTemperature;
     }
 
-    public void setHighTemperature(byte highTemperature) {
+    public void setHighTemperature(short highTemperature) {
         this.highTemperature = highTemperature;
     }
 
-    public byte getLowTemperatureId() {
+    public short getLowTemperatureId() {
         return lowTemperatureId;
     }
 
-    public void setLowTemperatureId(byte lowTemperatureId) {
+    public void setLowTemperatureId(short lowTemperatureId) {
         this.lowTemperatureId = lowTemperatureId;
     }
 
-    public byte getLowProbeCode() {
+    public short getLowProbeCode() {
         return lowProbeCode;
     }
 
-    public void setLowProbeCode(byte lowProbeCode) {
+    public void setLowProbeCode(short lowProbeCode) {
         this.lowProbeCode = lowProbeCode;
     }
 
-    public byte getLowTemperature() {
+    public short getLowTemperature() {
         return lowTemperature;
     }
 
-    public void setLowTemperature(byte lowTemperature) {
+    public void setLowTemperature(short lowTemperature) {
         this.lowTemperature = lowTemperature;
     }
 

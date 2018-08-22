@@ -34,20 +34,20 @@ public class GBx02Motor extends GBData {
         stream.writeByte(0x02);
 
         for(Motor motor : motors){
-            byte motorSeq = motor.getMotorSeq();
+            short motorSeq = motor.getMotorSeq();
             stream.writeByte(motorSeq);//驱动电机序号，有效值范围1~253
 
-            byte motorStatus = motor.getMotorStatus();
+            short motorStatus = motor.getMotorStatus();
             stream.writeByte(motorStatus);//驱动电机状态：0x01-耗电，0x02-发电，0x03-关闭状态，0x04-准备状态，0xFF表示异常，0xFE表示无效
 
-            byte controllerTemperature = motor.getControllerTemperature();
+            short controllerTemperature = motor.getControllerTemperature();
             if(controllerTemperature != 0xFF && controllerTemperature != 0xFE){
                 stream.writeByte(controllerTemperature + 40);//驱动电机控制器温度，有效值范围：0～250 （数值偏移量40℃，表示-40℃～+210℃），最小计量单元：1℃，“0xFE”表示异常，“0xFF”表示无效。
             }else{
                 stream.writeByte(controllerTemperature);
             }
 
-            short speed = motor.getSpeed();
+            int speed = motor.getSpeed();
             if(speed != 0xFFFF && speed != 0xFFFE){
                 stream.writeShort(speed + 20000);//驱动电机转速，有效值范围：0～65531（数值偏移量20000表示-20000 r/min～45531r/min），最小计量单元：1r/min，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
             }else{
@@ -61,7 +61,7 @@ public class GBx02Motor extends GBData {
                 stream.writeShort((short)torque);
             }
 
-            byte motorTemperature = motor.getMotorTemperature();
+            short motorTemperature = motor.getMotorTemperature();
             if(motorTemperature != 0xFF && motorTemperature != 0xFE){
                 stream.writeByte(motorTemperature + 40);//驱动电机温度，有效值范围：0～250 （数值偏移量40℃，表示-40℃～+210℃），最小计量单元：1℃，“0xFE”表示异常，“0xFF”表示无效。
             }else{

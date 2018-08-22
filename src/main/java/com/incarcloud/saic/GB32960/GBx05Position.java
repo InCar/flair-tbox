@@ -17,7 +17,7 @@ public class GBx05Position extends GBData{
     /**
      * 定位状态，状态位定义见表15。
      */
-    private byte positionStatus;
+    private short positionStatus;
     /**
      * 经度，以度为单位的纬度值乘以10的6次方，精确到百万分之一度。
      */
@@ -27,11 +27,11 @@ public class GBx05Position extends GBData{
      */
     private double latitude;
 
-    public byte getPositionStatus() {
+    public short getPositionStatus() {
         return positionStatus;
     }
 
-    public void setPositionStatus(byte positionStatus) {
+    public void setPositionStatus(short positionStatus) {
         this.positionStatus = positionStatus;
     }
 
