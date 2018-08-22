@@ -13,9 +13,9 @@ public class AS24x04Engine extends MongoX implements IMongoX04Engine {
         String vin = super.getVin(bsonDoc);
         ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(bsonDoc);
 
-        int vehEnSpdSts = Integer.parseInt(bsonDoc.getString("vehEnSpdSts"));
-        int vehRPM = Short.parseShort(bsonDoc.getString("vehRPM"));
-        float vehAvgFuelCsump_g = Float.parseFloat(bsonDoc.getString("vehAvgFuelCsump_g"));
+        int vehEnSpdSts = parseIntWithDef(bsonDoc, "vehEnSpdSts");
+        int vehRPM = parseIntWithDef(bsonDoc, "vehRPM");
+        float vehAvgFuelCsump_g = parseFloatWithDef(bsonDoc,"vehAvgFuelCsump_g");
 
         GBx04Engine data = new GBx04Engine(vin, tmGMT8);
         data.setStatus(calcEngineStatus(vehEnSpdSts, vehRPM));
