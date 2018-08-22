@@ -17,9 +17,9 @@ public class IP24x01Overview extends MongoX implements IMongoX01Overview {
         ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(bsonDoc);
 
         String vehPTReadyStr = bsonDoc.getString("vehPTReady");
-        /*if (vehPTReadyStr == null) {
+        if (vehPTReadyStr == null) {
             return null;
-        }*/
+        }
         int vehPTReady = Integer.parseInt(vehPTReadyStr);
         int vehKeySwitchStateIGN = Integer.parseInt(bsonDoc.getString("vehKeySwitchStateIGN"));
         int vehBMSBasicSta = Integer.parseInt(bsonDoc.getString("vehBMSBasicSta"));
