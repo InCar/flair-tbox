@@ -7,19 +7,19 @@ public class Motor{
     /**
      * 驱动电机序号，有效值范围1~253
      */
-    private byte motorSeq;
+    private short motorSeq;
     /**
      * 驱动电机状态：0x01-耗电，0x02-发电，0x03-关闭状态，0x04-准备状态，0xFF表示异常，0xFE表示无效
      */
-    private byte motorStatus;
+    private short motorStatus;
     /**
      * 驱动电机控制器温度，有效值范围：0～250 （数值偏移量40℃，表示-40℃～+210℃），最小计量单元：1℃，“0xFE”表示异常，“0xFF”表示无效。
      */
-    private byte controllerTemperature;
+    private short controllerTemperature;
     /**
      * 驱动电机转速，有效值范围：0～65531（数值偏移量20000表示-20000 r/min～45531r/min），最小计量单元：1r/min，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
      */
-    private short speed;
+    private int speed;
     /**
      * 驱动电机转矩，有效值范围：0～65531（数值偏移量20000表示-2000N*m～4553.1N*m），最小计量单元：0.1N*m，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
      */
@@ -27,7 +27,7 @@ public class Motor{
     /**
      * 驱动电机温度，有效值范围：0～250 （数值偏移量40℃，表示-40℃～+210℃），最小计量单元：1℃，“0xFE”表示异常，“0xFF”表示无效。
      */
-    private byte motorTemperature;
+    private short motorTemperature;
     /**
      * 电机控制器输入电压，有效值范围：0～60000（表示0V～6000V），最小计量单元：0.1V，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
      */
@@ -37,35 +37,35 @@ public class Motor{
      */
     private float controllerDirectCurrent;
 
-    public byte getMotorSeq() {
+    public short getMotorSeq() {
         return motorSeq;
     }
 
-    public void setMotorSeq(byte motorSeq) {
+    public void setMotorSeq(short motorSeq) {
         this.motorSeq = motorSeq;
     }
 
-    public byte getMotorStatus() {
+    public short getMotorStatus() {
         return motorStatus;
     }
 
-    public void setMotorStatus(byte motorStatus) {
+    public void setMotorStatus(short motorStatus) {
         this.motorStatus = motorStatus;
     }
 
-    public byte getControllerTemperature() {
+    public short getControllerTemperature() {
         return controllerTemperature;
     }
 
-    public void setControllerTemperature(byte controllerTemperature) {
+    public void setControllerTemperature(short controllerTemperature) {
         this.controllerTemperature = controllerTemperature;
     }
 
-    public short getSpeed() {
+    public int getSpeed() {
         return speed;
     }
 
-    public void setSpeed(short speed) {
+    public void setSpeed(int speed) {
         this.speed = speed;
     }
 
@@ -77,11 +77,11 @@ public class Motor{
         this.torque = torque;
     }
 
-    public byte getMotorTemperature() {
+    public short getMotorTemperature() {
         return motorTemperature;
     }
 
-    public void setMotorTemperature(byte motorTemperature) {
+    public void setMotorTemperature(short motorTemperature) {
         this.motorTemperature = motorTemperature;
     }
 

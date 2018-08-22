@@ -15,19 +15,19 @@ public class GBx01Overview extends GBData {
     }
 
     // 车辆启动状态 READY(ready)“0x01”，熄火(keyoff)“0x02”，其他“0x03”，“0xFE”表示异常，“0xFF”表示无效。
-    private byte vehicleStatus;
-    public byte getVehicleStatus(){ return vehicleStatus; }
-    public void setVehicleStatus(byte val){ vehicleStatus = val; }
+    private short vehicleStatus;
+    public short getVehicleStatus(){ return vehicleStatus; }
+    public void setVehicleStatus(short val){ vehicleStatus = val; }
 
     // 充电状态 0x01：停车充电；0x02：行驶充电；0x03：未充电状态，0x04：充电完成；“0xFE”表示异常，“0xFF”表示无效。
-    private byte chargingStatus;
-    public byte getChargingStatus(){ return chargingStatus; }
-    public void setChargingStatus(byte val){ chargingStatus = val; }
+    private short chargingStatus;
+    public short getChargingStatus(){ return chargingStatus; }
+    public void setChargingStatus(short val){ chargingStatus = val; }
 
     // 运行模式 驱动能量来源0x01: 纯电；0x02：混动；0x03：燃油；0xFE表示异常；0xFF表示无效。
-    private byte powerSource;
-    public byte getPowerSource(){ return powerSource; }
-    public void setPowerSource(byte val){ powerSource = val; }
+    private short powerSource;
+    public short getPowerSource(){ return powerSource; }
+    public void setPowerSource(short val){ powerSource = val; }
 
     // 车速 有效值范围：0～2200（表示0 km/h～220 km/h），最小计量单元：0.1km/h，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
     private float speedKmH;
@@ -67,20 +67,20 @@ public class GBx01Overview extends GBData {
     }
 
     // SOC 有效值范围：0～100（表示0%～100%），最小计量单元：1%，“0xFE”表示异常，“0xFF”表示无效。
-    private byte soc;
-    public byte getSoc() {
+    private short soc;
+    public short getSoc() {
         return soc;
     }
-    public void setSoc(byte val) {
+    public void setSoc(short val) {
         soc = val;
     }
 
     // DC-DC状态 直流斩波状态 0x01：工作；0x02：断开，“0xFE”表示异常，“0xFF”表示无效。
-    private byte dcdcOnOff;
-    public byte getDcdcOnOff() {
+    private short dcdcOnOff;
+    public short getDcdcOnOff() {
         return dcdcOnOff;
     }
-    public void setDcdcOnOff(byte val) {
+    public void setDcdcOnOff(short val) {
         dcdcOnOff = val;
     }
 

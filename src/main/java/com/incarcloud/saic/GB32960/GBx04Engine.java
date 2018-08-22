@@ -17,31 +17,31 @@ public class GBx04Engine extends GBData {
     /**
      * 发动机状态，0x01：启动状态；0x02：关闭状态，“0xFE”表示异常，“0xFF”表示无效。
      */
-    private byte status;
+    private short status;
 
     /**
      * 曲轴转速，有效范围：0～60000(表示0rpm～60000rpm)，最小计量单元：1rpm，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
      */
-    private short speed;
+    private int speed;
 
     /**
      * 燃料消耗率，有效值范围：0～60000（表示0L/100km～600L/100km），最小计量单元：0.01L/100km，“0xFF,0xFE”表示异常，“0xFF,0xFF”表示无效。
      */
     private float rate;
 
-    public byte getStatus() {
+    public short getStatus() {
         return status;
     }
 
-    public void setStatus(byte status) {
+    public void setStatus(short status) {
         this.status = status;
     }
 
-    public short getSpeed() {
+    public int getSpeed() {
         return speed;
     }
 
-    public void setSpeed(short speed) {
+    public void setSpeed(int speed) {
         this.speed = speed;
     }
 
