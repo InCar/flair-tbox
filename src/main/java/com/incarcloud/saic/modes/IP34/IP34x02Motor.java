@@ -1,4 +1,4 @@
-package com.incarcloud.saic.modes.AS24;
+package com.incarcloud.saic.modes.IP34;
 
 import com.incarcloud.saic.GB32960.GBx02Motor;
 import com.incarcloud.saic.GB32960.Motor;
@@ -13,11 +13,11 @@ import java.util.stream.Stream;
 /**
  * Created by dave on 18-8-21 下午2:07.
  */
-public class AS24x02Motor extends MongoX implements IMongoX02Motor {
+public class IP34x02Motor extends MongoX implements IMongoX02Motor {
 
 
     @Override
-    public GBx02Motor makeGBx02Motor(Document bsonDoc) {
+    public GBx02Motor makeGBx01Overview(Document bsonDoc) {
         String vin = super.getVin(bsonDoc);
         ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(bsonDoc);
         GBx02Motor motor = new GBx02Motor(vin, tmGMT8);
@@ -89,7 +89,7 @@ public class AS24x02Motor extends MongoX implements IMongoX02Motor {
         }
 
         // 驱动电机温度
-        m.setMotorTemperature((byte) Integer.parseInt(bsonDoc.getString(prefix + "SttrTem")));
+        m.setMotorTemperature((byte) Integer.parseInt(prefix + "SttrTem"));
 
         // 电机控制器输入电压
         float volt = Float.parseFloat(bsonDoc.getString("vehHVDCDCHVSideVolV"));
@@ -100,7 +100,7 @@ public class AS24x02Motor extends MongoX implements IMongoX02Motor {
         }
 
         // 电机控制器直流母线电流
-        float crntv = Float.parseFloat(bsonDoc.getString(prefix + "InvtrCrntV"));
+        int crntv = Integer.parseInt(bsonDoc.getString(prefix + "InvtrCrntV"));
         float crnt = Float.parseFloat(bsonDoc.getString(prefix + "InvtrCrnt"));
         if (crntv == 1 || crnt < -1000) {
             m.setControllerDirectCurrent(0xFFFF);
