@@ -6,14 +6,28 @@ import com.incarcloud.saic.modes.MongoX;
 import com.incarcloud.saic.modes.mongo.IMongoX02Motor;
 import org.bson.Document;
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.stream.Stream;
+
 /**
  * Created by dave on 18-8-22 上午11:12.
  */
 public class IP24x02Motor extends MongoX implements IMongoX02Motor {
 
     @Override
-    public GBx02Motor makeGBx01Overview(Document bsonDoc) {
-        return null;
+    public GBx02Motor makeGBx02Motor(Document bsonDoc) {
+        String vin = super.getVin(bsonDoc);
+        ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(bsonDoc);
+        GBx02Motor motor = new GBx02Motor(vin, tmGMT8);
+        motor.setMotors(new ArrayList<>());
+        Stream.of("TM", "ISG", "SAM").forEach(code -> {
+            Motor m = getMotor(bsonDoc, code);
+            if (m != null) {
+                motor.getMotors().add(m);
+            }
+        });
+        return motor;
     }
 
     /**
