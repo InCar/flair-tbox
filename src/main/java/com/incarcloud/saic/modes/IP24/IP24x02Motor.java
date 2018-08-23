@@ -45,11 +45,11 @@ public class IP24x02Motor extends MongoX implements IMongoX02Motor {
         Motor m = new Motor();
         // 驱动电机序号
         if ("TM".equals(code)) {
-            m.setMotorSeq((byte) 1);
+            m.setMotorSeq((short) 1);
         } else if ("ISG".equals(code)) {
-            m.setMotorSeq((byte) 2);
+            m.setMotorSeq((short) 2);
         } else if ("SAM".equals(code)) {
-            m.setMotorSeq((byte) 3);
+            m.setMotorSeq((short) 3);
         } else {
             throw new RuntimeException("无效的code: " + code);
         }
@@ -57,33 +57,33 @@ public class IP24x02Motor extends MongoX implements IMongoX02Motor {
         // 驱动电机状态
         float crnt = Float.parseFloat(bsonDoc.getString(prefix + "InvtrCrnt"));
         if (crnt == 1023 || crnt == 1024) {
-            m.setMotorStatus((byte) 0xFF);
+            m.setMotorStatus((short) 0xFF);
         } else {
             int sta = Integer.parseInt(bsonDoc.getString(prefix + "Sta"));
             if (sta == 3) {
-                m.setMotorStatus((byte) 0x04);
+                m.setMotorStatus((short) 0x04);
             } else if (sta == 6 || sta == 7 || sta == 8) {
                 if (crnt >= 0) {
-                    m.setMotorStatus((byte) 0x01);
+                    m.setMotorStatus((short) 0x01);
                 } else {
-                    m.setMotorStatus((byte) 0x02);
+                    m.setMotorStatus((short) 0x02);
                 }
             } else {
-                m.setMotorStatus((byte) 0x03);
+                m.setMotorStatus((short) 0x03);
             }
         }
 
         // 驱动电机控制器温度
         int tem = Integer.parseInt(bsonDoc.getString(prefix + "InvtrTem"));
         if (tem == 215 || tem == 214) {
-            m.setControllerTemperature((byte) 0xff);
+            m.setControllerTemperature((short) 0xff);
         } else {
-            m.setControllerTemperature((byte) tem);
+            m.setControllerTemperature((short) tem);
         }
 
         // 驱动电机转速
         int speed = Integer.parseInt(bsonDoc.getString(prefix + "Spd"));
-        m.setSpeed(speed == 32678 || speed == 32677 || speed < -20000 ? (byte) 0xFF : (byte) speed);
+        m.setSpeed(speed == 32678 || speed == 32677 || speed < -20000 ? 0xFF : speed);
 
         // 驱动电机转矩
         float toq = Float.parseFloat(bsonDoc.getString(prefix + "ActuToq"));
@@ -94,8 +94,8 @@ public class IP24x02Motor extends MongoX implements IMongoX02Motor {
         }
 
         // 驱动电机温度
-        byte mtem = (byte) Integer.parseInt(bsonDoc.getString(prefix + "SttrTem"));
-        m.setMotorTemperature(mtem == (byte) 215 || mtem == (byte) 214 ? (byte) 0xFF : mtem);
+        short mtem = (short) Integer.parseInt(bsonDoc.getString(prefix + "SttrTem"));
+        m.setMotorTemperature(mtem == (short) 215 || mtem == (short) 214 ? (short) 0xFF : mtem);
 
         // 电机控制器输入电压
         float volthv = Float.parseFloat(bsonDoc.getString("vehDCVoltHV"));

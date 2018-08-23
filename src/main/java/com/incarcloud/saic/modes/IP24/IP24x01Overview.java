@@ -16,38 +16,34 @@ public class IP24x01Overview extends MongoX implements IMongoX01Overview {
         String vin = super.getVin(bsonDoc);
         ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(bsonDoc);
 
-        String vehPTReadyStr = bsonDoc.getString("vehPTReady");
-        if (vehPTReadyStr == null) {
-            return null;
-        }
-        int vehPTReady = Integer.parseInt(vehPTReadyStr);
-        int vehKeySwitchStateIGN = Integer.parseInt(bsonDoc.getString("vehKeySwitchStateIGN"));
-        int vehBMSBasicSta = Integer.parseInt(bsonDoc.getString("vehBMSBasicSta"));
-        float vehBMSPackCurrent = Float.parseFloat((bsonDoc.getString("vehBMSPackCurrent")));
+        int vehPTReady = parseIntWithDef(bsonDoc,"vehPTReady");
+        int vehKeySwitchStateIGN = parseIntWithDef(bsonDoc,"vehKeySwitchStateIGN");
+        int vehBMSBasicSta = parseIntWithDef(bsonDoc,"vehBMSBasicSta");
+        float vehBMSPackCurrent = parseFloatWithDef(bsonDoc,"vehBMSPackCurrent");
 
-        int vehHEVSystemMode = Integer.parseInt(bsonDoc.getString("vehHEVSystemMode"));
+        int vehHEVSystemMode = parseIntWithDef(bsonDoc,"vehHEVSystemMode");
 
-        int vehSpdAvgDrvnV = Integer.parseInt(bsonDoc.getString("vehSpdAvgDrvnV"));
-        float vehSpeed = Float.parseFloat(bsonDoc.getString("vehSpeed"));
+        int vehSpdAvgDrvnV = parseIntWithDef(bsonDoc,"vehSpdAvgDrvnV");
+        float vehSpeed = parseFloatWithDef(bsonDoc,"vehSpeed");
 
-        float vehOdo = Float.parseFloat(bsonDoc.getString("vehOdo"));
+        float vehOdo = parseFloatWithDef(bsonDoc,"vehOdo");
 
-        float vehBMSPackVolt = Float.parseFloat(bsonDoc.getString("vehBMSPackVolt"));
+        float vehBMSPackVolt = parseFloatWithDef(bsonDoc,"vehBMSPackVolt");
 
-        float vehBMSPackSOC = Float.parseFloat(bsonDoc.getString("vehBMSPackSOC"));
+        float vehBMSPackSOC = parseFloatWithDef(bsonDoc,"vehBMSPackSOC");
 
-        int vehDCSta = Integer.parseInt(bsonDoc.getString("vehDCSta"));
+        int vehDCSta = parseIntWithDef(bsonDoc,"vehDCSta");
 
-        int vehTransInputTorqueV = Integer.parseInt(bsonDoc.getString("vehTransInputTorqueV"));
-        float vehTransInputTorque = Float.parseFloat(bsonDoc.getString("vehTransInputTorque"));
-        int vehBrakeLightSwitchV = Integer.parseInt(bsonDoc.getString("vehBrakeLightSwitchV"));
-        int vehBrakeLightSwitch = Integer.parseInt(bsonDoc.getString("vehBrakeLightSwitch"));
-        int vehEPBSysBrkLghtsReqd = Integer.parseInt(bsonDoc.getString("vehEPBSysBrkLghtsReqd"));
-        int vehBrkSysBrkLghtsReqd = Integer.parseInt(bsonDoc.getString("vehBrkSysBrkLghtsReqd"));
-        int vehGearPosV = Integer.parseInt(bsonDoc.getString("vehGearPosV"));
-        int vehGearPos = Integer.parseInt(bsonDoc.getString("vehGearPos"));
+        int vehTransInputTorqueV = parseIntWithDef(bsonDoc,"vehTransInputTorqueV");
+        float vehTransInputTorque = parseFloatWithDef(bsonDoc,"vehTransInputTorque");
+        int vehBrakeLightSwitchV = parseIntWithDef(bsonDoc,"vehBrakeLightSwitchV");
+        int vehBrakeLightSwitch = parseIntWithDef(bsonDoc,"vehBrakeLightSwitch");
+        int vehEPBSysBrkLghtsReqd = parseIntWithDef(bsonDoc,"vehEPBSysBrkLghtsReqd");
+        int vehBrkSysBrkLghtsReqd = parseIntWithDef(bsonDoc,"vehBrkSysBrkLghtsReqd");
+        int vehGearPosV = parseIntWithDef(bsonDoc,"vehGearPosV");
+        int vehGearPos = parseIntWithDef(bsonDoc,"vehGearPos");
 
-        float vehBMSPtIsltnRstc = Float.parseFloat(bsonDoc.getString("vehBMSPtIsltnRstc"));
+        float vehBMSPtIsltnRstc = parseFloatWithDef(bsonDoc,"vehBMSPtIsltnRstc");
 
         GBx01Overview data = new GBx01Overview(vin, tmGMT8);
         data.setVehicleStatus(calcVehicleStatus(vehPTReady, vehKeySwitchStateIGN));
