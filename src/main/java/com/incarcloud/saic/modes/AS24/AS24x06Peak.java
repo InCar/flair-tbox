@@ -50,7 +50,7 @@ public class AS24x06Peak extends MongoX implements IMongoX06Peak {
         data.setLowProbeCode(vehBMSCellMinTemIndx);
         //最低温度值
         int vehBMSCellMinTemV = parseIntWithDef(bsonDoc, "vehBMSCellMinTemV");
-        short vehBMSCellMinTem =  (short)parseIntWithDef(bsonDoc, "vehBMSCellMinTem");
+        short vehBMSCellMinTem = (short)Math.round(parseFloatWithDef(bsonDoc, "vehBMSCellMinTem"));
         data.setLowTemperature(minimumStorageSubsystem(vehBMSCellMinTemV, vehBMSCellMinTem));
         return data;
     }
