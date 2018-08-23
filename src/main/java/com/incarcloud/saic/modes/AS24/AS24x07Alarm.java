@@ -6,6 +6,7 @@ import com.incarcloud.saic.modes.mongo.IMongoX07Alarm;
 import org.bson.Document;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 
 public class AS24x07Alarm extends MongoX implements IMongoX07Alarm {
     @Override
@@ -18,10 +19,67 @@ public class AS24x07Alarm extends MongoX implements IMongoX07Alarm {
         float vehBMSCellMaxTem = parseFloatWithDef(bsonDoc, "vehBMSCellMaxTem");
         float vehBMSCellMinTem = parseFloatWithDef(bsonDoc, "vehBMSCellMinTem");
 
+        int vehBMSPackVolV = parseIntWithDef(bsonDoc, "vehBMSPackVolV");
+        float vehBMSPackVol = parseFloatWithDef(bsonDoc, "vehBMSPackVol");
 
+        int vehBMSPackSOCV = parseIntWithDef(bsonDoc, "vehBMSPackSOCV");
+        float vehBMSPackSOC = parseFloatWithDef(bsonDoc, "vehBMSPackSOC");
+
+        int vehBMSCellMaxVolV = parseIntWithDef(bsonDoc, "vehBMSCellMaxVolV");
+        float vehBMSCellMaxVol = parseFloatWithDef(bsonDoc, "vehBMSCellMaxVol");
+
+        int vehBMSCellMinVolV = parseIntWithDef(bsonDoc, "vehBMSCellMinVolV");
+        float vehBMSCellMinVol = parseFloatWithDef(bsonDoc, "vehBMSCellMinVol");
+
+        int vehBMSPtIsltnRstcV = parseIntWithDef(bsonDoc, "vehBMSPtIsltnRstcV");
+        float vehBMSPtIsltnRstc = parseFloatWithDef(bsonDoc, "vehBMSPtIsltnRstc");
+        int vehHVDCDCTem = parseIntWithDef(bsonDoc, "vehHVDCDCTem");
+        int vehBrkFludLvlLow = parseIntWithDef(bsonDoc, "vehBrkFludLvlLow");
+        int vehBrkSysRedBrkTlltReq = parseIntWithDef(bsonDoc, "vehBrkSysRedBrkTlltReq");
+        int vehABSF = parseIntWithDef(bsonDoc, "vehABSF");
+        int vehVSESts = parseIntWithDef(bsonDoc, "vehVSESts");
+        int vehIbstrWrnngIO = parseIntWithDef(bsonDoc, "vehIbstrWrnngIO");
+        int vehHVDCDCSta = parseIntWithDef(bsonDoc, "vehHVDCDCSta");
+        int vehTMInvtrTem = parseIntWithDef(bsonDoc, "vehTMInvtrTem");
+        int vehISGInvtrTem = parseIntWithDef(bsonDoc, "vehISGInvtrTem");
+        int vehSAMInvtrTem = parseIntWithDef(bsonDoc, "vehSAMInvtrTem");
+        int vehBMSHVILClsd = parseIntWithDef(bsonDoc, "aaaaa");
+        int vehTMSttrTem = parseIntWithDef(bsonDoc, "vehTMSttrTem");
+        int vehISGSttrTem = parseIntWithDef(bsonDoc, "vehISGSttrTem");
+        int vehSAMSttrTem = parseIntWithDef(bsonDoc, "vehSAMSttrTem");
 
         GBx07Alarm data = new GBx07Alarm(vin, tmGMT8);
         data.setTempPlusHigherl(calcTempPlusHigherl(vehBMSCellMinTemV, vehBMSCellMaxTemV, vehBMSCellMinTem, vehBMSCellMaxTem));
+        data.setTempratureHighestl(calcTempratureHighestl(vehBMSCellMaxTemV, vehBMSCellMaxTem));
+        data.setTotalVolHighestl(calcTotalVolHighestl(vehBMSPackVolV, vehBMSPackVol));
+        data.setTotalVolLowestl(calcTotalVolLowestl(vehBMSPackVolV, vehBMSPackVol));
+        data.setSocLowerl(calcSocLowerl(vehBMSPackSOCV, vehBMSPackSOC));
+        data.setSellVolHighestL(calcSellVolHighestL(vehBMSCellMaxVolV, vehBMSCellMaxVol));
+        data.setSellVolLowestl(calcSellVolLowestl(vehBMSCellMinVolV, vehBMSCellMinVol));
+        data.setSocHigherAlarm(calcSocHigherAlarm(vehBMSPackSOCV, vehBMSPackSOC));
+        data.setSocJumpAlarm(calcSocJumpAlarm(vehBMSPackSOCV, vehBMSPackSOC));
+        data.setBatterySysDismatch(calcBatterySysDismatch());
+        data.setVolPlusBiggerl(calcVolPlusBiggerl(vehBMSCellMaxVolV, vehBMSCellMinVolV, vehBMSCellMaxVol, vehBMSCellMinVol));
+        data.setInsuLowl(calcInsuLowl(vehBMSPtIsltnRstcV, vehBMSPtIsltnRstc));
+        data.setDcdcTempAlarm(calcDcdcTempAlarm(vehHVDCDCTem));
+        data.setIcuBrakeSysErr(calcIcuBrakeSysErr(vehBrkFludLvlLow, vehBrkSysRedBrkTlltReq, vehABSF, vehVSESts, vehIbstrWrnngIO));
+        data.setDcdcStatusAlarm(calcDcdcStatusAlarm(vehHVDCDCSta));
+        data.setIsMotorControlerTempHigh(calcIsMotorControlerTempHigh(vehTMInvtrTem, vehISGInvtrTem, vehSAMInvtrTem));
+        data.setIsLockHigh(calcIsLockHigh(vehBMSHVILClsd));
+        data.setIsMotorTempHigh(calcIsMotorTempHigh(vehTMSttrTem, vehISGSttrTem, vehSAMSttrTem));
+        data.setSellVolHighestChargerl(calcSellVolHighestChargerl(vehBMSCellMaxVolV, vehBMSCellMaxVol));
+
+        short def = 0;
+        data.setMaxLevel(def);
+        data.setDeviceFaultCount(def);
+        data.setDeviceFaultCodeList(new ArrayList<>());
+        data.setMotorFaultCount(def);
+        data.setMotorFaultCodeList(new ArrayList<>());
+        data.setEngineFaultCount(def);
+        data.setEngineFaultCodeList(new ArrayList<>());
+        data.setOtherFaultCount(def);
+        data.setOtherFaultCodeList(new ArrayList<>());
+
 
         return data;
     }
@@ -43,7 +101,7 @@ public class AS24x07Alarm extends MongoX implements IMongoX07Alarm {
         return 0x00;
     }
 
-    private static byte calcTempratureHighestl(int vehBMSCellMaxTemV, int vehBMSCellMaxTem) {
+    private static byte calcTempratureHighestl(int vehBMSCellMaxTemV, float vehBMSCellMaxTem) {
         /*
         IF vehBMSCellMaxTemV=0 && vehBMSCellMaxTem>=N
         THEN Bit1=1
@@ -58,7 +116,7 @@ public class AS24x07Alarm extends MongoX implements IMongoX07Alarm {
         return 0x00;
     }
 
-    private static byte calcTotalVolHighestl(int vehBMSPackVolV, int vehBMSPackVol) {
+    private static byte calcTotalVolHighestl(int vehBMSPackVolV, float vehBMSPackVol) {
         /*
         IF vehBMSPackVolV=0 &&  vehBMSPackVol>=N
         THEN Bit2=1
@@ -73,7 +131,7 @@ public class AS24x07Alarm extends MongoX implements IMongoX07Alarm {
         return 0x00;
     }
 
-    private static byte calcTotalVolLowestl(int vehBMSPackVolV, int vehBMSPackVol) {
+    private static byte calcTotalVolLowestl(int vehBMSPackVolV, float vehBMSPackVol) {
         /*
         IF vehBMSPackVolV=0 && vehBMSPackVol<=N
         THEN Bit3=1
@@ -188,7 +246,7 @@ public class AS24x07Alarm extends MongoX implements IMongoX07Alarm {
         return 0x00;
     }
 
-    private static byte calcInsuLowl(int vehBMSPtIsltnRstcV, int vehBMSPtIsltnRstc) {
+    private static byte calcInsuLowl(int vehBMSPtIsltnRstcV, float vehBMSPtIsltnRstc) {
         /*
         IF vehBMSPtIsltnRstcV=0 && vehBMSPtIsltnRstc<=N
         THEN Bit11=1
