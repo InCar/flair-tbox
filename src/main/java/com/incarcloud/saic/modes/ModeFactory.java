@@ -6,8 +6,22 @@ import java.util.List;
  * 映射算法工厂
  */
 public class ModeFactory {
+    public static final String DS_MONGO = "MongoDB";
+    public static final String DS_ORACLE = "Oracle";
+
     public static Mode create(String mode){
-        Mode obj;
+        Mode obj = null;
+        String ds = checkDS(mode);
+        if(ds == DS_MONGO)
+            obj = new ModeMongo(mode, s_gbSwitches);
+        else if(ds == DS_ORACLE)
+            obj = new ModeOracle(mode, s_gbSwitches);
+        return obj;
+    }
+
+    // 检查对应的数据源
+    public static String checkDS(String mode){
+        String ds;
         switch (mode){
             case "AS24":
             case "AS26":
@@ -15,17 +29,17 @@ public class ModeFactory {
             case "IP34":
             case "OLD-AS24":
             case "IP32P":
-                obj = new ModeMongo(mode, s_gbSwitches);
+                ds = DS_MONGO;
                 break;
             case "OLD-IP24MCE":
             case "OLD-IP24":
             case "OLD-BP34":
-                obj = new ModeOracle(mode, s_gbSwitches);
+                ds = DS_ORACLE;
                 break;
             default:
                 throw new UnsupportedOperationException(mode);
         }
-        return obj;
+        return ds;
     }
 
     // 测试用途,只测试某些类型的数据

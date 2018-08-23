@@ -19,7 +19,7 @@ public class SourceORA implements ISource2017 {
 
     public SourceORA(OracleConfig cfg){
         // TODO: oracle的实现
-        throw new RuntimeException("NotImplementation");
+        s_logger.warn("TODO: oracle的实现");
     }
 
     public void init(){

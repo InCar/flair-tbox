@@ -1,6 +1,8 @@
 package com.incarcloud.saic.t2017;
 
+import com.incarcloud.saic.ds.DSFactory;
 import com.incarcloud.saic.heliosphere.Hourglass;
+import com.incarcloud.saic.modes.ModeFactory;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +16,7 @@ public class TaskArg extends TaskArgBase {
     final LocalDate date;
     final String vin;
     final String mode;
+    private final String ds;
 
     private volatile long total = 0;
     private volatile long idx = 0;
@@ -25,7 +28,11 @@ public class TaskArg extends TaskArgBase {
         this.date = date;
         this.vin = vin;
         this.mode = mode;
+
+        this.ds = ModeFactory.checkDS(mode);
     }
+
+    public String getDS(){ return ds; }
 
     // 进度指示
     void updateTotal(long val){ total = val; }
