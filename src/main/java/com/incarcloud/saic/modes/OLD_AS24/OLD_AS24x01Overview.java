@@ -17,23 +17,23 @@ public class OLD_AS24x01Overview extends MongoX implements IMongoX01Overview {
         String vin = super.getVin(bsonDoc);
         ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(bsonDoc);
 
-        int workModel = Integer.parseInt(bsonDoc.getString("workModel"));
+        int workModel = parseIntWithDef(bsonDoc,"workModel");
 
-        float vehSpeed = Float.parseFloat(bsonDoc.getString("vehSpeed"));
+        float vehSpeed = parseFloatWithDef(bsonDoc,"vehSpeed");
 
-        float vehOdo = Float.parseFloat(bsonDoc.getString("vehOdo"));
+        float vehOdo = parseFloatWithDef(bsonDoc,"vehOdo");
 
-        float vehBMSPackVol = Float.parseFloat(bsonDoc.getString("vehBMSPackVol"));
+        float vehBMSPackVol = parseFloatWithDef(bsonDoc,"vehBMSPackVol");
 
-        float vehBMSPackCrnt = Float.parseFloat((bsonDoc.getString("vehBMSPackCrnt")));
+        float vehBMSPackCrnt = parseFloatWithDef(bsonDoc,"vehBMSPackCrnt");
 
-        float vehBMSPackSOC = Float.parseFloat(bsonDoc.getString("vehBMSPackSOC"));
+        float vehBMSPackSOC = parseFloatWithDef(bsonDoc,"vehBMSPackSOC");
 
-        int vehHVDCDCSta = Integer.parseInt(bsonDoc.getString("vehHVDCDCSta"));
+        int vehHVDCDCSta = parseIntWithDef(bsonDoc,"vehHVDCDCSta");
 
-        int TMActuToq = Integer.parseInt(bsonDoc.getString("TMActuToq"));
+        int TMActuToq = parseIntWithDef(bsonDoc,"TMActuToq");
 
-        float vehBMSPtIsltnRstc = Float.parseFloat(bsonDoc.getString("vehBMSPtIsltnRstc"));
+        float vehBMSPtIsltnRstc = parseFloatWithDef(bsonDoc,"vehBMSPtIsltnRstc");
 
         GBx01Overview data = new GBx01Overview(vin, tmGMT8);
         data.setVehicleStatus(calcVehicleStatus(workModel));
