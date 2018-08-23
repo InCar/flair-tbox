@@ -46,40 +46,40 @@ public class AS24x02Motor extends MongoX implements IMongoX02Motor {
         Motor m = new Motor();
         // 驱动电机序号
         if ("TM".equals(code)) {
-            m.setMotorSeq((byte) 1);
+            m.setMotorSeq((short) 1);
         } else if ("ISG".equals(code)) {
-            m.setMotorSeq((byte) 2);
+            m.setMotorSeq((short) 2);
         } else if ("SAM".equals(code)) {
-            m.setMotorSeq((byte) 3);
+            m.setMotorSeq((short) 3);
         } else {
             throw new RuntimeException("无效的code: " + code);
         }
 
         // 驱动电机状态
         if (bsonDoc.getString(prefix + "InvtrCrntV").equals("1")) {
-            m.setMotorStatus((byte) 0xFF);
+            m.setMotorStatus((short) 0xFF);
         } else {
             int sta = Integer.parseInt(bsonDoc.getString(prefix + "Sta"));
             int crnt = Integer.parseInt(bsonDoc.getString(prefix + "InvtrCrnt"));
             if (sta == 3) {
-                m.setMotorStatus((byte) 0x04);
+                m.setMotorStatus((short) 0x04);
             } else if (sta == 6 || sta == 7 || sta == 8) {
                 if (crnt >= 0) {
-                    m.setMotorStatus((byte) 0x01);
+                    m.setMotorStatus((short) 0x01);
                 } else {
-                    m.setMotorStatus((byte) 0x02);
+                    m.setMotorStatus((short) 0x02);
                 }
             } else {
-                m.setMotorStatus((byte) 0x03);
+                m.setMotorStatus((short) 0x03);
             }
         }
 
         // 驱动电机控制器温度
-        m.setControllerTemperature((byte) Integer.parseInt(bsonDoc.getString(prefix + "InvtrTem")));
+        m.setControllerTemperature((short) Integer.parseInt(bsonDoc.getString(prefix + "InvtrTem")));
 
         // 驱动电机转速
         int speed = Integer.parseInt(bsonDoc.getString(prefix + "Spd"));
-        m.setSpeed(speed < -20000 ? (byte) 0xFF : (byte) speed);
+        m.setSpeed(speed < -20000 ? 0xFF : speed);
 
         // 驱动电机转矩
         if ("1".equals(bsonDoc.getString(prefix + "ActuToqV"))) {
@@ -89,7 +89,7 @@ public class AS24x02Motor extends MongoX implements IMongoX02Motor {
         }
 
         // 驱动电机温度
-        m.setMotorTemperature((byte) Integer.parseInt(bsonDoc.getString(prefix + "SttrTem")));
+        m.setMotorTemperature((short) Integer.parseInt(bsonDoc.getString(prefix + "SttrTem")));
 
         // 电机控制器输入电压
         float volt = Float.parseFloat(bsonDoc.getString("vehHVDCDCHVSideVolV"));
