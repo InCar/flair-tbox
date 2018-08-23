@@ -13,9 +13,17 @@ public class ModeFactory {
             case "AS26":
             case "IP24":
             case "IP34":
-                obj = new ModeMongo(mode, s_gbSwitches); break;
+            case "OLD-AS24":
+            case "IP32P":
+                obj = new ModeMongo(mode, s_gbSwitches);
+                break;
+            case "OLD-IP24MCE":
+            case "OLD-IP24":
+            case "OLD-BP34":
+                obj = new ModeOracle(mode, s_gbSwitches);
+                break;
             default:
-                throw new UnsupportedOperationException("mode");
+                throw new UnsupportedOperationException(mode);
         }
         return obj;
     }

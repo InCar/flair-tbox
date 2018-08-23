@@ -31,6 +31,7 @@ public class Parker {
     private LocalDate endDate;
     private MetaVinMode metaVinMode;
     private String out; // 输出位置
+    private boolean enableTar = true;
 
     private Thread thread = null;
     private final Object objExit = new Object();
@@ -70,9 +71,10 @@ public class Parker {
         saTask.setMax(max);
     }
 
-    public void setDataSourceTargetConfig(MongoConfig cfg, String out){
+    public void setDataSourceTargetConfig(MongoConfig cfg, String out, boolean isTar){
         taskWork.init(cfg, out);
         this.out = out;
+        this.enableTar = isTar;
     }
 
     // 执行
@@ -122,7 +124,7 @@ public class Parker {
                 }
 
                 // compress
-                tar(cursor);
+                if(enableTar) tar(cursor);
 
                 hourglass.increaseFinishedDay();
                 if(i == totalDays-1)

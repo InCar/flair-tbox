@@ -13,6 +13,8 @@ saic2017:
     endDate: 2017-12-31
     # 输出文件夹
     out: ./out
+    # 是否把每天的输出结果打包
+    enableTar: true
     # mongodb
     mongo:
         hosts:

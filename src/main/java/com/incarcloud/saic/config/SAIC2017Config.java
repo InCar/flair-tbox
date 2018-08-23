@@ -29,6 +29,10 @@ public class SAIC2017Config {
     public String getOut(){ return out; }
     public void setOut(String val){ out = val; }
 
+    private boolean enableTar;
+    public boolean getEnableTar(){ return enableTar; }
+    public void setEnableTar(boolean val){ enableTar = val; }
+
     private final MongoConfig mongo = new MongoConfig();
     public MongoConfig getMongo(){ return mongo; }
 

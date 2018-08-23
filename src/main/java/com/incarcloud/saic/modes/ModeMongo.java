@@ -80,7 +80,8 @@ public class ModeMongo extends Mode{
     @SuppressWarnings("unchecked")
     private <T> T create(String mode, Class<T> cls){
         try {
-            final String prefix = String.format("com.incarcloud.saic.modes.%s.%sx", mode, mode);
+            String modeFixed = mode.replace('-', '_');
+            final String prefix = String.format("com.incarcloud.saic.modes.%s.%sx", modeFixed, modeFixed);
             final String name = prefix + cls.getSimpleName().substring("IMongoX".length());
             Class<?> clsObj = Class.forName(name);
             return (T)clsObj.newInstance();
