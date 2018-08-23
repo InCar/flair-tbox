@@ -17,37 +17,37 @@ public class AS26x01Overview extends MongoX implements IMongoX01Overview {
         String vin = super.getVin(bsonDoc);
         ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(bsonDoc);
 
-        int vehEPTRdy = Integer.parseInt(bsonDoc.getString("vehEPTRdy"));
-        int vehSysPwrMod = Integer.parseInt(bsonDoc.getString("vehSysPwrMod"));
-        int vehBMSBscSta = Integer.parseInt(bsonDoc.getString("vehBMSBscSta"));
-        float vehBMSPackCrnt = Float.parseFloat((bsonDoc.getString("vehBMSPackCrnt")));
+        int vehEPTRdy = parseIntWithDef(bsonDoc,"vehEPTRdy");
+        int vehSysPwrMod = parseIntWithDef(bsonDoc,"vehSysPwrMod");
+        int vehBMSBscSta = parseIntWithDef(bsonDoc,"vehBMSBscSta");
+        float vehBMSPackCrnt = parseFloatWithDef(bsonDoc,"vehBMSPackCrnt");
 
-        int vehSpdAvgDrvnV = Integer.parseInt(bsonDoc.getString("vehSpdAvgDrvnV"));
-        float vehSpeed = Float.parseFloat(bsonDoc.getString("vehSpeed"));
+        int vehSpdAvgDrvnV = parseIntWithDef(bsonDoc,"vehSpdAvgDrvnV");
+        float vehSpeed = parseFloatWithDef(bsonDoc,"vehSpeed");
 
-        int vehOdoV = Integer.parseInt(bsonDoc.getString("vehOdoV"));
-        float vehOdo = Float.parseFloat(bsonDoc.getString("vehOdo"));
+        int vehOdoV = parseIntWithDef(bsonDoc,"vehOdoV");
+        float vehOdo = parseFloatWithDef(bsonDoc,"vehOdo");
 
-        int vehBMSPackVolV = Integer.parseInt(bsonDoc.getString("vehBMSPackVolV"));
-        float vehBMSPackVol = Float.parseFloat(bsonDoc.getString("vehBMSPackVol"));
+        int vehBMSPackVolV = parseIntWithDef(bsonDoc,"vehBMSPackVolV");
+        float vehBMSPackVol = parseFloatWithDef(bsonDoc,"vehBMSPackVol");
 
-        int vehBMSPackCrntV = Integer.parseInt(bsonDoc.getString("vehBMSPackCrntV"));
+        int vehBMSPackCrntV = parseIntWithDef(bsonDoc,"vehBMSPackCrntV");
 
-        int vehBMSPackSOCV = Integer.parseInt(bsonDoc.getString("vehBMSPackSOCV"));
-        float vehBMSPackSOC = Float.parseFloat(bsonDoc.getString("vehBMSPackSOC"));
+        int vehBMSPackSOCV = parseIntWithDef(bsonDoc,"vehBMSPackSOCV");
+        float vehBMSPackSOC = parseFloatWithDef(bsonDoc,"vehBMSPackSOC");
 
-        int vehHVDCDCSta = Integer.parseInt(bsonDoc.getString("vehHVDCDCSta"));
+        int vehHVDCDCSta = parseIntWithDef(bsonDoc,"vehHVDCDCSta");
 
-        int vehEPTTrInptShaftToqV = Integer.parseInt(bsonDoc.getString("vehEPTTrInptShaftToqV"));
-        float vehEPTTrInptShaftToq = Float.parseFloat(bsonDoc.getString("vehEPTTrInptShaftToq"));
-        int vehEPTBrkPdlDscrtInptStsV = Integer.parseInt(bsonDoc.getString("vehEPTBrkPdlDscrtInptStsV"));
-        int vehEPTBrkPdlDscrtInptSts = Integer.parseInt(bsonDoc.getString("vehEPTBrkPdlDscrtInptSts"));
-        int vehBrkSysBrkLghtsReqd = Integer.parseInt(bsonDoc.getString("vehBrkSysBrkLghtsReqd"));
-        int vehEPBSysBrkLghtsReqd = Integer.parseInt(bsonDoc.getString("vehEPBSysBrkLghtsReqd"));
-        int vehTrShftLvrPosV = Integer.parseInt(bsonDoc.getString("vehTrShftLvrPosV"));
-        int vehGearPos = Integer.parseInt(bsonDoc.getString("vehGearPos"));
+        int vehEPTTrInptShaftToqV = parseIntWithDef(bsonDoc,"vehEPTTrInptShaftToqV");
+        float vehEPTTrInptShaftToq = parseFloatWithDef(bsonDoc,"vehEPTTrInptShaftToq");
+        int vehEPTBrkPdlDscrtInptStsV = parseIntWithDef(bsonDoc,"vehEPTBrkPdlDscrtInptStsV");
+        int vehEPTBrkPdlDscrtInptSts = parseIntWithDef(bsonDoc,"vehEPTBrkPdlDscrtInptSts");
+        int vehBrkSysBrkLghtsReqd = parseIntWithDef(bsonDoc,"vehBrkSysBrkLghtsReqd");
+        int vehEPBSysBrkLghtsReqd = parseIntWithDef(bsonDoc,"vehEPBSysBrkLghtsReqd");
+        int vehTrShftLvrPosV = parseIntWithDef(bsonDoc,"vehTrShftLvrPosV");
+        int vehGearPos = parseIntWithDef(bsonDoc,"vehGearPos");
 
-        float vehBMSPtIsltnRstc = Float.parseFloat(bsonDoc.getString("vehBMSPtIsltnRstc"));
+        float vehBMSPtIsltnRstc = parseFloatWithDef(bsonDoc,"vehBMSPtIsltnRstc");
 
         GBx01Overview data = new GBx01Overview(vin, tmGMT8);
         data.setVehicleStatus(calcVehicleStatus(vehEPTRdy, vehSysPwrMod));
