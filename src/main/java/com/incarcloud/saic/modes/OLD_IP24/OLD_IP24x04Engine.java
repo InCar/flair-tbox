@@ -1,10 +1,8 @@
-package com.incarcloud.saic.modes.OLD_IP24MCE;
+package com.incarcloud.saic.modes.OLD_IP24;
 
 import com.incarcloud.auxiliary.Helper;
-import com.incarcloud.saic.GB32960.GBx01Overview;
 import com.incarcloud.saic.GB32960.GBx04Engine;
 import com.incarcloud.saic.modes.OracleX;
-import com.incarcloud.saic.modes.oracle.IOracleX01Overview;
 import com.incarcloud.saic.modes.oracle.IOracleX04Engine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +15,8 @@ import java.time.ZonedDateTime;
  *
  * @author ty
  */
-public class OLD_IP24MCEx04Engine extends OracleX implements IOracleX04Engine {
-    private static final Logger s_logger = LoggerFactory.getLogger(OLD_IP24MCEx04Engine.class);
+public class OLD_IP24x04Engine extends OracleX implements IOracleX04Engine {
+    private static final Logger s_logger = LoggerFactory.getLogger(OLD_IP24x04Engine.class);
 
     public GBx04Engine makeGBx04Engine(ResultSet rs){
 
@@ -28,53 +26,53 @@ public class OLD_IP24MCEx04Engine extends OracleX implements IOracleX04Engine {
             String vin = super.getVin(rs);
             ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(rs);
 
-            int ISGSpeedHSC2 = rs.getInt("ISGSpeedHSC2");
+            int ISGSpeed = rs.getInt("ISGSpeed");
             float AvgFuelConsumption = rs.getInt("AvgFuelConsumption");
 
             data = new GBx04Engine(vin, tmGMT8);
             // TODO: ...
-            data.setStatus(calcEngineStatus(ISGSpeedHSC2));
-            data.setSpeed(calcAxleSpeed(ISGSpeedHSC2));
+            data.setStatus(calcEngineStatus(ISGSpeed));
+            data.setSpeed(calcAxleSpeed(ISGSpeed));
             data.setRate(calcOilConsumptionRate(AvgFuelConsumption));
 
         }
         catch (SQLException ex){
-            s_logger.error("OLD_IP24MCEx01Overview.makeGBx01Overview() failed, {}", Helper.printStackTrace(ex));
+            s_logger.error("OLD_IP24x04Engine.makeGBx04Engine() failed, {}", Helper.printStackTrace(ex));
         }
 
         return data;
     }
 
-    private static short calcEngineStatus(int ISGSpeedHSC2){
+    private static short calcEngineStatus(int ISGSpeed){
         /*
-        IF ISGSpeedHSC2=65534 || 65535
+        IF ISGSpeed=65534 || 65535
         THEN 发动机状态=0xFF
-        ELSE IF ISGSpeedHSC2>100
+        ELSE IF ISGSpeed>100
         THEN 发动机状态=0x01
         ELSE 发动机状态=0x02
         */
         short engineStatus;
-        if(ISGSpeedHSC2 == 65534 || ISGSpeedHSC2 == 65535)
+        if(ISGSpeed == 65534 || ISGSpeed == 65535)
             engineStatus = 0xFF;
-        else if(ISGSpeedHSC2 > 100)
+        else if(ISGSpeed > 100)
             engineStatus = 0x01;
         else engineStatus = 0x02;
         return engineStatus;
     }
 
-    private static int calcAxleSpeed(int ISGSpeedHSC2){
+    private static int calcAxleSpeed(int ISGSpeed){
         /*
-        IF ISGSpeedHSC2=65534 || 65535
+        IF ISGSpeed=65534 || 65535
         THEN 曲轴转速=0xFF,0xFF
-        ELSE IF ISGSpeedHSC2>100
-        THEN 曲轴转速=ISGSpeedHSC2
+        ELSE IF ISGSpeed>100
+        THEN 曲轴转速=ISGSpeed
         ELSE 曲轴转速=0x00
          */
         int axleSpeed;
-        if(ISGSpeedHSC2 == 65534 || ISGSpeedHSC2 == 65535)
+        if(ISGSpeed == 65534 || ISGSpeed == 65535)
             axleSpeed = 0xFFFF;
-        else if(ISGSpeedHSC2 > 100)
-            axleSpeed = ISGSpeedHSC2;
+        else if(ISGSpeed > 100)
+            axleSpeed = ISGSpeed;
         else axleSpeed = 0x01;
 
         return axleSpeed;
