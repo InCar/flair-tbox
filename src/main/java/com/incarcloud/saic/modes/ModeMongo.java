@@ -23,6 +23,10 @@ public class ModeMongo extends Mode{
 
     private final boolean[] gbSwitches;
 
+    public String getMode() {
+        return mode;
+    }
+
     ModeMongo(String mode, boolean[] gbSwitches){
         this.mode = mode;
         this.gbSwitches = gbSwitches;
@@ -80,7 +84,7 @@ public class ModeMongo extends Mode{
     @SuppressWarnings("unchecked")
     private <T> T create(String mode, Class<T> cls){
         try {
-            final String prefix = String.format("com.incarcloud.saic.modes.%s.%sx", mode, mode);
+            final String prefix = String.format("com.incarcloud.saic.modes.%s.%sx", mode.replace("-", "_"), mode.replace("-", "_"));
             final String name = prefix + cls.getSimpleName().substring("IMongoX".length());
             Class<?> clsObj = Class.forName(name);
             return (T)clsObj.newInstance();

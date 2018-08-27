@@ -67,8 +67,7 @@ public class SourceMGO implements ISource2017 {
                         idx++;
                     }
                 }
-            }
-            catch (Exception ex){
+            }catch (Exception ex){
                 dataWalk.onFailed(ex);
                 return;
             }

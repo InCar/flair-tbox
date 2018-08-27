@@ -5,6 +5,7 @@ import com.incarcloud.concurrent.LimitedSyncArgTask;
 import com.incarcloud.concurrent.LimitedTask;
 import com.incarcloud.lang.Action;
 import com.incarcloud.saic.config.MongoConfig;
+import com.incarcloud.saic.config.OracleConfig;
 import com.incarcloud.saic.meta.MetaVinMode;
 import com.incarcloud.saic.t2017.TaskArg;
 import com.incarcloud.saic.t2017.TaskWork;
@@ -71,6 +72,11 @@ public class Parker {
     }
 
     public void setDataSourceTargetConfig(MongoConfig cfg, String out){
+        taskWork.init(cfg, out);
+        this.out = out;
+    }
+
+    public void setDataSourceTargetConfig(OracleConfig cfg, String out){
         taskWork.init(cfg, out);
         this.out = out;
     }
