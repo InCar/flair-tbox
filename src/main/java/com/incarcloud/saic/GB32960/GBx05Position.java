@@ -53,7 +53,7 @@ public class GBx05Position extends GBData{
 
     @Override
     public int calcGBFrameSize(){
-        return 9;
+        return 10;
     }
 
     @Override

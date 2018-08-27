@@ -70,11 +70,17 @@ public abstract class GBData{
 
         // 计算BCC
         byte[] buf = stream.toByteArray();
-        byte bcc = (byte)0x00;
-        for(int i=2;i<buf.length-2;i++){
-            bcc = (byte)(bcc^buf[i]);
+
+        //添加数据单元长度
+        int length = buf.length - 25;
+        buf[22] = (byte) ((length >>> 8) & 0xFF);
+        buf[23] = (byte) (length & 0xFF);
+
+        int bcc = buf[2] & 0xFF;
+        for(int i = 3;i < buf.length - 1;i ++){
+            bcc = bcc ^ (buf[i] & 0xFF);
         }
-        buf[buf.length-1] = bcc;
+        buf[buf.length-1] = (byte)(bcc & 0xFF);
 
         stream.close();
 

@@ -55,7 +55,7 @@ public class GBx04Engine extends GBData {
 
     @Override
     public int calcGBFrameSize(){
-        return 5;
+        return 6;
     }
 
     @Override
