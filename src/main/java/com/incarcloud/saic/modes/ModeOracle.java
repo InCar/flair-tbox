@@ -21,6 +21,11 @@ public class ModeOracle extends Mode{
     private final IOracleX06Peak x06Peak;
     private final IOracleX07Alarm x07Alarm;
 
+    @Override
+    public String getMode() {
+        return mode;
+    }
+
     private final boolean[] gbSwitches;
 
     ModeOracle(String mode, boolean[] gbSwitches){

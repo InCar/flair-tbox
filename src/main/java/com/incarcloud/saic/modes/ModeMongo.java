@@ -23,6 +23,11 @@ public class ModeMongo extends Mode{
 
     private final boolean[] gbSwitches;
 
+    @Override
+    public String getMode() {
+        return mode;
+    }
+
     ModeMongo(String mode, boolean[] gbSwitches){
         this.mode = mode;
         this.gbSwitches = gbSwitches;

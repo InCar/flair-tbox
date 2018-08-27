@@ -1,5 +1,7 @@
 package com.incarcloud.saic.ds;
 
+import com.incarcloud.saic.modes.Mode;
+
 /**
  * 数据巡游器
  */
@@ -29,4 +31,6 @@ public interface IDataWalk {
      * 它和onFinished相互排斥,两者只有一个会被调用
      */
     void onFailed(Exception ex);
+
+    Mode getMode();
 }
