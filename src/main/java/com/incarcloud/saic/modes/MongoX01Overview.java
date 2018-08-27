@@ -18,7 +18,6 @@ public class MongoX01Overview extends MongoX implements IMongoX01Overview {
 
         int vehEPTRdy = parseIntWithDef(bsonDoc,"vehEPTRdy");
         int vehSysPwrMod = parseIntWithDef(bsonDoc,"vehSysPwrMod");
-
         int vehBMSBscSta = parseIntWithDef(bsonDoc, "vehBMSBscSta");
         float vehBMSPackCrnt = parseFloatWithDef(bsonDoc,"vehBMSPackCrnt");
         int vehElecVehSysMd = parseIntWithDef(bsonDoc,"vehElecVehSysMd");
@@ -40,7 +39,6 @@ public class MongoX01Overview extends MongoX implements IMongoX01Overview {
         int vehEPBSysBrkLghtsReqd = parseIntWithDef(bsonDoc,"vehEPBSysBrkLghtsReqd");
         int vehTrShftLvrPosV = parseIntWithDef(bsonDoc,"vehTrShftLvrPosV");
         int vehGearPos = parseIntWithDef(bsonDoc,"vehGearPos");
-
         float vehBMSPtIsltnRstc = parseFloatWithDef(bsonDoc,"vehBMSPtIsltnRstc");
 
         GBx01Overview data = new GBx01Overview(vin, tmGMT8);
