@@ -15,11 +15,11 @@ public class ModeOracle extends Mode{
     private final String mode;
 
     private final IOracleX01Overview x01Overview;
-    private final IOracleX02Motor x02Motor;
+//    private final IOracleX02Motor x02Motor;
     private final IOracleX04Engine x04Engine;
-    private final IOracleX05Position x05Position;
-    private final IOracleX06Peak x06Peak;
-    private final IOracleX07Alarm x07Alarm;
+//    private final IOracleX05Position x05Position;
+//    private final IOracleX06Peak x06Peak;
+//    private final IOracleX07Alarm x07Alarm;
 
     @Override
     public String getMode() {
@@ -33,11 +33,11 @@ public class ModeOracle extends Mode{
         this.gbSwitches = gbSwitches;
 
         x01Overview = gbSwitches[0x01] ? create(mode, IOracleX01Overview.class) : null;
-        x02Motor    = gbSwitches[0x02] ? create(mode, IOracleX02Motor.class)    : null;
+//        x02Motor    = gbSwitches[0x02] ? create(mode, IOracleX02Motor.class)    : null;
         x04Engine   = gbSwitches[0x04] ? create(mode, IOracleX04Engine.class)   : null;
-        x05Position = gbSwitches[0x05] ? create(mode, IOracleX05Position.class) : null;
-        x06Peak     = gbSwitches[0x06] ? create(mode, IOracleX06Peak.class)     : null;
-        x07Alarm    = gbSwitches[0x07] ? create(mode, IOracleX07Alarm.class)    : null;
+//        x05Position = gbSwitches[0x05] ? create(mode, IOracleX05Position.class) : null;
+//        x06Peak     = gbSwitches[0x06] ? create(mode, IOracleX06Peak.class)     : null;
+//        x07Alarm    = gbSwitches[0x07] ? create(mode, IOracleX07Alarm.class)    : null;
     }
 
     @Override
@@ -49,8 +49,8 @@ public class ModeOracle extends Mode{
 
     @Override
     public GBx02Motor makeGBx02Motor(Object data){
-        if(gbSwitches[0x02] && data instanceof ResultSet)
-            return x02Motor.makeGBx02Motor((ResultSet) data);
+//        if(gbSwitches[0x02] && data instanceof ResultSet)
+//            return x02Motor.makeGBx02Motor((ResultSet) data);
         return null;
     }
 
@@ -63,22 +63,22 @@ public class ModeOracle extends Mode{
 
     @Override
     public GBx05Position makeGBx05Position(Object data){
-        if(gbSwitches[0x05] && data instanceof ResultSet)
-            return x05Position.makeGBx05Position((ResultSet) data);
+//        if(gbSwitches[0x05] && data instanceof ResultSet)
+//            return x05Position.makeGBx05Position((ResultSet) data);
         return null;
     }
 
     @Override
     public GBx06Peak makeGBx06Peak(Object data){
-        if(gbSwitches[0x06] && data instanceof ResultSet)
-            return x06Peak.makeGBx06Peak((ResultSet) data);
+//        if(gbSwitches[0x06] && data instanceof ResultSet)
+//            return x06Peak.makeGBx06Peak((ResultSet) data);
         return null;
     }
 
     @Override
     public GBx07Alarm makeGBx07Alarm(Object data){
-        if(gbSwitches[0x07] && data instanceof ResultSet)
-            return x07Alarm.makeGBx07Alarm((ResultSet) data);
+//        if(gbSwitches[0x07] && data instanceof ResultSet)
+//            return x07Alarm.makeGBx07Alarm((ResultSet) data);
         return null;
     }
 

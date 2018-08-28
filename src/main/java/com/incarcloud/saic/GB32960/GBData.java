@@ -1,5 +1,7 @@
 package com.incarcloud.saic.GB32960;
 
+import com.incarcloud.saic.utils.DataPackUtil;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
@@ -81,6 +83,9 @@ public abstract class GBData{
             bcc = bcc ^ (buf[i] & 0xFF);
         }
         buf[buf.length-1] = (byte)(bcc & 0xFF);
+
+//        String msg = DataPackUtil.bytes2hex(buf);
+//        System.out.println(msg);
 
         stream.close();
 

@@ -77,8 +77,11 @@ public class ModeMongo extends Mode{
 
     @Override
     public GBx07Alarm makeGBx07Alarm(Object data){
-        if(gbSwitches[0x07] && data instanceof Document)
-            return x07Alarm.makeGBx07Alarm((Document) data);
+        if(gbSwitches[0x07] && data instanceof Document){
+            if(x07Alarm != null){
+                return x07Alarm.makeGBx07Alarm((Document) data);
+            }
+        }
         return null;
     }
 

@@ -34,6 +34,8 @@ dependencies {
     compile("org.mongodb:mongodb-driver-sync:3.8.+")
 
     compile("com.incarcloud:incar-vault:1.1.1")
+    compile group: 'com.alibaba', name: 'fastjson', version: '1.2.+'
+    compile files("lib/ojdbc6.jar")
 
     testImplementation("junit:junit:4.+")
 }
