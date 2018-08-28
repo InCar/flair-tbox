@@ -26,12 +26,13 @@ public class GBx02Motor extends GBData {
 
     @Override
     public int calcGBFrameSize(){
-        return 12 * motors.size() + 1;
+        return 12 * motors.size() + 2;
     }
 
     @Override
     public void fillGBFrame(DataOutputStream stream) throws IOException{
         stream.writeByte(0x02);
+        stream.writeByte(motors.size());
 
         for(Motor motor : motors){
             short motorSeq = motor.getMotorSeq();

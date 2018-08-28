@@ -14,4 +14,5 @@ public abstract class Mode {
     public abstract GBx05Position makeGBx05Position(Object data);
     public abstract GBx06Peak     makeGBx06Peak(Object data);
     public abstract GBx07Alarm    makeGBx07Alarm(Object data);
+    public abstract String getMode();
 }

@@ -40,6 +40,10 @@ class SaicDataWalk implements IDataWalk {
     private final TreeSet<GBPackage> sortedPackages = new TreeSet<>();
     private final TreeSet<GBx07Alarm> sortedAlarms;
 
+    public Mode getMode() {
+        return modeObj;
+    }
+
     SaicDataWalk(TaskArg taskArg, String out){
         this.taskArg = taskArg;
         this.out = out;

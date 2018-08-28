@@ -303,7 +303,7 @@ public class GBx07Alarm extends GBData {
 
     @Override
     public int calcGBFrameSize(){
-        return 9 + 4 * (deviceFaultCount + motorFaultCount + engineFaultCount + otherFaultCount);
+        return 10 + 4 * (deviceFaultCount + motorFaultCount + engineFaultCount + otherFaultCount);
     }
 
     @Override

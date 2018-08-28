@@ -2,6 +2,7 @@ package com.incarcloud.saic.t2017;
 
 import com.incarcloud.lang.Action;
 import com.incarcloud.saic.config.MongoConfig;
+import com.incarcloud.saic.config.OracleConfig;
 import com.incarcloud.saic.ds.DSFactory;
 import com.incarcloud.saic.ds.ISource2017;
 import org.slf4j.Logger;
@@ -25,6 +26,16 @@ public class TaskWork implements Action<TaskArg> {
 
     // 初始化
     public void init(MongoConfig cfg, String out){
+        // 输入数据源
+        ds = DSFactory.create(cfg);
+        ds.init();
+
+        // 输出文件夹
+        this.out = out;
+    }
+
+    // 初始化
+    public void init(OracleConfig cfg, String out){
         // 输入数据源
         ds = DSFactory.create(cfg);
         ds.init();
