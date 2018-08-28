@@ -1,8 +1,9 @@
-package com.incarcloud.saic.modes.OLD_IP24;
+package com.incarcloud.saic.modes.OLD_IP24MCE;
 
 import com.incarcloud.auxiliary.Helper;
 import com.incarcloud.saic.GB32960.GBx02Motor;
 import com.incarcloud.saic.GB32960.Motor;
+import com.incarcloud.saic.modes.OLD_BP34.OLD_BP34x01Overview;
 import com.incarcloud.saic.modes.OracleX;
 import com.incarcloud.saic.modes.oracle.IOracleX02Motor;
 import org.slf4j.Logger;
@@ -14,10 +15,10 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 /**
- * Created by dave on 18-8-28 上午10:00.
+ * Created by dave on 18-8-28 下午1:48.
  */
-public class OLD_IP24x02Motor extends OracleX implements IOracleX02Motor {
-    private static final Logger s_logger = LoggerFactory.getLogger(OLD_IP24x02Motor.class);
+public class OLD_IP24MCEx02Motor extends OracleX implements IOracleX02Motor {
+    private static final Logger s_logger = LoggerFactory.getLogger(OLD_BP34x01Overview.class);
 
     @Override
     public GBx02Motor makeGBx02Motor(ResultSet rs) {
@@ -32,8 +33,8 @@ public class OLD_IP24x02Motor extends OracleX implements IOracleX02Motor {
             // 驱动电机序号
             m.setMotorSeq((short) 1);
 
-            float toq = rs.getFloat("TMTorqueActual");
-            int sta = rs.getInt("TMState");
+            float toq = rs.getFloat("TMTorqueActualHSC2");
+            int sta = rs.getInt("TMStateHSC2");
 
             // 驱动电机状态
             if (toq == 511 || toq == 512) {
@@ -51,19 +52,19 @@ public class OLD_IP24x02Motor extends OracleX implements IOracleX02Motor {
             }
 
             // 驱动电机控制器温度
-            int TMInvtTemp = rs.getInt("TMInvtTemp");
-            if (TMInvtTemp == 215 || TMInvtTemp == 214) {
+            int TMInvtTempHSC2 = rs.getInt("TMInvtTempHSC2");
+            if (TMInvtTempHSC2 == 215 || TMInvtTempHSC2 == 214) {
                 m.setControllerTemperature((short) 0xFF);
             } else {
-                m.setControllerTemperature((short) (TMInvtTemp + 40));
+                m.setControllerTemperature((short) (TMInvtTempHSC2 + 40));
             }
 
             // 驱动电机转速
-            int TMSpeed = rs.getInt("TMSpeed");
-            if (TMSpeed == 32678 || TMSpeed == 32677 || TMSpeed < -20000) {
+            int TMSpeedHSC2 = rs.getInt("TMSpeedHSC2");
+            if (TMSpeedHSC2 == 32678 || TMSpeedHSC2 == 32677 || TMSpeedHSC2 < -20000) {
                 m.setSpeed(0xFF);
             } else {
-                m.setSpeed(TMSpeed + 20000);
+                m.setSpeed(TMSpeedHSC2 + 20000);
             }
 
             // 驱动电机转矩
@@ -74,29 +75,29 @@ public class OLD_IP24x02Motor extends OracleX implements IOracleX02Motor {
             }
 
             // 驱动电机温度
-            int TMTemp = rs.getInt("TMTemp");
-            if (TMTemp == 215 || TMTemp == 214) {
+            int TMTempHSC2 = rs.getInt("TMTempHSC2");
+            if (TMTempHSC2 == 215 || TMTempHSC2 == 214) {
                 m.setMotorTemperature((short) 0xFF);
             } else {
-                m.setMotorTemperature((short) (TMTemp + 40));
+                m.setMotorTemperature((short) (TMTempHSC2 + 40));
             }
 
             // 电机控制器输入电压
-            float DCVoltHV = rs.getFloat("DCVoltHV");
-            if (DCVoltHV == 1023 || DCVoltHV == 1022) {
+            float DCVoltHVHSC2 = rs.getFloat("DCVoltHVHSC2");
+            if (DCVoltHVHSC2 == 1023 || DCVoltHVHSC2 == 1022) {
                 m.setControllerInputVoltage(0xFFFF);
             } else {
-                m.setControllerInputVoltage((DCVoltHV - 1) * 10);
+                m.setControllerInputVoltage((DCVoltHVHSC2 - 1) * 10);
             }
 
             // 电机控制器直流母线电流
-            float BMSPackCurrent = rs.getFloat("BMSPackCurrent");
-            if (BMSPackCurrent == 638.35f || BMSPackCurrent == 638.375f) {
+            float BMSPackCurrentHSC2 = rs.getFloat("BMSPackCurrentHSC2");
+            if (BMSPackCurrentHSC2 == 638.35f || BMSPackCurrentHSC2 == 638.375f) {
                 m.setControllerDirectCurrent(0xFFFF);
             } else if (toq > 0) {
-                m.setControllerDirectCurrent((BMSPackCurrent - 2 + 1000) * 10);
+                m.setControllerDirectCurrent((BMSPackCurrentHSC2 - 2 + 1000) * 10);
             } else if (toq < 0) {
-                m.setControllerDirectCurrent((BMSPackCurrent + 1000) * 10);
+                m.setControllerDirectCurrent((BMSPackCurrentHSC2 + 1000) * 10);
             } else {
                 m.setControllerDirectCurrent(0);
             }
@@ -109,8 +110,8 @@ public class OLD_IP24x02Motor extends OracleX implements IOracleX02Motor {
             // 驱动电机序号
             m.setMotorSeq((short) 2);
 
-            toq = rs.getInt("ISGTorqueActual");
-            sta = rs.getInt("ISGState");
+            toq = rs.getInt("ISGTorqueActualHSC2");
+            sta = rs.getInt("ISGStateHSC2");
 
             // 驱动电机状态
             if (toq == 511 || toq == 512) {
@@ -128,19 +129,19 @@ public class OLD_IP24x02Motor extends OracleX implements IOracleX02Motor {
             }
 
             // 驱动电机控制器温度
-            int ISGInvtTemp = rs.getInt("ISGInvtTemp");
-            if (ISGInvtTemp == 215 || ISGInvtTemp == 214) {
+            int ISGInvtTempHSC2 = rs.getInt("ISGInvtTempHSC2");
+            if (ISGInvtTempHSC2 == 215 || ISGInvtTempHSC2 == 214) {
                 m.setControllerTemperature((short) 0xFF);
             } else {
-                m.setControllerTemperature((short) (ISGInvtTemp + 40));
+                m.setControllerTemperature((short) (ISGInvtTempHSC2 + 40));
             }
 
             // 驱动电机转速
-            int ISGSpeed = rs.getInt("ISGSpeed");
-            if (ISGSpeed == 32678 || ISGSpeed == 32677 || ISGSpeed < -20000) {
+            int ISGSpeedHSC2 = rs.getInt("ISGSpeedHSC2");
+            if (ISGSpeedHSC2 == 32678 || ISGSpeedHSC2 == 32677 || ISGSpeedHSC2 < -20000) {
                 m.setSpeed(0xFF);
             } else {
-                m.setSpeed(ISGSpeed + 20000);
+                m.setSpeed(ISGSpeedHSC2 + 20000);
             }
 
             // 驱动电机转矩
@@ -151,25 +152,25 @@ public class OLD_IP24x02Motor extends OracleX implements IOracleX02Motor {
             }
 
             // 驱动电机温度
-            int ISGTemp = rs.getInt("ISGTemp");
-            if (ISGTemp == 215 || ISGTemp == 214) {
+            int ISGTempHSC2 = rs.getInt("ISGTempHSC2");
+            if (ISGTempHSC2 == 215 || ISGTempHSC2 == 214) {
                 m.setMotorTemperature((short) 0xFF);
             } else {
-                m.setMotorTemperature((short) (ISGTemp + 40));
+                m.setMotorTemperature((short) (ISGTempHSC2 + 40));
             }
 
             // 电机控制器输入电压
-            if (DCVoltHV == 1023 || DCVoltHV == 1022) {
+            if (DCVoltHVHSC2 == 1023 || DCVoltHVHSC2 == 1022) {
                 m.setControllerInputVoltage(0xFFFF);
             } else {
-                m.setControllerInputVoltage((DCVoltHV - 1) * 10);
+                m.setControllerInputVoltage((DCVoltHVHSC2 - 1) * 10);
             }
 
             // 电机控制器直流母线电流
-            if (BMSPackCurrent == 638.35f || BMSPackCurrent == 638.375f) {
+            if (BMSPackCurrentHSC2 == 638.35f || BMSPackCurrentHSC2 == 638.375f) {
                 m.setControllerDirectCurrent(0xFFFF);
-            } else if (toq > 0 && ISGSpeed > 100) {
-                m.setControllerDirectCurrent((BMSPackCurrent - 1 + 1000) * 10);
+            } else if (toq > 0 && ISGSpeedHSC2 > 100) {
+                m.setControllerDirectCurrent((BMSPackCurrentHSC2 - 1 + 1000) * 10);
             } else {
                 m.setControllerDirectCurrent(0);
             }
