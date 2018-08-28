@@ -16,48 +16,47 @@ public class IP32Px06Peak extends MongoX implements IMongoX06Peak {
     public GBx06Peak makeGBx06Peak(Document bsonDoc){
         String vin = super.getVin(bsonDoc);
         ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(bsonDoc);
-
-        byte vehBMSCellMaxVolIndx = Byte.parseByte(bsonDoc.getString("vehBMSCellMaxVolIndx"));
-        int vehBMSCellMaxVolV = Integer.parseInt(bsonDoc.getString("vehBMSCellMaxVolV"));
-        float vehBMSCellMaxVol = Float.parseFloat(bsonDoc.getString("vehBMSCellMaxVol"));
-        byte vehBMSCellMinVolIndx = Byte.parseByte(bsonDoc.getString("vehBMSCellMinVolIndx"));
-        int vehBMSCellMinVolV = Integer.parseInt(bsonDoc.getString("vehBMSCellMinVolV"));
-        float vehBMSCellMinVol = Float.parseFloat(bsonDoc.getString("vehBMSCellMinVol"));
-        byte vehBMSCellMaxTemIndx = Byte.parseByte(bsonDoc.getString("vehBMSCellMaxTemIndx"));
         GBx06Peak data = new GBx06Peak(vin, tmGMT8);
         //最高电压电池子系统号=0x01
-        data.setHighBatteryId((byte) 0x01);
+        data.setHighBatteryId((short) 0x01);
         //最高电压电池单体代号 = vehBMSCellMaxVolIndx
+        short vehBMSCellMaxVolIndx = Short.parseShort(bsonDoc.getString("vehBMSCellMaxVolIndx"));
         data.setHighBatteryCode(vehBMSCellMaxVolIndx);
         //电 池 单 体 电 压 最 高 值
+        short vehBMSCellMaxVolV = Short.parseShort(bsonDoc.getString("vehBMSCellMaxVolV"));
+        float vehBMSCellMaxVol = Float.parseFloat(bsonDoc.getString("vehBMSCellMaxVol"));
         data.setHighVoltage(singleBatteryVoltage(vehBMSCellMaxVolV, vehBMSCellMaxVol));
         //最低电压电池子系统号
-        data.setLowBatteryId((byte) 0x1);
+        data.setLowBatteryId((short) 0x1);
         //最低电压电池单体代号
+        short vehBMSCellMinVolIndx = Short.parseShort(bsonDoc.getString("vehBMSCellMinVolIndx"));
         data.setLowBatteryCode(vehBMSCellMinVolIndx);
         //电池单体电压最低值
+        short vehBMSCellMinVolV = Short.parseShort(bsonDoc.getString("vehBMSCellMinVolV"));
+        float vehBMSCellMinVol = Float.parseFloat(bsonDoc.getString("vehBMSCellMinVol"));
         data.setLowVoltage(minimumVoltageOfsingle(vehBMSCellMinVolV, vehBMSCellMinVol));
         //最高温度子系统号
-        data.setHighTemperatureId((byte) 0x1);
+        data.setHighTemperatureId((short) 0x1);
         //最高温度探针序号
+        short vehBMSCellMaxTemIndx = Short.parseShort(bsonDoc.getString("vehBMSCellMaxTemIndx"));
         data.setHighProbeCode(vehBMSCellMaxTemIndx);
         //最高温度值
-        byte vehBMSCellMaxTemV = Byte.parseByte(bsonDoc.getString("vehBMSCellMaxTemV"));
-        byte vehBMSCellMaxTem = Byte.parseByte(bsonDoc.getString("vehBMSCellMaxTem"));
+        short vehBMSCellMaxTemV = Short.parseShort(bsonDoc.getString("vehBMSCellMaxTemV"));
+        short vehBMSCellMaxTem = Short.parseShort(bsonDoc.getString("vehBMSCellMaxTem"));
         data.setHighTemperature(highestTemperatureSubsystem(vehBMSCellMaxTemV, vehBMSCellMaxTem));
         //最低温度子系统号
-        data.setLowTemperatureId((byte) 0x1);
+        data.setLowTemperatureId((short) 0x1);
         //最低温度探针序号
-        byte vehBMSCellMinTemIndx = Byte.parseByte(bsonDoc.getString("vehBMSCellMinTemIndx"));
+        short vehBMSCellMinTemIndx = Short.parseShort(bsonDoc.getString("vehBMSCellMinTemIndx"));
         data.setLowProbeCode(vehBMSCellMinTemIndx);
         //最低温度值
-        int vehBMSCellMinTemV = Integer.parseInt(bsonDoc.getString("vehBMSCellMinTemV"));
-        byte vehBMSCellMinTem = Byte.parseByte(bsonDoc.getString("vehBMSCellMinTem"));
+        short vehBMSCellMinTemV = Short.parseShort(bsonDoc.getString("vehBMSCellMinTemV"));
+        short vehBMSCellMinTem = Short.parseShort(bsonDoc.getString("vehBMSCellMinTem"));
         data.setLowTemperature(minimumStorageSubsystem(vehBMSCellMinTemV, vehBMSCellMinTem));
         return data;
     }
 
-    private static float singleBatteryVoltage(int vehBMSCellMaxVolV, float vehBMSCellMaxVol){
+    private static float singleBatteryVoltage(short vehBMSCellMaxVolV, float vehBMSCellMaxVol){
         /*
         IF vehBMSCellMaxVolV=1
         THEN 电 池 单 体 电 压 最 高 值
@@ -67,11 +66,11 @@ public class IP32Px06Peak extends MongoX implements IMongoX06Peak {
          */
         float singleBattery;
         if(vehBMSCellMaxVolV == 1) singleBattery = 0xFFFF;
-        else singleBattery = vehBMSCellMaxVol * 0.001f;
+        else singleBattery = vehBMSCellMaxVol;
         return singleBattery;
     }
 
-    private static float minimumVoltageOfsingle(int vehBMSCellMinVolV, float vehBMSCellMinVol){
+    private static float minimumVoltageOfsingle(short vehBMSCellMinVolV, float vehBMSCellMinVol){
         /*
         IF vehBMSCellMinVolV=1
         THEN 电 池 单 体 电 压 最 低 值
@@ -81,33 +80,33 @@ public class IP32Px06Peak extends MongoX implements IMongoX06Peak {
          */
         float minimumVoltage;
         if(vehBMSCellMinVolV == 1) minimumVoltage = 0xFFFF;
-        else minimumVoltage = vehBMSCellMinVol * 0.001f;
+        else minimumVoltage = vehBMSCellMinVol;
         return minimumVoltage;
     }
 
-    private static byte highestTemperatureSubsystem(int vehBMSCellMaxTemV, byte vehBMSCellMaxTem){
+    private static short highestTemperatureSubsystem(short vehBMSCellMaxTemV, short vehBMSCellMaxTem){
         /*
         IF vehBMSCellMaxTemV=1
         THEN 最高温度值=0xFF
         ELSE 最 高 温 度 值 =
         vehBMSCellMaxTem
          */
-        byte highestSubsystem;
-        if(vehBMSCellMaxTemV == 1) highestSubsystem = (byte) 0xFF;
-        else highestSubsystem = (byte) (vehBMSCellMaxTem - 40);
+        short highestSubsystem;
+        if(vehBMSCellMaxTemV == 1) highestSubsystem = (short) 0xFF;
+        else highestSubsystem = (short) (vehBMSCellMaxTem);
         return highestSubsystem;
     }
 
-    private static byte minimumStorageSubsystem(int vehBMSCellMinTemV,byte vehBMSCellMinTem){
+    private static short minimumStorageSubsystem(short vehBMSCellMinTemV,short vehBMSCellMinTem){
         /*
         IF vehBMSCellMinTemV=1
         THEN 最低温度值=0xFF
         ELSE 最 低 温 度 值 =
         vehBMSCellMinTem
         */
-        byte minimumStorage;
-        if(vehBMSCellMinTemV == 1) minimumStorage = (byte) 0xFF;
-        else minimumStorage = (byte) (vehBMSCellMinTem - 40);
+        short minimumStorage;
+        if(vehBMSCellMinTemV == 1) minimumStorage = (short) 0xFF;
+        else minimumStorage = (short) (vehBMSCellMinTem );
         return minimumStorage;
     }
 }
