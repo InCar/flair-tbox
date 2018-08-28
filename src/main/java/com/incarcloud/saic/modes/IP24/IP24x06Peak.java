@@ -18,11 +18,10 @@ public class IP24x06Peak extends MongoX implements IMongoX06Peak {
         ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(bsonDoc);
         GBx06Peak data = new GBx06Peak(vin, tmGMT8);
 
-
         //最高电压电池子系统号=0x01
-        data.setHighBatteryId((byte) 0x01);
+        data.setHighBatteryId((short) 0x01);
         //最高电压电池单体代号 = vehBMSCellMaxVolIndx
-        byte vehBMSCellMaxVolIndx = Byte.parseByte(bsonDoc.getString("vehBMSCellMaxVolIndx"));
+        short vehBMSCellMaxVolIndx = Short.parseShort(bsonDoc.getString("vehBMSCellMaxVolIndx"));
         data.setHighBatteryCode(vehBMSCellMaxVolIndx);
         /* IF vehBMSCellMaxVol=8.19||8.191
         THEN 电 池 单 体 电 压 最 高 值 =0xFF,0xFF
@@ -30,9 +29,9 @@ public class IP24x06Peak extends MongoX implements IMongoX06Peak {
         float vehBMSCellMaxVol = Float.parseFloat(bsonDoc.getString("vehBMSCellMaxVol"));
         data.setHighVoltage(singleBatteryVoltage(vehBMSCellMaxVol));
         //最低电压电池子系统号
-        data.setLowBatteryId((byte) 0x1);
+        data.setLowBatteryId((short) 0x1);
         //最低电压电池单体代号
-        byte vehBMSCellMinVolIndx = Byte.parseByte(bsonDoc.getString("vehBMSCellMinVolIndx"));
+        short vehBMSCellMinVolIndx = Short.parseShort(bsonDoc.getString("vehBMSCellMinVolIndx"));
         data.setLowBatteryCode(vehBMSCellMinVolIndx);
         /*IF vehBMSCellMinVol=8.19||8.191
         THEN 电 池 单 体 电 压 最 低 值 =0xFF,0xFF
@@ -40,9 +39,9 @@ public class IP24x06Peak extends MongoX implements IMongoX06Peak {
         float vehBMSCellMinVol = Float.parseFloat(bsonDoc.getString("vehBMSCellMinVol"));
         data.setLowVoltage(minimumVoltageOfsingle(vehBMSCellMinVol));
         //最高温度子系统号
-        data.setHighTemperatureId((byte) 0x1);
+        data.setHighTemperatureId((short) 0x1);
         //最高温度探针序号  最 高 温 度 探 针 序 号 = /vehBMSCellMaxTemIndx
-        byte vehBMSCellMaxTemIndx = Byte.parseByte(bsonDoc.getString("vehBMSCellMaxTemIndx"));
+        short vehBMSCellMaxTemIndx = Short.parseShort(bsonDoc.getString("vehBMSCellMaxTemIndx"));
         data.setHighProbeCode(vehBMSCellMaxTemIndx);
         /*IF vehBMSCellMaxTem=87||87.5
         THEN 最高温度值=0xFF
@@ -68,7 +67,7 @@ public class IP24x06Peak extends MongoX implements IMongoX06Peak {
         ELSE 电 池 单 体 电 压 最 高 值 = vehBMSCellMaxVol*/
         float singleBattery;
         if(vehBMSCellMaxVol == 8.19||vehBMSCellMaxVol ==8.191) singleBattery = 0xFFFF;
-        else singleBattery = vehBMSCellMaxVol * 0.001f;
+        else singleBattery = vehBMSCellMaxVol;
         return singleBattery;
     }
     private static float minimumVoltageOfsingle(float vehBMSCellMinVol){

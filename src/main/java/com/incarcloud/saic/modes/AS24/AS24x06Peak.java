@@ -91,7 +91,7 @@ public class AS24x06Peak extends MongoX implements IMongoX06Peak {
         vehBMSCellMaxTem
          */
         short highestSubsystem;
-        if(vehBMSCellMaxTemV == 1) highestSubsystem = (byte) 0xFF;
+        if(vehBMSCellMaxTemV == 1) highestSubsystem = (short) 0xFF;
         else highestSubsystem =  vehBMSCellMaxTem ;
         return highestSubsystem;
     }
