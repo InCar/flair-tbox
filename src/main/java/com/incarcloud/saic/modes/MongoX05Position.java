@@ -7,6 +7,10 @@ import org.bson.Document;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
+/**
+ *
+ * @author lgy
+ */
 public class MongoX05Position extends MongoX implements IMongoX05Position {
     @Override
     public GBx05Position makeGBx05Position(Document bsonDoc) {
