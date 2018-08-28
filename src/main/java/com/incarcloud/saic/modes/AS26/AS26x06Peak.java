@@ -146,7 +146,7 @@ public class AS26x06Peak extends MongoX implements IMongoX06Peak  {
 
         data.setLowTemperature((byte) (vehBMSCellTemMin - 40));
         /*  IF最低温度值=215
-        THEN最低温度探针序号=0xFF
+        THEN最低温度探针序号=0xFF  jhfhyh
         ELSE 最低温度探针序号=Index{最低温度值 of [vehBMSCellTem(1) ,…, vehBMSCellTem(可充电储能温度探针个数)]}*/
         @SuppressWarnings("unchecked")
         List<Document> tmplistLowTem1 = (List<Document>)bsonDoc.get("vehBMSCellTem", List.class);
