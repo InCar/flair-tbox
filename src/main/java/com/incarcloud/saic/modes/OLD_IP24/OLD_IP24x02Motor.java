@@ -1,4 +1,4 @@
-package com.incarcloud.saic.modes.OLD_BP34;
+package com.incarcloud.saic.modes.OLD_IP24;
 
 import com.incarcloud.auxiliary.Helper;
 import com.incarcloud.saic.GB32960.GBx02Motor;
@@ -14,10 +14,10 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 /**
- * Created by dave on 18-8-27 下午4:11.
+ * Created by dave on 18-8-28 上午10:00.
  */
-public class OLD_BP34x02Motor extends OracleX implements IOracleX02Motor {
-    private static final Logger s_logger = LoggerFactory.getLogger(OLD_BP34x01Overview.class);
+public class OLD_IP24x02Motor extends OracleX implements IOracleX02Motor {
+    private static final Logger s_logger = LoggerFactory.getLogger(OLD_IP24x02Motor.class);
 
     @Override
     public GBx02Motor makeGBx02Motor(ResultSet rs) {
@@ -32,8 +32,8 @@ public class OLD_BP34x02Motor extends OracleX implements IOracleX02Motor {
             // 驱动电机序号
             m.setMotorSeq((short) 1);
 
-            float toq = rs.getFloat("TMActuToq");
-            int sta = rs.getInt("TMSta");
+            float toq = rs.getFloat("TMTorqueActual");
+            int sta = rs.getInt("TMState");
 
             // 驱动电机状态
             if (toq == 511 || toq == 512) {
@@ -51,48 +51,52 @@ public class OLD_BP34x02Motor extends OracleX implements IOracleX02Motor {
             }
 
             // 驱动电机控制器温度
-            int TMInvtrTem = rs.getInt("TMInvtrTem");
-            if (TMInvtrTem == 215 || TMInvtrTem == 214) {
+            int TMInvtTemp = rs.getInt("TMInvtTemp");
+            if (TMInvtTemp == 215 || TMInvtTemp == 214) {
                 m.setControllerTemperature((short) 0xFF);
             } else {
-                m.setControllerTemperature((short) (TMInvtrTem + 40));
+                m.setControllerTemperature((short) (TMInvtTemp + 40));
             }
 
             // 驱动电机转速
-            int TMSpd = rs.getInt("TMSpd");
-            if (TMSpd == 32728 || TMSpd == 32767 || TMSpd < -20000) {
+            int TMSpeed = rs.getInt("TMSpeed");
+            if (TMSpeed == 32678 || TMSpeed == 32677 || TMSpeed < -20000) {
                 m.setSpeed(0xFF);
             } else {
-                m.setSpeed(TMSpd + 20000);
+                m.setSpeed(TMSpeed + 20000);
             }
 
             // 驱动电机转矩
-            float TMActuToq = rs.getFloat("TMActuToq");
-            if (TMActuToq == 511.5f || TMActuToq == 511f) {
+            if (toq == 511.5f || toq == 511f) {
                 m.setTorque(0xFF);
             } else {
-                m.setTorque((TMActuToq + 2000) * 10);
+                m.setTorque((toq + 2000) * 10);
             }
 
             // 驱动电机温度
-            int TMSttrTem = rs.getInt("TMSttrTem");
-            if (TMSttrTem == 215 || TMSttrTem == 214) {
+            int TMTemp = rs.getInt("TMTemp");
+            if (TMTemp == 215 || TMTemp == 214) {
                 m.setMotorTemperature((short) 0xFF);
             } else {
-                m.setMotorTemperature((short) (TMSttrTem + 40));
+                m.setMotorTemperature((short) (TMTemp + 40));
             }
 
             // 电机控制器输入电压
-            m.setControllerInputVoltage(rs.getFloat("HVDCDCHVSideVol") * 10);
+            float DCVoltHV = rs.getFloat("DCVoltHV");
+            if (DCVoltHV == 1023 || DCVoltHV == 1022) {
+                m.setControllerInputVoltage(0xFFFF);
+            } else {
+                m.setControllerInputVoltage((DCVoltHV - 1) * 10);
+            }
 
             // 电机控制器直流母线电流
-            float BMSPackCrnt = rs.getFloat("BMSPackCrnt");
-            if (BMSPackCrnt == 638.35f || BMSPackCrnt == 638.375f) {
+            float BMSPackCurrent = rs.getFloat("BMSPackCurrent");
+            if (BMSPackCurrent == 638.35f || BMSPackCurrent == 638.375f) {
                 m.setControllerDirectCurrent(0xFFFF);
             } else if (toq > 0) {
-                m.setControllerDirectCurrent((BMSPackCrnt - 2 + 1000) * 10);
+                m.setControllerDirectCurrent((BMSPackCurrent - 2 + 1000) * 10);
             } else if (toq < 0) {
-                m.setControllerDirectCurrent((BMSPackCrnt + 1000) * 10);
+                m.setControllerDirectCurrent((BMSPackCurrent + 1000) * 10);
             } else {
                 m.setControllerDirectCurrent(0);
             }
@@ -103,10 +107,10 @@ public class OLD_BP34x02Motor extends OracleX implements IOracleX02Motor {
             // ============================== 2号电机
             m = new Motor();
             // 驱动电机序号
-            m.setMotorSeq((short) 1);
+            m.setMotorSeq((short) 2);
 
-            toq = rs.getInt("ISGActuToq");
-            sta = rs.getInt("ISGSta");
+            toq = rs.getInt("ISGTorqueActual");
+            sta = rs.getInt("ISGState");
 
             // 驱动电机状态
             if (toq == 511 || toq == 512) {
@@ -124,46 +128,48 @@ public class OLD_BP34x02Motor extends OracleX implements IOracleX02Motor {
             }
 
             // 驱动电机控制器温度
-            int ISGInvtrTem = rs.getInt("ISGInvtrTem");
-            if (ISGInvtrTem == 215 || ISGInvtrTem == 214) {
+            int ISGInvtTemp = rs.getInt("ISGInvtTemp");
+            if (ISGInvtTemp == 215 || ISGInvtTemp == 214) {
                 m.setControllerTemperature((short) 0xFF);
             } else {
-                m.setControllerTemperature((short) (ISGInvtrTem + 40));
+                m.setControllerTemperature((short) (ISGInvtTemp + 40));
             }
 
             // 驱动电机转速
-            int ISGSpd = rs.getInt("ISGSpd");
-            if (ISGSpd == 32728 || ISGSpd == 32767 || ISGSpd < -2000) {
+            int ISGSpeed = rs.getInt("ISGSpeed");
+            if (ISGSpeed == 32678 || ISGSpeed == 32677 || ISGSpeed < -20000) {
                 m.setSpeed(0xFF);
             } else {
-                m.setSpeed(ISGSpd + 2000);
+                m.setSpeed(ISGSpeed + 20000);
             }
 
             // 驱动电机转矩
-            float ISGActuToq = rs.getFloat("ISGActuToq");
-            if (ISGActuToq == 511.5f || ISGActuToq == 511) {
+            if (toq == 511.5f || toq == 511) {
                 m.setTorque(0xFF);
             } else {
-                m.setTorque((ISGActuToq + 2000) * 10);
+                m.setTorque((toq + 2000) * 10);
             }
 
             // 驱动电机温度
-            int ISGSttrTem = rs.getInt("ISGSttrTem");
-            if (ISGSttrTem == 215 || ISGSttrTem == 214) {
+            int ISGTemp = rs.getInt("ISGTemp");
+            if (ISGTemp == 215 || ISGTemp == 214) {
                 m.setMotorTemperature((short) 0xFF);
             } else {
-                m.setMotorTemperature((short) (ISGSttrTem + 40));
+                m.setMotorTemperature((short) (ISGTemp + 40));
             }
 
             // 电机控制器输入电压
-            m.setControllerInputVoltage(rs.getFloat("HVDCDCHVSideVol") * 10);
+            if (DCVoltHV == 1023 || DCVoltHV == 1022) {
+                m.setControllerInputVoltage(0xFFFF);
+            } else {
+                m.setControllerInputVoltage((DCVoltHV - 1) * 10);
+            }
 
             // 电机控制器直流母线电流
-            BMSPackCrnt = rs.getFloat("BMSPackCrnt");
-            if (BMSPackCrnt == 638.35f || BMSPackCrnt == 638.375f) {
+            if (BMSPackCurrent == 638.3f || BMSPackCurrent == 638.375f) {
                 m.setControllerDirectCurrent(0xFFFF);
-            } else if (toq > 0 && ISGSpd > 100) {
-                m.setControllerDirectCurrent((BMSPackCrnt - 1 + 1000) * 10);
+            } else if (toq > 0 && ISGSpeed > 100) {
+                m.setControllerDirectCurrent((BMSPackCurrent - 1 + 1000) * 10);
             } else {
                 m.setControllerDirectCurrent(0);
             }
