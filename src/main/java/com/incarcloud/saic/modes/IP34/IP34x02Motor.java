@@ -89,7 +89,7 @@ public class IP34x02Motor extends MongoX implements IMongoX02Motor {
         }
 
         // 驱动电机温度
-        m.setMotorTemperature((short) Integer.parseInt(prefix + "SttrTem"));
+        m.setMotorTemperature((short) Integer.parseInt(bsonDoc.getString(prefix + "SttrTem")));
 
         // 电机控制器输入电压
         float volt = Float.parseFloat(bsonDoc.getString("vehHVDCDCHVSideVolV"));
