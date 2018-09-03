@@ -92,11 +92,15 @@ public class AS24x02Motor extends MongoX implements IMongoX02Motor {
         m.setMotorTemperature((short) Integer.parseInt(bsonDoc.getString(prefix + "SttrTem")));
 
         // 电机控制器输入电压
-        float volt = Float.parseFloat(bsonDoc.getString("vehHVDCDCHVSideVolV"));
-        if (volt == 1) {
+        if (bsonDoc.getString("vehHVDCDCHVSideVol") == null) {
             m.setControllerInputVoltage(0xFFFF);
         } else {
-            m.setControllerInputVoltage(Float.parseFloat(bsonDoc.getString("vehHVDCDCHVSideVol")));
+            float volt = Float.parseFloat(bsonDoc.getString("vehHVDCDCHVSideVolV"));
+            if(volt == 1){
+                m.setControllerInputVoltage(0xFFFF);
+            }else{
+                m.setControllerInputVoltage(volt);
+            }
         }
 
         // 电机控制器直流母线电流
