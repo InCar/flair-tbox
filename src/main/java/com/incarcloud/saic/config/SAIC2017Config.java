@@ -33,11 +33,17 @@ public class SAIC2017Config {
     public boolean getEnableTar(){ return enableTar; }
     public void setEnableTar(boolean val){ enableTar = val; }
 
+    private final List<String> dataSources = new ArrayList<>();
+    public List<String> getDataSources (){ return dataSources; }
+
     private final MongoConfig mongo = new MongoConfig();
     public MongoConfig getMongo(){ return mongo; }
 
     private final OracleConfig oracle = new OracleConfig();
     public OracleConfig getOracle(){ return oracle; }
+
+    private final JsonConfig json = new JsonConfig();
+    public JsonConfig getJson(){ return json; }
 
     private int maxPower;
     public int getMaxPower(){ return maxPower; }

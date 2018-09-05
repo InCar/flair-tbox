@@ -15,6 +15,11 @@ saic2017:
     out: ./out
     # 是否把每天的输出结果打包
     enableTar: true
+    # 数据源,只处理指定的数据源,或不写表示全部处理
+    dataSources:
+        - mongo
+        - oracle
+        - json
     # mongodb
     mongo:
         hosts:
@@ -26,10 +31,13 @@ saic2017:
         collection: newrvmSignalData{date:yyyyMMdd}
     # oracle
     oracle:
-        driver: driver
-        url: url
-        username: username
-        password: password
+        driver: oracle.jdbc.driver.OracleDriver
+        url: jdbc:oracle:thin:@//127.0.0.1:1521/orcl
+        username: # your-user-name
+        password: # your-password
+    # json
+    json:
+        dir: ../saic/data # json文件位置
     # 最大并发数
     maxPower: 8
     # 车辆数据模式,处理列在此处的,或不写表示全部处理

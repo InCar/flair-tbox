@@ -4,6 +4,7 @@ import com.incarcloud.auxiliary.Helper;
 import com.incarcloud.concurrent.LimitedSyncArgTask;
 import com.incarcloud.concurrent.LimitedTask;
 import com.incarcloud.lang.Action;
+import com.incarcloud.saic.config.JsonConfig;
 import com.incarcloud.saic.config.MongoConfig;
 import com.incarcloud.saic.config.OracleConfig;
 import com.incarcloud.saic.meta.MetaVinMode;
@@ -72,8 +73,9 @@ public class Parker {
         saTask.setMax(max);
     }
 
-    public void setDataSourceTargetConfig(MongoConfig cfgM, OracleConfig cfgO, String out, boolean isTar){
-        taskWork.init(cfgM, cfgO, out);
+    public void setDataSourceTargetConfig(String out, boolean isTar,
+                                          MongoConfig cfgM, OracleConfig cfgO, JsonConfig cfgJ){
+        taskWork.init(cfgM, cfgO, cfgJ, out);
         this.out = out;
         this.enableTar = isTar;
     }

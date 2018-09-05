@@ -1,20 +1,19 @@
 package com.incarcloud.saic.modes;
 
+import com.incarcloud.saic.ds.DSFactory;
+
 import java.util.List;
 
 /**
  * 映射算法工厂
  */
 public class ModeFactory {
-    public static final String DS_MONGO = "MongoDB";
-    public static final String DS_ORACLE = "Oracle";
-
     public static Mode create(String mode){
         Mode obj = null;
         String ds = checkDS(mode);
-        if(ds == DS_MONGO)
+        if(ds.equals(DSFactory.Mongo))
             obj = new ModeMongo(mode, s_gbSwitches);
-        else if(ds == DS_ORACLE)
+        else if(ds.equals(DSFactory.Oracle))
             obj = new ModeOracle(mode, s_gbSwitches);
         return obj;
     }
@@ -29,12 +28,12 @@ public class ModeFactory {
             case "IP34":
             case "OLD-AS24":
             case "IP32P":
-                ds = DS_MONGO;
+                ds = DSFactory.Mongo;
                 break;
             case "OLD-IP24MCE":
             case "OLD-IP24":
             case "OLD-BP34":
-                ds = DS_ORACLE;
+                ds = DSFactory.Oracle;
                 break;
             default:
                 throw new UnsupportedOperationException(mode);

@@ -1,6 +1,7 @@
 package com.incarcloud.saic;
 
 import com.incarcloud.saic.config.SAIC2017Config;
+import com.incarcloud.saic.ds.DSFactory;
 import com.incarcloud.saic.heliosphere.Parker;
 import com.incarcloud.saic.meta.MetaVinMode;
 import com.incarcloud.saic.modes.ModeFactory;
@@ -14,6 +15,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+
+import java.util.List;
 
 @SpringBootApplication
 public class App implements CommandLineRunner{
@@ -51,7 +54,18 @@ public class App implements CommandLineRunner{
             SpringApplication.exit(_ctx, ()->exitCode);
         });
         parker.setMaxPower(cfg.getMaxPower());
-        parker.setDataSourceTargetConfig(cfg.getMongo(), cfg.getOracle(), cfg.getOut(), cfg.getEnableTar());
+
+        List<String> ds = cfg.getDataSources();
+        if(ds == null || ds.size() == 0){
+            parker.setDataSourceTargetConfig(cfg.getOut(), cfg.getEnableTar(),
+                    cfg.getMongo(), cfg.getOracle(), cfg.getJson());
+        }
+        else {
+            parker.setDataSourceTargetConfig(cfg.getOut(), cfg.getEnableTar(),
+                    ds.contains(DSFactory.Mongo) ? cfg.getMongo() : null,
+                    ds.contains(DSFactory.Oracle) ? cfg.getOracle() : null,
+                    ds.contains(DSFactory.Json) ? cfg.getJson() : null);
+        }
         parker.runAsync();
     }
 }
