@@ -24,6 +24,7 @@ saic2017:
     mongo:
         hosts:
             - 127.0.0.1:27017
+            # - /tmp/mongodb-27017.sock
         source: admin # the source where the user is defined
         user: # your-user-name
         pwd: # your-password

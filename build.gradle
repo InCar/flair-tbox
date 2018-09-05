@@ -37,6 +37,8 @@ dependencies {
     compile group: 'com.alibaba', name: 'fastjson', version: '1.2.+'
     compile files("lib/ojdbc6.jar")
 
+    runtime("com.github.jnr:jnr-unixsocket:0.19")
+
     testImplementation("junit:junit:4.+")
 }
 
