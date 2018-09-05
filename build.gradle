@@ -66,6 +66,7 @@ compileJava{
     dependsOn MarkGitVersion
     options.encoding = "utf-8"
     options.compilerArgs << "-Xlint:unchecked"
+    options.compilerArgs << "-proc:none"
 }
 
 compileTestJava{
