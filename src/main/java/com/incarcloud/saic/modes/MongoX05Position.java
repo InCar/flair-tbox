@@ -13,7 +13,7 @@ public class MongoX05Position extends MongoX implements IMongoX05Position {
 
         String vin = super.getVin(bsonDoc);
         ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(bsonDoc);
-        int gpsStatus = Integer.parseInt(bsonDoc.getString("gpsStatus"));
+        int gpsStatus = (int)parseFloatWithDef(bsonDoc,"gpsStatus");
         double gnssLat = Double.parseDouble(bsonDoc.getString("gnssLat"));
         double gnssLong = Double.parseDouble(bsonDoc.getString("gnssLong"));
 

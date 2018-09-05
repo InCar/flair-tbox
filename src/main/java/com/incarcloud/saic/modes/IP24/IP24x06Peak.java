@@ -21,43 +21,43 @@ public class IP24x06Peak extends MongoX implements IMongoX06Peak {
         //最高电压电池子系统号=0x01
         data.setHighBatteryId((short) 0x01);
         //最高电压电池单体代号 = vehBMSCellMaxVolIndx
-        short vehBMSCellMaxVolIndx = Short.parseShort(bsonDoc.getString("vehBMSCellMaxVolIndx"));
+        short vehBMSCellMaxVolIndx = (short)parseIntWithDef(bsonDoc, "vehBMSCellMaxVolIndx");
         data.setHighBatteryCode(vehBMSCellMaxVolIndx);
         /* IF vehBMSCellMaxVol=8.19||8.191
         THEN 电 池 单 体 电 压 最 高 值 =0xFF,0xFF
         ELSE 电 池 单 体 电 压 最 高 值 = vehBMSCellMaxVol*/
-        float vehBMSCellMaxVol = Float.parseFloat(bsonDoc.getString("vehBMSCellMaxVol"));
+        float vehBMSCellMaxVol = parseFloatWithDef(bsonDoc, "vehBMSCellMaxVol");
         data.setHighVoltage(singleBatteryVoltage(vehBMSCellMaxVol));
         //最低电压电池子系统号
         data.setLowBatteryId((short) 0x1);
         //最低电压电池单体代号
-        short vehBMSCellMinVolIndx = Short.parseShort(bsonDoc.getString("vehBMSCellMinVolIndx"));
+        short vehBMSCellMinVolIndx = (short)parseIntWithDef(bsonDoc, "vehBMSCellMinVolIndx");
         data.setLowBatteryCode(vehBMSCellMinVolIndx);
         /*IF vehBMSCellMinVol=8.19||8.191
         THEN 电 池 单 体 电 压 最 低 值 =0xFF,0xFF
         ELSE 电 池 单 体 电 压 最 低 值 = vehBMSCellMinVol*/
-        float vehBMSCellMinVol = Float.parseFloat(bsonDoc.getString("vehBMSCellMinVol"));
+        float vehBMSCellMinVol = parseFloatWithDef(bsonDoc, "vehBMSCellMinVol");
         data.setLowVoltage(minimumVoltageOfsingle(vehBMSCellMinVol));
         //最高温度子系统号
         data.setHighTemperatureId((short) 0x1);
         //最高温度探针序号  最 高 温 度 探 针 序 号 = /vehBMSCellMaxTemIndx
-        short vehBMSCellMaxTemIndx = Short.parseShort(bsonDoc.getString("vehBMSCellMaxTemIndx"));
+        short vehBMSCellMaxTemIndx = (short)parseIntWithDef(bsonDoc, "vehBMSCellMaxTemIndx");
         data.setHighProbeCode(vehBMSCellMaxTemIndx);
         /*IF vehBMSCellMaxTem=87||87.5
         THEN 最高温度值=0xFF
         ELSE 最 高 温 度 值 =   vehBMSCellMaxTem*/
-        float vehBMSCellMaxTem = Float.parseFloat(bsonDoc.getString("vehBMSCellMaxTem"));
+        float vehBMSCellMaxTem = parseFloatWithDef(bsonDoc, "vehBMSCellMaxTem");
         data.setHighTemperature(maxTemp(vehBMSCellMaxTem));
         //最低温度子系统号
         data.setLowTemperatureId((short) 0x1);
         //最低温度探针序号 最 低 温 度 探 针 序 号 = vehBMSCellMinTemIndx
-        short vehBMSCellMinTemIndx = Short.parseShort(bsonDoc.getString("vehBMSCellMinTemIndx"));
+        short vehBMSCellMinTemIndx = (short)parseIntWithDef(bsonDoc, "vehBMSCellMinTemIndx");
         data.setLowProbeCode(vehBMSCellMinTemIndx);
         /* IF vehBMSCellMinTem=87||87.5
             THEN 最低温度值=0xFF
             ELSE 最 低 温 度 值 =
             vehBMSCellMinTem */
-        short vehBMSCellMinTem = Short.parseShort(bsonDoc.getString("vehBMSCellMinTem"));
+        short vehBMSCellMinTem = (short)parseFloatWithDef(bsonDoc, "vehBMSCellMinTem");
         data.setLowTemperature(mimTemp(vehBMSCellMinTem));
         return data;
     }
