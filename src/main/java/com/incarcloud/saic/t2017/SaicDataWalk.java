@@ -40,6 +40,10 @@ class SaicDataWalk implements IDataWalk {
     private final TreeSet<GBPackage> sortedPackages = new TreeSet<>();
     private final TreeSet<GBx07Alarm> sortedAlarms;
 
+    // 目标文件
+    private OutputStream fs = null;
+    private OutputStreamWriter fsW = null;
+
     public Mode getMode() {
         return modeObj;
     }
@@ -182,15 +186,26 @@ class SaicDataWalk implements IDataWalk {
 
     private BufferedWriter prepareFS(Path path) throws Exception{
         Files.createDirectories(path.getParent());
-        OutputStream fs = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        fs = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         final int size = 4096*1024*4; // 16M write buffer
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fs, Charset.forName("UTF-8").newEncoder()), size);
+        fsW = new OutputStreamWriter(fs, Charset.forName("UTF-8").newEncoder());
+        BufferedWriter writer = new BufferedWriter(fsW, size);
         return writer;
     }
 
     private void closeFS(BufferedWriter writer) throws Exception{
         if(writer != null){
             writer.close();
+        }
+
+        if(fsW != null){
+            fsW.close();
+            fsW = null;
+        }
+
+        if(fs != null){
+            fs.close();
+            fs = null;
         }
     }
 
