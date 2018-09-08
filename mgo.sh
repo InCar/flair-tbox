@@ -9,17 +9,10 @@ readonly db="newrvm"
 readonly prefixC="newrvmSignalData"
 
 ##############################
-echo "$(date +"%F %T") - SAIC to GB32960 : $strBegin -> $strEnd ..."
 
-readonly beginTM=$(date -d "$strBegin" +%s)
-readonly endTM=$(date -d "$strEnd" +%s)
-readonly totalDays=$(((endTM-beginTM)/86400))
-
-for((i=0; i<=totalDays; i++))
-do
-    tmMark=$((beginTM+86400*i))
-    tmYMD=$(date -d @$tmMark +%Y%m%d)
-    tmYMD2=$(date -d @$tmMark +%F)
+process(){
+    tmYMD=$(date -d @$1 +%Y%m%d)
+    tmYMD2=$(date -d @$1 +%F)
 
     # step 1 pigz -> tar -> mongorestore
     echo $(date +"%F %T") - processing $tmYMD2 ...
@@ -42,7 +35,25 @@ do
     # step 4 mongodb drop
     echo $(date +"%F %T") - clear ...
     mongo $db --eval "db.${prefixC}${tmYMD}.drop()"
+}
 
+##############################
+
+readonly task_file="task"
+readonly xend="END"
+
+echo "$(date +"%F %T") - SAIC to GB32960 : Start."
+
+i=1
+while :
+do
+    tm=$(head -$i $task_file | tail -1)
+    if [ "$tm" == "$xend" ]; then
+        break
+    fi
+
+    tmK=$(date -d "$tm" +%s)
+    process $tmK
+    i=$((i+1))
 done
-
 echo "$(date +"%F %T") - SAIC to GB32960 : Finished."
