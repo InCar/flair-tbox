@@ -230,7 +230,7 @@ public class AS26x07Alarm extends MongoX implements IMongoX07Alarm {
         N=15 %
         满足条件1次即报警，不需要2次
         */
-        if (vehBMSPackSOCV == 0 && Math.abs(vehBMSPackSOC * (15 + 1) - vehBMSPackSOC * 15) > 0 && (vehBMSPackSOC * 16 > 0) && (vehBMSPackSOC * (15)  >= 15)) {
+        if (vehBMSPackSOCV == 0 && Math.abs(vehBMSPackSOC * (15 + 1) - vehBMSPackSOC * 15) > 15 && (vehBMSPackSOC * 16 > 0) && (vehBMSPackSOC * (15)  >= 15)) {
             return 0x01;
         }
         return 0x00;
