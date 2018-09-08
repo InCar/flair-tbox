@@ -42,6 +42,7 @@ process(){
 readonly task_file="task"
 readonly xend="END"
 
+
 echo "$(date +"%F %T") - SAIC to GB32960 : Start."
 
 i=1
@@ -52,8 +53,15 @@ do
         break
     fi
 
-    tmK=$(date -d "$tm" +%s)
-    process $tmK
+    if [[ ${tm} != *"done"* ]]; then
+
+        tmK=$(date -d "$tm" +%s)
+
+        sed -i "${i}s/$/ ... /" $task_file
+        process $tmK
+        sed -i "${i}s/$/done./" $task_file
+    fi
+
     i=$((i+1))
 done
 echo "$(date +"%F %T") - SAIC to GB32960 : Finished."
