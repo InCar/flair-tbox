@@ -1,9 +1,6 @@
 #!/bin/bash
 
-# define the begin and end date
-readonly strBegin="2017-09-01"
-readonly strEnd="2017-09-03"
-
+# define the variables
 readonly oss="oss://ic-saic"
 readonly sourceDir="/saic/data"
 readonly outDir="/saic/output"
@@ -16,7 +13,6 @@ process(){
     tmYMD=$(date -d @$1 +%Y%m%d)
     tmYMD2=$(date -d @$1 +%F)
 
-    echo $(date +"%F %T") - processing $tmYMD2 ...
     fileTGZ=$sourceDir/${tmYMD}.tgz
     fileBSON=app/dump/$tmYMD/$db/${prefixC}${tmYMD}.bson
 
@@ -26,7 +22,7 @@ process(){
     ossutil64 cp $oss/saic2017mgo/${tmYMD}.tgz $fileTGZ
 
     # step 2 pigz -> tar -> mongorestore
-    pigz -p 2 -dc $fileTGZ | tar -xOf - $fileBSON | mongorestore -d $db -c ${prefixC}${tmYMD} -j 16 --noIndexRestore -vv -
+    pigz -p 2 -dc $fileTGZ | tar -xOf - $fileBSON | mongorestore -d $db -c ${prefixC}${tmYMD} -j 16 --noIndexRestore --drop -vv -
 
     # step 3 mongodb create index
     echo $(date +"%F %T") - create index ...
@@ -37,7 +33,7 @@ process(){
     java -jar saic-2017-1.0.0.jar --spring.profiles.active=product \
                                   --saic2017.beginDate="$tmYMD2" --saic2017.endDate="$tmYMD2" \
                                   --saic2017.mongo.database="$db" --saic2017.mongo.collection="${prefixC}${tmYMD}" \
-                                  --saic2017.out="$outDir" \
+                                  --saic2017.dataSources[0]="mongo" --saic2017.out="$outDir" \
          > /dev/null 2>&1
 
     # step 5 oss copy back
