@@ -1,41 +1,76 @@
 #!/bin/bash
 
-# define the begin and end date
-readonly strBegin="2017-09-01"
-readonly strEnd="2017-09-03"
-
+# define the variables
+readonly oss="oss://ic-saic"
 readonly sourceDir="/saic/data"
+readonly outDir="/saic/output"
 readonly db="newrvm"
 readonly prefixC="newrvmSignalData"
 
 ##############################
-echo "$(date +"%F %T") - SAIC to GB32960 : $strBegin -> $strEnd ..."
 
-readonly beginTM=$(date -d "$strBegin" +%s)
-readonly endTM=$(date -d "$strEnd" +%s)
-readonly totalDays=$(((endTM-beginTM)/86400))
+process(){
+    tmYMD=$(date -d @$1 +%Y%m%d)
+    tmYMD2=$(date -d @$1 +%F)
 
-for((i=0; i<=totalDays; i++))
-do
-    tmMark=$((beginTM+86400*i))
-    tmYMD=$(date -d @$tmMark +%Y%m%d)
-    echo $(date +"%F %T") - processing $(date -d @$tmMark +%F) ...
-
-    # step 1 pigz -> tar -> mongorestore
     fileTGZ=$sourceDir/${tmYMD}.tgz
     fileBSON=app/dump/$tmYMD/$db/${prefixC}${tmYMD}.bson
 
-    pigz -p 2 -dc $fileTGZ | tar -xOf - $fileBSON | mongorestore -d $db -c ${prefixC}${tmYMD} -j 16 --noIndexRestore -vv -
+    echo $(date +"%F %T") - processing $tmYMD2 ...
 
-    # step 2 mongodb create index
+    # step 1 oss copy
+    ossutil64 cp $oss/saic2017mgo/${tmYMD}.tgz $fileTGZ
+
+    # step 2 pigz -> tar -> mongorestore
+    pigz -p 2 -dc $fileTGZ | tar -xOf - $fileBSON | mongorestore -d $db -c ${prefixC}${tmYMD} -j 16 --noIndexRestore --drop -vv -
+
+    # step 3 mongodb create index
+    echo $(date +"%F %T") - create index ...
     mongo $db --eval "db.${prefixC}${tmYMD}.createIndex({vin:\"hashed\"}, {background:false})"
 
-    # step 3 java
-    java -jar saic-2017-1.0.0.jar --spring.profiles.active=product --saic2017.beginDate="$tmYMD" --saic2017.endDate="$tmYMD" > /dev/null 2>&1
+    # step 4 java
+    echo $(date +"%F %T") - transforming ...
+    java -jar saic-2017-1.0.0.jar --spring.profiles.active=product \
+                                  --saic2017.beginDate="$tmYMD2" --saic2017.endDate="$tmYMD2" \
+                                  --saic2017.mongo.database="$db" --saic2017.mongo.collection="${prefixC}${tmYMD}" \
+                                  --saic2017.dataSources[0]="mongo" --saic2017.out="$outDir" \
+         > /dev/null 2>&1
 
-    # step 4 mongodb drop
+    # step 5 oss copy back
+    fileGZ=$(date -d @$1 +%Y)/$(date -d @$1 +%m)/${tmYMD}.tar.gz
+    ossutil64 cp $outDir/$fileGZ ${oss}-output/mgo/$fileGZ
+
+    # step 6 clear
+    echo $(date +"%F %T") - clear ...
     mongo $db --eval "db.${prefixC}${tmYMD}.drop()"
+    rm -f $fileTGZ
+}
 
+##############################
+
+readonly task_file="task"
+readonly xend="END"
+
+
+echo "$(date +"%F %T") - SAIC to GB32960 : Start."
+
+i=1
+while :
+do
+    tm=$(head -$i $task_file | tail -1)
+    if [ "$tm" == "$xend" ]; then
+        break
+    fi
+
+    if [[ ${tm} != *"done"* ]]; then
+
+        tmK=$(date -d "$tm" +%s)
+
+        sed -i "${i}s/$/ ... /" $task_file
+        process $tmK
+        sed -i "${i}s/$/done./" $task_file
+    fi
+
+    i=$((i+1))
 done
-
 echo "$(date +"%F %T") - SAIC to GB32960 : Finished."
