@@ -22,7 +22,7 @@ public class MongoX {
 
     protected static int parseIntWithDef(Document bsonDoc, String field, int def){
         String buf = bsonDoc.getString(field);
-        return buf!=null?Integer.parseInt(buf):def;
+        return buf!=null? (int) Float.parseFloat(buf) :def;
     }
 
     protected static float parseFloatWithDef(Document bsonDoc, String field, float def){
