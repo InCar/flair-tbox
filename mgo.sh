@@ -36,14 +36,18 @@ process(){
                                   --saic2017.dataSources[0]="mongo" --saic2017.out="$outDir" \
          > /dev/null 2>&1
 
-    # step 5 oss copy back
-    fileGZ=$(date -d @$1 +%Y)/$(date -d @$1 +%m)/${tmYMD}.tar.gz
-    ossutil64 cp $outDir/$fileGZ ${oss}-output/mgo/$fileGZ
+    # step 5 make tar.gz file then oss copy back
+    pathYM=$(date -d @$1 +%Y)/$(date -d @$1 +%m)
+    pathDD=$(date -d @$1 +%d)
+    fileGZ=$(pathDD).tar.gz
+    tar -C $outDir/$pathYM -zcvf $outDir/$pathYM/$fileGZ $pathDD && rm -rf $outDir/$pathYM/$pathDD
+
+    ossutil64 cp $outDir/$pathYM/$fileGZ ${oss}-output/mgo/$pathYM/$fileGZ
 
     # step 6 clear
     echo $(date +"%F %T") - clear ...
     mongo $db --eval "db.${prefixC}${tmYMD}.drop()"
-    rm -f $fileTGZ
+    # rm -f $outDir/$pathYM/$fileGZ
 }
 
 ##############################

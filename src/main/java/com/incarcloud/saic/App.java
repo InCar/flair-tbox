@@ -57,11 +57,11 @@ public class App implements CommandLineRunner{
 
         List<String> ds = cfg.getDataSources();
         if(ds == null || ds.size() == 0){
-            parker.setDataSourceTargetConfig(cfg.getOut(), cfg.getEnableTar(),
+            parker.setDataSourceTargetConfig(cfg.getOut(),
                     cfg.getMongo(), cfg.getOracle(), cfg.getJson());
         }
         else {
-            parker.setDataSourceTargetConfig(cfg.getOut(), cfg.getEnableTar(),
+            parker.setDataSourceTargetConfig(cfg.getOut(),
                     ds.contains(DSFactory.Mongo) ? cfg.getMongo() : null,
                     ds.contains(DSFactory.Oracle) ? cfg.getOracle() : null,
                     ds.contains(DSFactory.Json) ? cfg.getJson() : null);

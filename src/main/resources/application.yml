@@ -13,8 +13,6 @@ saic2017:
     endDate: 2017-12-31
     # 输出文件夹
     out: ./out
-    # 是否把每天的输出结果打包
-    enableTar: true
     # 数据源,只处理指定的数据源,或不写表示全部处理
     dataSources:
         - mongo

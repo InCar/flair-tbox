@@ -32,8 +32,6 @@ public class Parker {
     private LocalDate beginDate;
     private LocalDate endDate;
     private MetaVinMode metaVinMode;
-    private String out; // 输出位置
-    private boolean enableTar = true;
 
     private Thread thread = null;
     private final Object objExit = new Object();
@@ -73,11 +71,9 @@ public class Parker {
         saTask.setMax(max);
     }
 
-    public void setDataSourceTargetConfig(String out, boolean isTar,
+    public void setDataSourceTargetConfig(String out,
                                           MongoConfig cfgM, OracleConfig cfgO, JsonConfig cfgJ){
         taskWork.init(cfgM, cfgO, cfgJ, out);
-        this.out = out;
-        this.enableTar = isTar;
     }
 
     // 执行
@@ -126,9 +122,6 @@ public class Parker {
                     }
                 }
 
-                // compress
-                if(enableTar) tar(cursor);
-
                 hourglass.increaseFinishedDay();
                 if(i == totalDays-1)
                     s_logger.info(String.format("progress %6.2f%%", 100.0f * hourglass.getProgress()));
@@ -143,24 +136,5 @@ public class Parker {
 
         if(actionFinished != null)
             actionFinished.run(exitCode);
-    }
-
-    private void tar(LocalDate date){
-        Path path = Paths.get(this.out,
-                String.valueOf(date.getYear()),
-                String.format("%02d", date.getMonthValue()));
-        String target = String.format("%02d", date.getDayOfMonth());
-        File workingFolder = path.toFile();
-
-        // 按日期打包
-        try {
-            String cmd = String.format("tar --remove-files -zcvf %s.tar.gz %s", target, target);
-            s_logger.info("[{}]$ {}", path.toString(), cmd);
-            Runtime.getRuntime().exec(cmd, null, workingFolder).waitFor();
-        }
-        catch (Exception ex){
-            // 打包失败,可以手动打包,记录一个警告
-            s_logger.warn("tar failed, please tar manually.\n\t{}", ex.getMessage());
-        }
     }
 }
