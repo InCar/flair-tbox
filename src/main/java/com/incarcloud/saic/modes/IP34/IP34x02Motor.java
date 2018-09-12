@@ -59,8 +59,8 @@ public class IP34x02Motor extends MongoX implements IMongoX02Motor {
         if (bsonDoc.getString(prefix + "InvtrCrntV").equals("1")) {
             m.setMotorStatus((short) 0xFF);
         } else {
-            int sta = Integer.parseInt(bsonDoc.getString(prefix + "Sta"));
-            int crnt = Integer.parseInt(bsonDoc.getString(prefix + "InvtrCrnt"));
+            int sta = (int)Float.parseFloat(bsonDoc.getString(prefix + "Sta"));
+            int crnt = (int)Float.parseFloat(bsonDoc.getString(prefix + "InvtrCrnt"));
             if (sta == 3) {
                 m.setMotorStatus((short) 0x04);
             } else if (sta == 6 || sta == 7 || sta == 8) {
@@ -75,10 +75,10 @@ public class IP34x02Motor extends MongoX implements IMongoX02Motor {
         }
 
         // 驱动电机控制器温度
-        m.setControllerTemperature((short) Integer.parseInt(bsonDoc.getString(prefix + "InvtrTem")));
+        m.setControllerTemperature((short) Float.parseFloat(bsonDoc.getString(prefix + "InvtrTem")));
 
         // 驱动电机转速
-        int speed = Integer.parseInt(bsonDoc.getString(prefix + "Spd"));
+        int speed = (int)Float.parseFloat(bsonDoc.getString(prefix + "Spd"));
         m.setSpeed(speed < -20000 ? 0xFF : speed);
 
         // 驱动电机转矩
@@ -89,7 +89,7 @@ public class IP34x02Motor extends MongoX implements IMongoX02Motor {
         }
 
         // 驱动电机温度
-        m.setMotorTemperature((short) Integer.parseInt(bsonDoc.getString(prefix + "SttrTem")));
+        m.setMotorTemperature((short)Float.parseFloat(bsonDoc.getString(prefix + "SttrTem")));
 
         // 电机控制器输入电压
         float volt = Float.parseFloat(bsonDoc.getString("vehHVDCDCHVSideVolV"));
@@ -100,7 +100,7 @@ public class IP34x02Motor extends MongoX implements IMongoX02Motor {
         }
 
         // 电机控制器直流母线电流
-        int crntv = Integer.parseInt(bsonDoc.getString(prefix + "InvtrCrntV"));
+        int crntv = (int)Float.parseFloat(bsonDoc.getString(prefix + "InvtrCrntV"));
         float crnt = Float.parseFloat(bsonDoc.getString(prefix + "InvtrCrnt"));
         if (crntv == 1 || crnt < -1000) {
             m.setControllerDirectCurrent(0xFFFF);

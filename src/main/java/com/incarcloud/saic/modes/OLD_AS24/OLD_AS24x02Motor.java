@@ -59,7 +59,7 @@ public class OLD_AS24x02Motor extends MongoX implements IMongoX02Motor {
         if (StringUtils.isEmpty(speed) || "NULL".equalsIgnoreCase(speed)) {
             m.setSpeed(0xFF);
         } else {
-            m.setSpeed(Integer.parseInt(speed));
+            m.setSpeed((int)Float.parseFloat(speed));
         }
 
         // 驱动电机转矩
