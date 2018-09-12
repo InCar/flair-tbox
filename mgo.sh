@@ -19,7 +19,7 @@ process(){
     echo $(date +"%F %T") - processing $tmYMD2 ...
 
     # step 1 oss copy
-    ossutil64 cp $oss/saic2017mgo/${tmYMD}.tgz $fileTGZ
+    ossutil64 -f cp $oss/saic2017mgo/${tmYMD}.tgz $fileTGZ
 
     # step 2 pigz -> tar -> mongorestore
     pigz -p 2 -dc $fileTGZ | tar -xOf - $fileBSON | mongorestore -d $db -c ${prefixC}${tmYMD} -j 16 --noIndexRestore --drop -vv -
@@ -39,15 +39,32 @@ process(){
     # step 5 make tar.gz file then oss copy back
     pathYM=$(date -d @$1 +%Y)/$(date -d @$1 +%m)
     pathDD=$(date -d @$1 +%d)
-    fileGZ=$(pathDD).tar.gz
-    tar -C $outDir/$pathYM -zcvf $outDir/$pathYM/$fileGZ $pathDD && rm -rf $outDir/$pathYM/$pathDD
+    fileGZ=${pathDD}.tar.gz
+    tar -I pigz -C $outDir/$pathYM -cvf $outDir/$pathYM/$fileGZ $pathDD && rm -rf $outDir/$pathYM/$pathDD
 
-    ossutil64 cp $outDir/$pathYM/$fileGZ ${oss}-output/mgo/$pathYM/$fileGZ
+    ossutil64 -f cp $outDir/$pathYM/$fileGZ ${oss}-output/mgo/$pathYM/$fileGZ
 
     # step 6 clear
     echo $(date +"%F %T") - clear ...
     mongo $db --eval "db.${prefixC}${tmYMD}.drop()"
+    rm -f $fileTGZ
     # rm -f $outDir/$pathYM/$fileGZ
+}
+
+##############################
+# reset mongodb
+
+resetMgo(){
+    # stop mongod
+    ps -ef | awk '/mongod/ {if($8=="mongod"){system("mongo --eval \"db.adminCommand({shutdown:1})\" ")}}'
+    # force stop mongod
+    ps -ef | awk '/mongod/ {if($8=="mongod"){system("kill -9 " $2)}}'
+
+    # clear all mongodb running files
+    rm -rf /saic/mongodb/var/run/* /saic/mongodb/var/log/* /saic/mongodb/var/log/*
+
+    # restart mongodb
+    mongod --config /saic/mongodb/mongod.conf
 }
 
 ##############################
@@ -57,6 +74,12 @@ readonly xend="END"
 
 
 echo "$(date +"%F %T") - SAIC to GB32960 : Start."
+
+echo "reset mongodb"
+resetMgo
+# clear *.tgz *.tgz.temp
+rm -rf $sourceDir/*.tgz $sourceDir/*.tgz.temp
+
 
 i=1
 while :
