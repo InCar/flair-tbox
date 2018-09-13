@@ -10,21 +10,23 @@ import java.time.ZonedDateTime;
 public class MongoX05Position extends MongoX implements IMongoX05Position {
     @Override
     public GBx05Position makeGBx05Position(Document bsonDoc) {
-
-        String vin = super.getVin(bsonDoc);
-        ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(bsonDoc);
-        int gpsStatus = (int)parseFloatWithDef(bsonDoc,"gpsStatus");
-        double gnssLat = Double.parseDouble(bsonDoc.getString("gnssLat"));
-        double gnssLong = Double.parseDouble(bsonDoc.getString("gnssLong"));
-
-        GBx05Position gBx05Position = new GBx05Position(vin, tmGMT8);
-        gBx05Position.setPositionStatus(calcGpsStatus(gpsStatus));
-        gBx05Position.setLatitude(calcGnssLong(gnssLat));
-        gBx05Position.setLongitude(calcGnssLat(gnssLong));
-        return gBx05Position;
+        try {
+            String vin = super.getVin(bsonDoc);
+            ZonedDateTime tmGMT8 = super.getZonedDateTimeGMT8(bsonDoc);
+            int gpsStatus = (int) parseFloatWithDef(bsonDoc, "gpsStatus");
+            double gnssLat = Double.parseDouble(bsonDoc.getString("gnssLat"));
+            double gnssLong = Double.parseDouble(bsonDoc.getString("gnssLong"));
+            GBx05Position gBx05Position = new GBx05Position(vin, tmGMT8);
+            gBx05Position.setPositionStatus(calcGpsStatus(gpsStatus));
+            gBx05Position.setLatitude(calcGnssLong(gnssLat));
+            gBx05Position.setLongitude(calcGnssLat(gnssLong));
+            return gBx05Position;
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
-    private static byte calcGpsStatus(int gpsStatus){
+    private static byte calcGpsStatus(int gpsStatus) {
         /*IF gpsStatus=0
         THEN 定位状态=1
         ELSE 定位状态=0*/
@@ -34,12 +36,12 @@ public class MongoX05Position extends MongoX implements IMongoX05Position {
         return GS;
     }
 
-    private static Double calcGnssLat(double gnssLat){
+    private static Double calcGnssLat(double gnssLat) {
         //经度,精确到百万分之一度。
         return gnssLat;
     }
 
-    private static Double calcGnssLong(double gnssLong){
+    private static Double calcGnssLong(double gnssLong) {
         //纬度,精确到百万分之一度。
         return gnssLong;
     }
