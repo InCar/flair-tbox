@@ -38,7 +38,12 @@ public class OLD_BP34x01Overview extends OracleX implements IOracleX01Overview {
             float VehSpdavgdrvn = rs.getFloat("VehSpdavgdrvn");
             float vehOdo = rs.getFloat("vehOdo");
             float BMSPackVol = rs.getFloat("BMSPackVol");
-            float vehSpeed = rs.getFloat("vehSpeed");
+
+            float vehSpeed = 0;
+            try {
+                vehSpeed = rs.getFloat("vehSpeed");
+            } catch (SQLException e) {
+            }
             float BMSPtIsltnRstc = rs.getFloat("BMSPtIsltnRstc");
 
 
