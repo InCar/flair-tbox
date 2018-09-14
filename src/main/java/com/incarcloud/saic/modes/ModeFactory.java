@@ -8,26 +8,20 @@ import java.util.List;
  * 映射算法工厂
  */
 public class ModeFactory {
-    public static Mode create(String mode, boolean isJsonOnlyMode){
+    public static Mode create(String mode){
         Mode obj = null;
 
-        if(isJsonOnlyMode){
-            // Json only mode不检查，直接使用Json数据源
-            obj = new ModeJson(mode, s_gbSwitches);
-        }
-        else {
-            // 普通模式，根据车辆类型来识别数据源
-            String ds = checkDS(mode);
-            if (ds.equals(DSFactory.Mongo))
-                obj = new ModeMongo(mode, s_gbSwitches);
-            else if (ds.equals(DSFactory.Oracle))
-                obj = new ModeOracle(mode, s_gbSwitches);
-        }
+        String ds = checkDS(mode);
+        if (ds.equals(DSFactory.Mongo))
+            obj = new ModeMongo(mode, s_gbSwitches);
+        else if (ds.equals(DSFactory.Oracle))
+            obj = new ModeOracle(mode, s_gbSwitches);
         return obj;
     }
 
     // 检查对应的数据源
     public static String checkDS(String mode){
+        // ds.contains(DSFactory.Json)
         String ds;
         switch (mode){
             case "AS24":
