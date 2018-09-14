@@ -2,6 +2,7 @@ package com.incarcloud.saic.modes;
 
 import com.incarcloud.saic.ds.DSFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,13 +17,26 @@ public class ModeFactory {
             obj = new ModeMongo(mode, s_gbSwitches);
         else if (ds.equals(DSFactory.Oracle))
             obj = new ModeOracle(mode, s_gbSwitches);
+        else if(ds.equals(DSFactory.Json))
+            obj = new ModeJson(mode, s_gbSwitches);
         return obj;
     }
 
     // 检查对应的数据源
+    private static final List<String> dataSources = new ArrayList<>();
+    public static void setDataSources(List<String> listSrc){
+        dataSources.clear();
+        dataSources.addAll(listSrc);
+    }
+
     public static String checkDS(String mode){
         // ds.contains(DSFactory.Json)
         String ds;
+
+        // 如果有JSON数据源，忽略掉Mongo 和 Oracle
+        if(dataSources.contains(DSFactory.Json))
+            return DSFactory.Json;
+
         switch (mode){
             case "AS24":
             case "AS26":

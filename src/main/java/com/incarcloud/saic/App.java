@@ -42,6 +42,9 @@ public class App implements CommandLineRunner{
         ModeFactory.switchOnOffGB(cfg.getGB32960());
         s_logger.info("Active GB32960 : {}", cfg.getGB32960().size() > 0 ? cfg.getGB32960() : "[*]");
 
+        // 数据源配置
+        ModeFactory.setDataSources(cfg.getDataSources());
+
         // 车辆静态配置
         MetaVinMode metaVinMode = new MetaVinMode();
         metaVinMode.load(cfg.getModes(), cfg.getVinMatch());
