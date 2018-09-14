@@ -1,5 +1,6 @@
 package com.incarcloud.saic.ds.oracle;
 
+import com.incarcloud.auxiliary.Helper;
 import com.incarcloud.saic.config.OracleConfig;
 import com.incarcloud.saic.ds.IDataWalk;
 import com.incarcloud.saic.ds.ISource2017;
@@ -21,11 +22,20 @@ public class SourceORA implements ISource2017 {
     private static final Logger s_logger = LoggerFactory.getLogger(SourceORA.class);
 
     private final OracleConfig cfg;
-    private final Connection conn;
+    private Connection conn = null;
 
     public SourceORA(OracleConfig cfg){
         this.cfg = cfg;
-        conn = cfg.createClient();
+        s_logger.info("connect {} ...", cfg.getUrl());
+
+        try {
+            conn = cfg.createClient();
+            s_logger.info("connected!");
+        }
+        catch (Exception ex){
+            s_logger.error("Connect failed: \n{}", Helper.printStackTrace(ex));
+            throw ex;
+        }
     }
 
     public void init(){
