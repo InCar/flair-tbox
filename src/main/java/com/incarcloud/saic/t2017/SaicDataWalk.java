@@ -44,6 +44,9 @@ class SaicDataWalk implements IDataWalk {
     private OutputStream fs = null;
     private OutputStreamWriter fsW = null;
 
+    // Json only mode
+    private boolean isJsonOnlyMode = false;
+
     public Mode getMode() {
         return modeObj;
     }
@@ -52,13 +55,21 @@ class SaicDataWalk implements IDataWalk {
         this.taskArg = taskArg;
         this.out = out;
 
-        this.modeObj = ModeFactory.create(taskArg.mode);
+        this.modeObj = ModeFactory.create(taskArg.mode, this.isJsonOnlyMode);
         this.listFns = makeFuncs(this.modeObj);
 
         this.base64Encoder = Base64.getEncoder();
 
         // Alarm按时间排序
         sortedAlarms = new TreeSet<>(Comparator.comparing(GBx07Alarm::getTmGMT8));
+    }
+
+    /**
+     * 如果开启了Json数据源，执行JsonOnly模式
+     * 所有mongodb oracle数据源不起作用
+     */
+    void switchJsonOnlyMode(boolean isJsonOnly){
+        this.isJsonOnlyMode = isJsonOnly;
     }
 
     /**

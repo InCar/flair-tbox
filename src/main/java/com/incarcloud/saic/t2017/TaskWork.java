@@ -52,6 +52,9 @@ public class TaskWork implements Action<TaskArg> {
     @Override
     public void run(TaskArg arg){
         SaicDataWalk dataWalk = new SaicDataWalk(arg, this.out);
+        // 根据是否开启了Json数据源，来决定是否进入JsonOnly模式
+        dataWalk.switchJsonOnlyMode(this.dsJSO != null);
+
         if(arg.getDS().equals(DSFactory.Mongo) && dsMGO != null)
             dsMGO.fetch(arg.vin, arg.date, dataWalk);
         else if(arg.getDS().equals(DSFactory.Oracle) && dsORA != null)
