@@ -77,14 +77,14 @@ public class SourceORA implements ISource2017 {
                 if(rscount.next()){
                     total = rscount.getInt("res");
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (Exception ex) {
+                s_logger.error("fetching count error: \n{}", Helper.printStackTrace(ex));
             } finally {
                 if(pstmtcount != null){
                     try {
                         pstmtcount.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
+                    } catch (SQLException ex) {
+                        s_logger.error("pstmtcount close error: \n{}", Helper.printStackTrace(ex));
                     }
                 }
             }
@@ -122,14 +122,15 @@ public class SourceORA implements ISource2017 {
                     }
 
                 } catch (Exception ex) {
+                    s_logger.error("fetching data error: \n{}", Helper.printStackTrace(ex));
                     dataWalk.onFailed(ex);
                     return;
                 } finally {
                     try {
                         rs.close();
                         pstmt.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
+                    } catch (SQLException ex) {
+                        s_logger.error("rs close error: \n{}", Helper.printStackTrace(ex));
                     }
                 }
 
