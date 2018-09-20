@@ -20,7 +20,7 @@ public class IP34x06Peak  extends MongoX implements IMongoX06Peak {
         //最高电压电池子系统号=0x01
         data.setHighBatteryId((short) 0x01);
         //最高电压电池单体代号 = vehBMSCellMaxVolIndx
-        short vehBMSCellMaxVolIndx = Short.parseShort(bsonDoc.getString("vehBMSCellMaxVolIndx"));
+        short vehBMSCellMaxVolIndx = Short.parseShort(bsonDoc.getString("vehBMSCellMaxVolIndx") == null? "0":bsonDoc.getString("vehBMSCellMaxVolIndx"));
         data.setHighBatteryCode(vehBMSCellMaxVolIndx);
         //电 池 单 体 电 压 最 高 值
         short vehBMSCellMaxVolV = (short)parseIntWithDef(bsonDoc,"vehBMSCellMaxVolV");
