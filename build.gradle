@@ -14,7 +14,7 @@ buildscript {
 apply plugin: 'org.springframework.boot'
 
 group = 'com.incarcloud'
-version = '1.0.0'
+version = '1.2.6'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
