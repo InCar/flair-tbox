@@ -68,11 +68,6 @@ class SaicDataWalk implements IDataWalk {
      * 每天所有的数据打包成一个 dd.tar.gz 文件
      */
     public boolean onBegin(long totalCount){
-        // taskArg.modes
-
-        this.modeObj = ModeFactory.create(mode);
-        this.listFns = makeFuncs(this.modeObj);
-
         taskArg.updateTotal(totalCount);
         return true;
     }
@@ -86,6 +81,9 @@ class SaicDataWalk implements IDataWalk {
         try {
             // 性能计数器
             taskArg.increasePerfCount();
+
+            // 侦测数据模式
+            detectMode(data);
 
             // 实时数据
             List<GBData> listGBData = new ArrayList<>();
@@ -223,6 +221,31 @@ class SaicDataWalk implements IDataWalk {
             // 按时间排序,以备输出
             sortedPackages.add(new GBPackage(tm, b64Val));
         }
+    }
+
+    private void detectMode(Object data){
+        if(modeObj != null) return;
+
+        if(taskArg.modes.size() == 1) {
+            modeObj = ModeFactory.create(taskArg.modes.get(0));
+        }
+        else if(taskArg.modes.size() > 1){
+            // 使用置信率最高的模型
+            float fMax = 0.0f;
+            for(String mode : taskArg.modes){
+                Mode candidate = ModeFactory.create(mode);
+                float fConfRate = candidate.calcConfRate(data);
+                if(modeObj==null || fConfRate > fMax){
+                    fMax = fConfRate;
+                    modeObj = candidate;
+                }
+            }
+        }
+        else{
+            throw new RuntimeException();
+        }
+
+        listFns = makeFuncs(modeObj);
     }
 
     private static List<Func<GBData, Object>> makeFuncs(Mode modeObj){
