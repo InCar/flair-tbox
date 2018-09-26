@@ -31,14 +31,16 @@ class SaicDataWalk implements IDataWalk {
 
     private final TaskArg taskArg;
     private final String out;
-    private final Mode modeObj;
-    private final List<Func<GBData, Object>> listFns;
 
     private final Base64.Encoder base64Encoder;
 
     // 排序树
     private final TreeSet<GBPackage> sortedPackages = new TreeSet<>();
     private final TreeSet<GBx07Alarm> sortedAlarms;
+
+    // 转换算法模型
+    private Mode modeObj = null;
+    private List<Func<GBData, Object>> listFns = null;
 
     // 目标文件
     private OutputStream fs = null;
@@ -51,9 +53,6 @@ class SaicDataWalk implements IDataWalk {
     SaicDataWalk(TaskArg taskArg, String out){
         this.taskArg = taskArg;
         this.out = out;
-
-        this.modeObj = ModeFactory.create(taskArg.mode);
-        this.listFns = makeFuncs(this.modeObj);
 
         this.base64Encoder = Base64.getEncoder();
 
@@ -69,6 +68,11 @@ class SaicDataWalk implements IDataWalk {
      * 每天所有的数据打包成一个 dd.tar.gz 文件
      */
     public boolean onBegin(long totalCount){
+        // taskArg.modes
+
+        this.modeObj = ModeFactory.create(mode);
+        this.listFns = makeFuncs(this.modeObj);
+
         taskArg.updateTotal(totalCount);
         return true;
     }

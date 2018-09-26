@@ -68,12 +68,14 @@ compileJava{
     dependsOn MarkGitVersion
     options.encoding = "utf-8"
     options.compilerArgs << "-Xlint:unchecked"
+    options.compilerArgs << "-Xdiags:verbose"
     options.compilerArgs << "-proc:none"
 }
 
 compileTestJava{
     options.encoding = "utf-8"
     options.compilerArgs << "-Xlint:unchecked"
+    options.compilerArgs << "-Xdiags:verbose"
 }
 
 bootRun{

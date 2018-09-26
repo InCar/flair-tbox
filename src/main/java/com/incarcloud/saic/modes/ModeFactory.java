@@ -12,7 +12,7 @@ public class ModeFactory {
     public static Mode create(String mode){
         Mode obj = null;
 
-        String ds = checkDS(mode);
+        String ds = checkDS();
         if (ds.equals(DSFactory.Mongo))
             obj = new ModeMongo(mode, s_gbSwitches);
         else if (ds.equals(DSFactory.Oracle))
@@ -29,32 +29,12 @@ public class ModeFactory {
         dataSources.addAll(listSrc);
     }
 
-    public static String checkDS(String mode){
-        // ds.contains(DSFactory.Json)
-        String ds;
+    public static String checkDS(){
+        // 强制只允许单一数据源
+        if(dataSources.size() != 1)
+            throw new RuntimeException("Only single data source is allowed!");
 
-        // 如果有JSON数据源，忽略掉Mongo 和 Oracle
-        if(dataSources.contains(DSFactory.Json))
-            return DSFactory.Json;
-
-        switch (mode){
-            case "AS24":
-            case "AS26":
-            case "IP24":
-            case "IP34":
-            case "OLD-AS24":
-            case "IP32P":
-                ds = DSFactory.Mongo;
-                break;
-            case "OLD-IP24MCE":
-            case "OLD-IP24":
-            case "OLD-BP34":
-                ds = DSFactory.Oracle;
-                break;
-            default:
-                throw new UnsupportedOperationException(mode);
-        }
-        return ds;
+        return dataSources.get(0);
     }
 
     // 测试用途,只测试某些类型的数据

@@ -2,6 +2,8 @@ package com.incarcloud.saic.ds;
 
 import com.incarcloud.saic.modes.Mode;
 
+import java.util.List;
+
 /**
  * 数据巡游器
  */
