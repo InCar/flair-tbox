@@ -240,10 +240,12 @@ class SaicDataWalk implements IDataWalk {
                     modeObj = candidate;
                 }
             }
+            s_logger.debug("{} mode {} {}", taskArg.vin, modeObj.getMode(), String.format("%03.2f", fMax));
         }
         else{
             throw new RuntimeException();
         }
+
 
         listFns = makeFuncs(modeObj);
     }

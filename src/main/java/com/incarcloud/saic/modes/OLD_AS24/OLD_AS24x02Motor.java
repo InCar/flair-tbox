@@ -28,8 +28,8 @@ public class OLD_AS24x02Motor extends MongoX implements IMongoX02Motor {
         // 驱动电机序号
         m.setMotorSeq((short) 1);
 
-        float torque = Float.parseFloat(bsonDoc.getString("TMActuToq"));
-        float sta = Float.parseFloat(bsonDoc.getString("TMSta"));
+        float torque = parseFloatWithDef(bsonDoc, "TMActuToq");
+        float sta = parseFloatWithDef(bsonDoc, "TMSta");
 
         // 驱动电机状态
         if (torque == 511 || torque == 512) {
