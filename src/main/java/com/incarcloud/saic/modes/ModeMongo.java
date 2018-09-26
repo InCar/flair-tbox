@@ -14,6 +14,7 @@ public class ModeMongo extends Mode{
 
     private final String mode;
 
+    private final IMongoX00ConfRate x00ConfRate;
     private final IMongoX01Overview x01Overview;
     private final IMongoX02Motor x02Motor;
     private final IMongoX04Engine x04Engine;
@@ -31,6 +32,8 @@ public class ModeMongo extends Mode{
     ModeMongo(String mode, boolean[] gbSwitches){
         this.mode = mode;
         this.gbSwitches = gbSwitches;
+
+        x00ConfRate = create(mode, IMongoX00ConfRate.class);
 
         x01Overview = gbSwitches[0x01] ? create(mode, IMongoX01Overview.class) : null;
         x02Motor    = gbSwitches[0x02] ? create(mode, IMongoX02Motor.class)    : null;
@@ -83,6 +86,14 @@ public class ModeMongo extends Mode{
             }
         }
         return null;
+    }
+
+    @Override
+    public float calcConfRate(Object data){
+        if(data instanceof Document)
+            return x00ConfRate.calc((Document)data);
+        else
+            return 0.0f;
     }
 
     @SuppressWarnings("unchecked")
