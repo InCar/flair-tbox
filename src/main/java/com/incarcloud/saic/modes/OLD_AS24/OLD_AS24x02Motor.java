@@ -150,7 +150,7 @@ public class OLD_AS24x02Motor extends MongoX implements IMongoX02Motor {
         }
 
         // 电机控制器输入电压
-        m.setControllerInputVoltage(Float.parseFloat(bsonDoc.getString("vehHVDCDCHVSideVol")));
+        m.setControllerInputVoltage(parseFloatWithDef(bsonDoc, "vehHVDCDCHVSideVol"));
 
         // 电机控制器直流母线电流
         crnt = parseFloatWithDef(bsonDoc, "vehBMSPackCrnt");
