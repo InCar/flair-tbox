@@ -1,7 +1,8 @@
 buildscript {
     repositories {
         if (project.hasProperty("maven") && maven.equals("maven.aliyun.com"))
-            maven { url = 'http://maven.aliyun.com/nexus/content/groups/public/' }
+            // maven { url = 'http://maven.aliyun.com/nexus/content/groups/public/' }
+            maven { url = 'https://maven.aliyun.com/repository/public'}
         else
             mavenCentral()
 
