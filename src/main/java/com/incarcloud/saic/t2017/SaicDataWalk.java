@@ -31,14 +31,16 @@ class SaicDataWalk implements IDataWalk {
 
     private final TaskArg taskArg;
     private final String out;
-    private final Mode modeObj;
-    private final List<Func<GBData, Object>> listFns;
 
     private final Base64.Encoder base64Encoder;
 
     // 排序树
     private final TreeSet<GBPackage> sortedPackages = new TreeSet<>();
     private final TreeSet<GBx07Alarm> sortedAlarms;
+
+    // 转换算法模型
+    private Mode modeObj = null;
+    private List<Func<GBData, Object>> listFns = null;
 
     // 目标文件
     private OutputStream fs = null;
@@ -51,9 +53,6 @@ class SaicDataWalk implements IDataWalk {
     SaicDataWalk(TaskArg taskArg, String out){
         this.taskArg = taskArg;
         this.out = out;
-
-        this.modeObj = ModeFactory.create(taskArg.mode);
-        this.listFns = makeFuncs(this.modeObj);
 
         this.base64Encoder = Base64.getEncoder();
 
@@ -82,6 +81,9 @@ class SaicDataWalk implements IDataWalk {
         try {
             // 性能计数器
             taskArg.increasePerfCount();
+
+            // 侦测数据模式
+            detectMode(data);
 
             // 实时数据
             List<GBData> listGBData = new ArrayList<>();
@@ -219,6 +221,33 @@ class SaicDataWalk implements IDataWalk {
             // 按时间排序,以备输出
             sortedPackages.add(new GBPackage(tm, b64Val));
         }
+    }
+
+    private void detectMode(Object data){
+        if(modeObj != null) return;
+
+        if(taskArg.modes.size() == 1) {
+            modeObj = ModeFactory.create(taskArg.modes.get(0));
+        }
+        else if(taskArg.modes.size() > 1){
+            // 使用置信率最高的模型
+            float fMax = 0.0f;
+            for(String mode : taskArg.modes){
+                Mode candidate = ModeFactory.create(mode);
+                float fConfRate = candidate.calcConfRate(data);
+                if(modeObj==null || fConfRate > fMax){
+                    fMax = fConfRate;
+                    modeObj = candidate;
+                }
+            }
+            s_logger.debug("{} mode {} {}", taskArg.vin, modeObj.getMode(), String.format("%03.2f", fMax));
+        }
+        else{
+            throw new RuntimeException();
+        }
+
+
+        listFns = makeFuncs(modeObj);
     }
 
     private static List<Func<GBData, Object>> makeFuncs(Mode modeObj){

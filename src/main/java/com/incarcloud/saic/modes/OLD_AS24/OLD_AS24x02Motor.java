@@ -28,8 +28,8 @@ public class OLD_AS24x02Motor extends MongoX implements IMongoX02Motor {
         // 驱动电机序号
         m.setMotorSeq((short) 1);
 
-        float torque = Float.parseFloat(bsonDoc.getString("TMActuToq"));
-        float sta = Float.parseFloat(bsonDoc.getString("TMSta"));
+        float torque = parseFloatWithDef(bsonDoc, "TMActuToq");
+        float sta = parseFloatWithDef(bsonDoc, "TMSta");
 
         // 驱动电机状态
         if (torque == 511 || torque == 512) {
@@ -51,7 +51,7 @@ public class OLD_AS24x02Motor extends MongoX implements IMongoX02Motor {
         if (StringUtils.isEmpty(tem) || "NULL".equalsIgnoreCase(tem)) {
             m.setControllerTemperature((short) 0xFF);
         } else {
-            m.setControllerTemperature(Short.parseShort(tem));
+            m.setControllerTemperature((short)Float.parseFloat(tem));
         }
 
         // 驱动电机转速
@@ -74,11 +74,11 @@ public class OLD_AS24x02Motor extends MongoX implements IMongoX02Motor {
         if (StringUtils.isEmpty(stem) || "NULL".equalsIgnoreCase(speed)) {
             m.setMotorTemperature((short) 0xFF);
         } else {
-            m.setMotorTemperature(Short.parseShort(stem));
+            m.setMotorTemperature((short)Float.parseFloat(stem));
         }
 
         // 电机控制器输入电压
-        m.setControllerInputVoltage(Float.parseFloat(bsonDoc.getString("vehHVDCDCHVSideVol")));
+        m.setControllerInputVoltage(parseFloatWithDef(bsonDoc, "vehHVDCDCHVSideVol"));
 
 
         // 电机控制器直流母线电流
@@ -102,8 +102,8 @@ public class OLD_AS24x02Motor extends MongoX implements IMongoX02Motor {
         m.setMotorSeq((short) 2);
 
         // 驱动电机状态
-        torque = Float.parseFloat(bsonDoc.getString("vehISGActuToq"));
-        sta = Float.parseFloat(bsonDoc.getString("vehISGSta"));
+        torque = parseFloatWithDef(bsonDoc, "vehISGActuToq");
+        sta = parseFloatWithDef(bsonDoc, "vehISGSta");
         if (torque == 511 || torque == 512) {
             m.setMotorStatus((short) 0xFF);
         } else if (sta == 3) {
@@ -150,7 +150,7 @@ public class OLD_AS24x02Motor extends MongoX implements IMongoX02Motor {
         }
 
         // 电机控制器输入电压
-        m.setControllerInputVoltage(Float.parseFloat(bsonDoc.getString("vehHVDCDCHVSideVol")));
+        m.setControllerInputVoltage(parseFloatWithDef(bsonDoc, "vehHVDCDCHVSideVol"));
 
         // 电机控制器直流母线电流
         crnt = parseFloatWithDef(bsonDoc, "vehBMSPackCrnt");

@@ -52,11 +52,12 @@ public class TaskWork implements Action<TaskArg> {
     @Override
     public void run(TaskArg arg){
         SaicDataWalk dataWalk = new SaicDataWalk(arg, this.out);
-        if (arg.getDS().equals(DSFactory.Mongo) && dsMGO != null)
+        String ds = ModeFactory.checkDS();
+        if (ds.equals(DSFactory.Mongo) && dsMGO != null)
             dsMGO.fetch(arg.vin, arg.date, dataWalk);
-        else if (arg.getDS().equals(DSFactory.Oracle) && dsORA != null)
+        else if (ds.equals(DSFactory.Oracle) && dsORA != null)
             dsORA.fetch(arg.vin, arg.date, dataWalk);
-        else if(arg.getDS().equals(DSFactory.Json) && dsJSO != null)
+        else if(ds.equals(DSFactory.Json) && dsJSO != null)
             dsJSO.fetch(arg.vin, arg.date, dataWalk);
 
         arg.increaseFinishedVin();

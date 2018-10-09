@@ -14,5 +14,7 @@ public abstract class Mode<T> {
     public abstract GBx05Position makeGBx05Position(Object data);
     public abstract GBx06Peak     makeGBx06Peak(Object data);
     public abstract GBx07Alarm    makeGBx07Alarm(Object data);
-    public abstract String    getMode();
+    public abstract String        getMode();
+
+    public float calcConfRate(Object data){ return 0.0f; }
 }

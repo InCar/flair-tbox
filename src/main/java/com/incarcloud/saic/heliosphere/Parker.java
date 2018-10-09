@@ -102,7 +102,7 @@ public class Parker {
 
                 for (Map.Entry<String, List<String>> vinModes : metaVinMode.getVinModes()) {
                     // TODO: 如何决断Mode???
-                    saTask.submit(new TaskArg(cursor, vinModes.getKey(), vinModes.getValue().get(0), hourglass));
+                    saTask.submit(new TaskArg(cursor, vinModes.getKey(), vinModes.getValue(), hourglass));
                 }
 
                 // 等待工作完成

@@ -17,6 +17,7 @@ import java.util.Date;
  * @author GuoKun
  * @version 1.0
  * @create_date 2018/9/11 09:35
+ * 统计Json中gnsstime两条相邻数据的时间间隔
  */
 public class JsonReaderDifference {
     static Logger logger = LoggerFactory.getLogger(JsonReaderDifference.class);

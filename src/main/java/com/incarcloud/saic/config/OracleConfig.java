@@ -1,10 +1,15 @@
 package com.incarcloud.saic.config;
 
+import com.incarcloud.auxiliary.Helper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class OracleConfig {
+    private static final Logger s_logger = LoggerFactory.getLogger(OracleConfig.class);
 
     private String driver;
     private String url;
@@ -47,12 +52,13 @@ public class OracleConfig {
 
     public Connection createClient(){
         try {
-            Class.forName(driver);
+            Object obj = Class.forName(driver);
+            s_logger.info("oracle driver : {}", obj);
             conn = DriverManager.getConnection(url, username, password);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }catch (SQLException e) {
-            e.printStackTrace();
+            s_logger.info("oracle conn: {}", conn);
+        }catch (Exception ex) {
+            s_logger.error("create oracle client failed: {}", Helper.printStackTrace(ex));
+            throw new RuntimeException("Connect to database failed!");
         }
         return conn;
     }

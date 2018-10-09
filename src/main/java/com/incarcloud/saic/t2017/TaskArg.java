@@ -6,6 +6,8 @@ import com.incarcloud.saic.modes.ModeFactory;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 任务参数
@@ -15,24 +17,20 @@ public class TaskArg extends TaskArgBase {
 
     final LocalDate date;
     final String vin;
-    final String mode;
-    private final String ds;
+
+    final List<String> modes = new ArrayList<>();
 
     private volatile long total = 0;
     private volatile long idx = 0;
     private volatile long actualWritten = 0;
 
-    public TaskArg(LocalDate date, String vin, String mode, Hourglass hourglass){
+    public TaskArg(LocalDate date, String vin, List<String> modes, Hourglass hourglass){
         super(hourglass);
 
         this.date = date;
         this.vin = vin;
-        this.mode = mode;
-
-        this.ds = ModeFactory.checkDS(mode);
+        this.modes.addAll(modes);
     }
-
-    public String getDS(){ return ds; }
 
     // 进度指示
     void updateTotal(long val){ total = val; }
@@ -43,7 +41,7 @@ public class TaskArg extends TaskArgBase {
     public String toString(){
         return String.format("TaskArg@%s %s %s %s %d/%d/%d",
                 String.format("%08x", hashCode()),
-                vin, date.format(s_fmt), mode,
+                vin, date.format(s_fmt), modes,
                 actualWritten, idx, total);
     }
 }

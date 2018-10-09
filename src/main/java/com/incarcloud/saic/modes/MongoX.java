@@ -30,6 +30,10 @@ public class MongoX {
 //        return null;
     }
 
+    public float calcConfRate(Document bsonDoc){
+        return 0.0f;
+    }
+
     protected static int parseIntWithDef(Document bsonDoc, String field, int def){
         String buf = bsonDoc.getString(field);
         return buf!=null? (int) Float.parseFloat(buf) :def;
