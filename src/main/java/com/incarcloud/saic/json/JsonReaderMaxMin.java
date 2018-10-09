@@ -1,6 +1,5 @@
 package com.incarcloud.saic.json;
 
-import com.alibaba.fastjson.JSONObject;
 import com.incarcloud.concurrent.LimitedSyncArgTask;
 import com.incarcloud.lang.Action;
 import org.slf4j.Logger;
@@ -15,19 +14,18 @@ import java.io.IOException;
 /**
  * @author GuoKun
  * @version 1.0
- * @create_date 2018/9/11 16:21
+ * @create_date 2018/9/11 09:35
+ * @Description 做统计报表，用于转换文件到mysql中
  */
-public class JsonReaderGnssTimeChange {
-    static Logger logger = LoggerFactory.getLogger(JsonReaderGnssTimeChange.class);
-    static String savePath = "/home/saic/gnsstimeChangeTime.txt"; // 数据存储路径
-    static String dataPath = "/saic/data/json";         // 读取数据路径
-    static int maxTask = 96;                        // 线程数量
-//    static String savePath = "D:\\gnsstimeChangeTime.txt"; // 数据存储路径
-//    static String dataPath = "D:\\test";         // 读取数据路径
-//    static int maxTask = 64;                        // 线程数量
+public class JsonReaderMaxMin {
+    static Logger logger = LoggerFactory.getLogger(JsonReaderMaxMin.class);
+    static String source = "oracle";
+    static String year = "2017";
+    static String savePath = "F:\\2018 - incar\\saic-2017\\build\\libs\\" + year + source +".txt"; // 数据存储路径
+    static String dataPath = "F:\\2018 - incar\\saic-2017\\build\\libs\\" + year + source; // 读取数据路径
+    static int maxTask = 4;  // 线程数量
 
-
-    public static void mainJson() {
+    public static void createFile() {
         // 判断文件是否存在，不存在就创建
         File fileSave = new File(savePath);
         if (!fileSave.exists()) {
@@ -43,9 +41,10 @@ public class JsonReaderGnssTimeChange {
 
         // 线程任务
         Action<File> taskDemo = (x) -> {
-            readFileByLines(x);
+            readFileByLines(x,year,source);
             logger.info("run task for argument: {}", x);
         };
+
         // 任务集合
         LimitedSyncArgTask<File> syncArgTaskDemo = new LimitedSyncArgTask<>(taskDemo);
         syncArgTaskDemo.setMax(maxTask);
@@ -59,36 +58,36 @@ public class JsonReaderGnssTimeChange {
         }
     }
 
-    public static void readFileByLines(File file) {
+    public static void readFileByLines(File file, String year, String source) {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(file));
             String tempStringOne = reader.readLine();
-            String tempStringTwo = null;
-            Long changeNumber = 0l;
-            Long error = 0l;
-            StringBuffer gnsstime = new StringBuffer();
-            while(tempStringOne != null && (tempStringTwo = reader.readLine()) != null) {
+            int error = 0 ;
+            StringBuffer sb = new StringBuffer();
+            while((tempStringOne = reader.readLine()) != null) {
                 try {
-                    JSONObject entityOne = JSONObject.parseObject(tempStringOne);
-                    JSONObject entityTwo = JSONObject.parseObject(tempStringTwo);
-                    if(("1970-01-01 08:00:00".equals(entityOne.getString("gnsstime")) && !"1970-01-01 08:00:00".equals(entityTwo.getString("gnsstime")))
-                    || (!"1970-01-01 08:00:00".equals(entityOne.getString("gnsstime")) && "1970-01-01 08:00:00".equals(entityTwo.getString("gnsstime")))) {
-                        changeNumber ++;
-                        String gt = entityTwo.getString("gnsstime") + "   ";
-                        gnsstime.append(gt);
+                    if(tempStringOne.length() >10) {
+                        String[] strings = tempStringOne.split("/");
+                        String vin = strings[strings.length -1 ];
+                        String name = file.getName();
+                        String month = name.substring(0,2);
+                        String day = name.substring(2,4);
+                        String date = year + "-"+month+"-"+day;
+                        sb.append(" ('").append(date).append("','").append(vin).append("','").append(source).append("'),");
                     }
-                    tempStringOne = tempStringTwo;
                 } catch (Exception var32) {
                     logger.error(var32.getMessage());
                     error ++ ;
                 }
             }
-            reader.close();
-            writer("INSERT INTO `incar`.`test_gnsstime_change`(`vin`, `change_num`, `error`, `gt`) VALUES ('"
-                    + file.getName() + "',"  + changeNumber + "," + error + ",'" + gnsstime + "');", savePath);
-            System.out.println(file.getName() + "完成");
-            logger.info(file.getName() + "完成");
+            if(sb.length() > 3) {
+                String values = sb.substring(0, sb.length() - 1) + ";";
+                reader.close();
+                writer("INSERT INTO `incar`.`vin`(`dateStr`, `vin`, `source`) VALUES " + values, savePath);
+                System.out.println(file.getName() + "完成");
+                logger.info(file.getName() + "完成");
+            }
         } catch (IOException var33) {
             var33.printStackTrace();
         } finally {
@@ -104,7 +103,6 @@ public class JsonReaderGnssTimeChange {
 
     public static synchronized void writer(String content, String path) {
         content = content + "\r\n";
-
         try {
             FileWriter writer = new FileWriter(path, true);
             writer.write(content);
@@ -114,6 +112,4 @@ public class JsonReaderGnssTimeChange {
         }
 
     }
-
-
 }

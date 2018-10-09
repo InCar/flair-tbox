@@ -21,68 +21,11 @@ import java.util.TreeMap;
  * @author GuoKun
  * @version 1.0
  * @create_date 2018/9/13 10:22
+ * @Description 文件处理工具类
  */
 public class JSONTreeUtil {
-    static Logger logger = LoggerFactory.getLogger(JsonReader.class);
 
-    // 读取文件
-    public static TreeMap<String, Integer> getTreeMap(File readerFile, File writerFile) {
-        TreeMap<String, Integer> treeMap = new TreeMap<>();
-        LineNumberReader raf = null;
-        BufferedWriter bw = null;
-
-        createFile(writerFile);
-
-        try {
-            raf = new LineNumberReader(new FileReader(readerFile));
-            String tempString = null;
-            while ((tempString = raf.readLine()) != null) {
-                try {
-                    raf.getLineNumber();
-                    JSONObject entity = JSONObject.parseObject(tempString);
-                    String date = entity.getString("gnsstime");
-                    treeMap.put(date, raf.getLineNumber());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            raf.close();
-
-            bw = new BufferedWriter(new FileWriter(writerFile));
-
-            Iterator titer = treeMap.entrySet().iterator();
-            while (titer.hasNext()) {
-                Map.Entry ent = (Map.Entry) titer.next();
-                String keyt = ent.getKey().toString();
-                String valuet = ent.getValue().toString();
-
-                String temp = readAppointedLineNumber(readerFile, Integer.valueOf(valuet));
-                System.out.println(temp);
-
-                bw.write(temp + "\t\n");
-            }
-        } catch (FileNotFoundException e1) {
-            e1.printStackTrace();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        } finally {
-            if (raf != null) {
-                try {
-                    raf.close();
-                } catch (IOException var31) {
-                    logger.error(var31.getMessage());
-                }
-            }
-            if (bw != null) {
-                try {
-                    bw.close();
-                } catch (IOException var31) {
-                    logger.error(var31.getMessage());
-                }
-            }
-        }
-        return null;
-    }
+    static Logger logger = LoggerFactory.getLogger(JSONTreeUtil.class);
 
     // 读取文件指定行。
     static String readAppointedLineNumber(File sourceFile, int lineNumber) throws IOException {
@@ -134,81 +77,7 @@ public class JSONTreeUtil {
         return lines;
     }
 
-
-    public static void change(File readerFile, File writerFile) {
-        TreeMap<String, JsonExcursion> treeMap = new TreeMap<>();
-        LineNumberReader raf = null;
-        BufferedWriter bw = null;
-        //  创建文件
-        createFile(writerFile);
-
-        int offset = 0;
-
-        try {
-            raf = new LineNumberReader(new FileReader(readerFile));
-            String tempString = null;
-            while ((tempString = raf.readLine()) != null) {
-                try {
-                    int len = tempString.length();
-                    JSONObject entity = JSONObject.parseObject(tempString);
-                    String date = entity.getString("gnsstime");
-                    JsonExcursion entry = new JsonExcursion(offset, 0, tempString.length());
-                    treeMap.put(date, entry);
-                    offset += len;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            raf.close();
-
-            bw = new BufferedWriter(new FileWriter(writerFile));
-            RandomAccessFile inputFile = new RandomAccessFile(readerFile, "r");
-            Iterator iterator = treeMap.entrySet().iterator();
-            while (iterator.hasNext()) {
-                try {
-                    Map.Entry entry = (Map.Entry) iterator.next();
-                    JsonExcursion entity = (JsonExcursion) entry.getValue();
-                    inputFile.seek(entity.getStart());
-                    long ii = inputFile.getFilePointer();
-                    String ss = inputFile.readLine();
-                    byte[] bytes = new byte[entity.getLength()];
-                    inputFile.read(bytes, 0, entity.getLength());
-                    String temp = new String(bytes);
-                    bw.write(temp + "\t\n");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (FileNotFoundException e1) {
-            e1.printStackTrace();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        } finally {
-            if (raf != null) {
-                try {
-                    raf.close();
-                } catch (IOException var31) {
-                    logger.error(var31.getMessage());
-                }
-            }
-            if (bw != null) {
-                try {
-                    bw.close();
-                } catch (IOException var31) {
-                    logger.error(var31.getMessage());
-                }
-            }
-        }
-
-
-
-    }
-
-    /**
-     * 随机读取文件内容
-     *
-     * @param fileName 文件名
-     */
+    // 随机读取文件内容
     public static void readFileByRandomAccess(String fileName) {
         RandomAccessFile randomFile = null;
         try {
@@ -252,16 +121,5 @@ public class JSONTreeUtil {
                 logger.error(var12.getMessage());
             }
         }
-    }
-
-
-    public static void getBytes(File readerFile, int num) {
-        BufferedReader bufferedReader = null;
-        try {
-            bufferedReader = new BufferedReader(new FileReader(readerFile));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
     }
 }
