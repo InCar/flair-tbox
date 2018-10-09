@@ -18,6 +18,16 @@ public class MongoX {
         String tboxTime = bsonDoc.getString("tboxTime");
         long tmEpoch = Long.parseLong(tboxTime);
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(tmEpoch), s_zoneGMT8);
+        // JSON数据处理：处理导入Mongodb的Json数据
+//        try {
+//            String tboxTime = bsonDoc.getString("gnsstime");
+//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+//            long tmEpoch = simpleDateFormat.parse(tboxTime).getTime();
+//            return ZonedDateTime.ofInstant(Instant.ofEpochMilli(tmEpoch), s_zoneGMT8);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
     }
 
     protected static int parseIntWithDef(Document bsonDoc, String field, int def){

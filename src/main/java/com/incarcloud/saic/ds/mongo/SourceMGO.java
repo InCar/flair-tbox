@@ -40,6 +40,8 @@ public class SourceMGO implements ISource2017 {
     public void fetch(String vin, LocalDate date, IDataWalk dataWalk){
         MongoDatabase database = client.getDatabase(cfg.getDatabase());
         MongoCollection<Document> docs = database.getCollection(cfg.getCollection(date));
+        // JSON： 处理导入mongo的JSON数据
+//        MongoCollection<Document> docs = database.getCollection("jso");
 
         Bson filterByVin = Filters.eq("vin", vin);
 
@@ -53,12 +55,16 @@ public class SourceMGO implements ISource2017 {
         if(docTotal != null){
             int total = docTotal.get("count", Integer.class);
             s_logger.debug("fetching {} {} {}", vin, date.format(s_fmt), total);
-
+//            String dateStr = date.format(s_fmt);
             try {
                 // 如果DataWalk的onBegin方法失败,就没有必要取数据了,直接结束
                 if(dataWalk.onBegin(total)) {
                     // 检索数据,因为mongo已经是按天存储在collection中,所以这里不需要时间过滤条件
                     MongoIterable<Document> fx = docs.find(Filters.eq("vin", vin));
+                    // JSON： 处理导入mongo的JSON数据
+//                    MongoIterable<Document> fx = docs.find(Filters.and(Filters.eq("vin", vin),
+//                            Filters.gte("gnsstime",dateStr+" 00:00:00"),
+//                            Filters.lte("gnsstime",dateStr+" 23:59:59")));
 
                     long idx = 0;
                     for (Document doc : fx) {
