@@ -21,3 +21,4 @@ public class OLD_AS24x00ConfRate extends MongoX00ConfRate {
         return fV;
     }
 }
+

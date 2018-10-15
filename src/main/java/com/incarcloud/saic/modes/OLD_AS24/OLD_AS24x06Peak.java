@@ -47,3 +47,4 @@ public class OLD_AS24x06Peak extends MongoX implements IMongoX06Peak {
         return data;
     }
 }
+
